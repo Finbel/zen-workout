@@ -169,6 +169,68 @@ A muted sage green used for success states, nature themes, and secondary accents
 
 ---
 
+## Terracotta Palette
+
+A warm earth red used for error states, warnings, and accent elements requiring attention.
+
+<ColorPalette
+  title="Terracotta"
+  colors={[
+    {
+      name: 'Terracotta 50',
+      variable: '--color-terracotta-50',
+      value: '#fdf5f2',
+    },
+    {
+      name: 'Terracotta 100',
+      variable: '--color-terracotta-100',
+      value: '#f0e0d0',
+    },
+    {
+      name: 'Terracotta 200',
+      variable: '--color-terracotta-200',
+      value: '#e4c4b0',
+    },
+    {
+      name: 'Terracotta 300',
+      variable: '--color-terracotta-300',
+      value: '#d5a088',
+    },
+    {
+      name: 'Terracotta 400',
+      variable: '--color-terracotta-400',
+      value: '#cc7b55',
+    },
+    {
+      name: 'Terracotta 500',
+      variable: '--color-terracotta-500',
+      value: '#c3592b',
+    },
+    {
+      name: 'Terracotta 600',
+      variable: '--color-terracotta-600',
+      value: '#a24a24',
+    },
+    {
+      name: 'Terracotta 700',
+      variable: '--color-terracotta-700',
+      value: '#7d3a1c',
+    },
+    {
+      name: 'Terracotta 800',
+      variable: '--color-terracotta-800',
+      value: '#5a2a15',
+    },
+    {
+      name: 'Terracotta 900',
+      variable: '--color-terracotta-900',
+      value: '#3d1c0e',
+    },
+  ]}
+/>
+
+---
+
 ## Neutral Palette
 
 A warm cream-based neutral palette that forms the foundation of our UI.
@@ -255,6 +317,57 @@ These semantic tokens provide consistent, meaningful color usage across the desi
   ]}
 />
 
+<ColorPalette
+  title="Status Colors"
+  colors={[
+    {
+      name: 'Error',
+      variable: '--color-error',
+      value: '#c3592b',
+    },
+    {
+      name: 'Error Hover',
+      variable: '--color-error-hover',
+      value: '#a24a24',
+    },
+    {
+      name: 'Error Subtle',
+      variable: '--color-error-subtle',
+      value: '#f0e0d0',
+    },
+    {
+      name: 'Warning',
+      variable: '--color-warning',
+      value: '#cc7b55',
+    },
+    {
+      name: 'Warning Hover',
+      variable: '--color-warning-hover',
+      value: '#c3592b',
+    },
+    {
+      name: 'Warning Subtle',
+      variable: '--color-warning-subtle',
+      value: '#fdf5f2',
+    },
+    {
+      name: 'Success',
+      variable: '--color-success',
+      value: '#5c7d55',
+    },
+    {
+      name: 'Success Hover',
+      variable: '--color-success-hover',
+      value: '#496645',
+    },
+    {
+      name: 'Success Subtle',
+      variable: '--color-success-subtle',
+      value: '#f4f7f4',
+    },
+  ]}
+/>
+
 ---
 
 ## Usage
@@ -270,5 +383,18 @@ These semantic tokens provide consistent, meaningful color usage across the desi
 /* Use palette colors for specific brand elements */
 .brand-accent {
   background-color: var(--color-primary-500);
+}
+
+/* Use status colors for feedback states */
+.alert-error {
+  background-color: var(--color-error-subtle);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+
+.alert-success {
+  background-color: var(--color-success-subtle);
+  border: 1px solid var(--color-success);
+  color: var(--color-success);
 }
 ```

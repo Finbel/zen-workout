@@ -122,6 +122,118 @@ src/components/
 
 ---
 
+## YAGNI Principle
+
+**You Ain't Gonna Need It** — build only what is explicitly required.
+
+The Zen Design System follows a minimal implementation philosophy. Before adding any feature or prop, ask yourself: "Is this explicitly requested or documented in the requirements?"
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    borderRadius: 'var(--radius-md)',
+    marginBottom: '1.5rem',
+  }}
+>
+  <h4
+    style={{
+      margin: '0 0 1rem 0',
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-text-primary)',
+    }}
+  >
+    YAGNI Guidelines
+  </h4>
+  <ul
+    style={{
+      margin: 0,
+      paddingLeft: '1.25rem',
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+      lineHeight: '1.8',
+    }}
+  >
+    <li>Only add props or functionality that is explicitly requested</li>
+    <li>Avoid speculative features ("this might be useful someday")</li>
+    <li>Start with the minimal viable implementation</li>
+    <li>Add complexity only when real use cases demand it</li>
+    <li>Prefer composition over configuration</li>
+  </ul>
+</div>
+
+<Guideline type="do">
+  Build the exact feature requested. If a Button is needed with primary and
+  secondary variants, implement only those two variants.
+</Guideline>
+
+<Guideline type="dont">
+  Add extra variants, sizes, or props "just in case" — you can always add them
+  later when a real need arises.
+</Guideline>
+
+---
+
+## Accessibility
+
+Building accessible components is essential for the Zen Design System. Every component must be usable by everyone, including people who rely on assistive technologies.
+
+### Focus Management
+
+- All interactive elements must be focusable
+- Use `:focus-visible` for keyboard focus states (not `:focus`)
+- Ensure focus order follows a logical reading sequence
+- Trap focus within modals and dialogs when open
+
+```css
+.zen-component:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+```
+
+### Keyboard Navigation
+
+- Support expected keyboard interactions for each component type
+- Buttons: `Enter` and `Space` to activate
+- Menus: Arrow keys to navigate, `Escape` to close
+- Tabs: Arrow keys to switch, `Tab` to move focus
+- Document all keyboard shortcuts in stories
+
+### ARIA Attributes
+
+Use ARIA attributes to enhance semantic meaning:
+
+```tsx
+// Button with loading state
+<button aria-busy={loading} aria-disabled={disabled}>
+  {loading ? 'Loading...' : children}
+</button>
+
+// Expandable section
+<button aria-expanded={isOpen} aria-controls="panel-id">
+  Toggle Panel
+</button>
+```
+
+### Color Contrast
+
+- Text must meet WCAG 2.1 AA contrast ratios (4.5:1 for normal text, 3:1 for large text)
+- Use design tokens that have been verified for accessibility
+- Never rely on color alone to convey information
+
+### Testing with a11y Addon
+
+The Storybook a11y addon is configured to automatically audit components. Check the "Accessibility" tab in Storybook to verify your component passes all checks:
+
+- No violations should appear in the accessibility panel
+- Test with keyboard-only navigation
+- Verify screen reader announcements are meaningful
+
+---
+
 ## Component Implementation
 
 ### TypeScript & Props
@@ -420,6 +532,34 @@ Structure your CSS file with clear sections:
 }
 ```
 
+### Component-Level CSS Variables
+
+Define component-specific CSS custom properties to enable easy customization and maintain consistency across size variants:
+
+```css
+.zen-button--md {
+  --button-height: 2.5rem;
+  --button-padding-x: var(--space-4);
+  --button-font-size: var(--font-size-base);
+
+  height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  font-size: var(--button-font-size);
+}
+```
+
+This pattern allows consumers to override specific values without modifying the base styles, and makes the relationship between size variants explicit and maintainable.
+
+<Guideline type="do">
+  Define component-level variables for dimensions, spacing, and typography that
+  vary by size or variant.
+</Guideline>
+
+<Guideline type="dont">
+  Use magic numbers directly in property values — always reference a design
+  token or component variable.
+</Guideline>
+
 ### Interactive States
 
 Always define states in this order:
@@ -503,6 +643,53 @@ argTypes: {
 Stories should be **comprehensive but focused**. Each story should demonstrate
 a specific aspect of the component.
 
+### Playground Story (Required)
+
+Every component **must** include a `Playground` story as the first story. This provides an interactive sandbox where developers can experiment with all props using Storybook controls.
+
+```tsx
+export const Playground: Story = {
+  args: {
+    children: 'Button',
+    variant: 'primary',
+    size: 'md',
+    disabled: false,
+  },
+}
+```
+
+The Playground story should:
+
+- Be the first exported story (appears at the top of the component's story list)
+- Include sensible default values for all props via `args`
+- Enable full interactivity through Storybook's Controls panel
+
+### Using Design Tokens in Stories
+
+Always use design tokens instead of hardcoded pixel or rem values in story layouts. This ensures visual consistency with the design system.
+
+<Guideline type="do">
+
+```tsx
+<div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+  <Button variant="primary">Primary</Button>
+  <Button variant="secondary">Secondary</Button>
+</div>
+```
+
+</Guideline>
+
+<Guideline type="dont">
+
+```tsx
+<div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+  <Button variant="primary">Primary</Button>
+  <Button variant="secondary">Secondary</Button>
+</div>
+```
+
+</Guideline>
+
 ### Required Stories
 
 Every component should include these essential stories:
@@ -527,6 +714,18 @@ Every component should include these essential stories:
     Essential Stories Checklist
   </h4>
   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <span style={{ color: 'var(--color-secondary-500)' }}>✓</span>
+      <strong>Playground</strong>
+      <span
+        style={{
+          color: 'var(--color-text-muted)',
+          fontSize: 'var(--font-size-sm)',
+        }}
+      >
+        — Interactive sandbox with all props via args
+      </span>
+    </div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
       <span style={{ color: 'var(--color-secondary-500)' }}>✓</span>
       <strong>All Variants</strong>
@@ -749,14 +948,19 @@ Before submitting a new component, verify:
         }}
       >
         <li>
+          Has <code>Playground</code> story as first story
+        </li>
+        <li>
           Has <code>autodocs</code> tag enabled
         </li>
         <li>Includes stories for all variants</li>
         <li>Includes stories for all sizes</li>
         <li>Shows disabled states</li>
+        <li>Uses design tokens in story layouts</li>
         <li>
           Has descriptive <code>argTypes</code>
         </li>
+        <li>Passes a11y addon checks</li>
       </ul>
     </div>
     <div>

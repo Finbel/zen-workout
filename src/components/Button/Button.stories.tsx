@@ -36,13 +36,28 @@ export default meta
 type Story = StoryObj<typeof Button>
 
 /* ----------------------------------------
+   PLAYGROUND
+   ---------------------------------------- */
+
+export const Playground: Story = {
+  args: {
+    children: 'Button',
+    variant: 'primary',
+    size: 'md',
+    disabled: false,
+  },
+}
+
+/* ----------------------------------------
    ALL VARIANTS
    ---------------------------------------- */
 
 export const AllVariants: Story = {
   name: 'All Variants',
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div
+      style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}
+    >
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
       <Button variant="outline">Outline</Button>
@@ -58,7 +73,9 @@ export const AllVariants: Story = {
 export const AllSizes: Story = {
   name: 'All Sizes',
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div
+      style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}
+    >
       <Button size="sm">Small</Button>
       <Button size="md">Medium</Button>
       <Button size="lg">Large</Button>
@@ -72,7 +89,9 @@ export const AllSizes: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div
+      style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}
+    >
       <Button variant="primary" disabled>
         Primary
       </Button>

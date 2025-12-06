@@ -31,6 +31,18 @@
   --color-secondary-800: #263830;
   --color-secondary-900: #1a2620;
 
+  /* Terracotta palette - Warm earth red */
+  --color-terracotta-50: #fdf5f2;
+  --color-terracotta-100: #f0e0d0;
+  --color-terracotta-200: #e4c4b0;
+  --color-terracotta-300: #d5a088;
+  --color-terracotta-400: #cc7b55;
+  --color-terracotta-500: #c3592b;
+  --color-terracotta-600: #a24a24;
+  --color-terracotta-700: #7d3a1c;
+  --color-terracotta-800: #5a2a15;
+  --color-terracotta-900: #3d1c0e;
+
   /* Neutral palette - Warm cream */
   --color-neutral-0: #fdfbf6;
   --color-neutral-50: #faf7f0;
@@ -65,6 +77,19 @@
   --color-secondary: var(--color-secondary-500);
   --color-secondary-hover: var(--color-secondary-600);
   --color-secondary-active: var(--color-secondary-700);
+
+  /* Status colors - Semantic */
+  --color-error: var(--color-terracotta-500);
+  --color-error-hover: var(--color-terracotta-600);
+  --color-error-subtle: var(--color-terracotta-100);
+
+  --color-warning: var(--color-terracotta-400);
+  --color-warning-hover: var(--color-terracotta-500);
+  --color-warning-subtle: var(--color-terracotta-50);
+
+  --color-success: var(--color-secondary-500);
+  --color-success-hover: var(--color-secondary-600);
+  --color-success-subtle: var(--color-secondary-50);
 
   /* Focus ring */
   --color-focus-ring: var(--color-primary-400);

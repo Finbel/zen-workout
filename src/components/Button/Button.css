@@ -8,29 +8,26 @@
   border: none;
   background: none;
   cursor: pointer;
-  
+
   /* Layout */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  
+
   /* Typography */
   font-family: var(--font-family-sans);
   font-weight: var(--font-weight-medium);
   text-decoration: none;
   white-space: nowrap;
-  
+
   /* Shape */
   border-radius: var(--radius-md);
-  
+
   /* Interaction */
-  transition: 
-    background-color var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast), border-color var(--transition-fast),
+    box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .zen-button:focus-visible {
@@ -52,21 +49,33 @@
    ---------------------------------------- */
 
 .zen-button--sm {
-  height: 2rem;          /* 32px */
-  padding: 0 var(--space-3);
-  font-size: var(--font-size-sm);
+  --button-height: 2rem;
+  --button-padding-x: var(--space-3);
+  --button-font-size: var(--font-size-sm);
+
+  height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  font-size: var(--button-font-size);
 }
 
 .zen-button--md {
-  height: 2.5rem;        /* 40px */
-  padding: 0 var(--space-4);
-  font-size: var(--font-size-base);
+  --button-height: 2.5rem;
+  --button-padding-x: var(--space-4);
+  --button-font-size: var(--font-size-base);
+
+  height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  font-size: var(--button-font-size);
 }
 
 .zen-button--lg {
-  height: 3rem;          /* 48px */
-  padding: 0 var(--space-6);
-  font-size: var(--font-size-lg);
+  --button-height: 3rem;
+  --button-padding-x: var(--space-6);
+  --button-font-size: var(--font-size-lg);
+
+  height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  font-size: var(--button-font-size);
 }
 
 /* ----------------------------------------
@@ -132,4 +141,3 @@
 .zen-button--ghost:active:not(:disabled) {
   background-color: var(--color-border-subtle);
 }
-
