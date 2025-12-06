@@ -1,0 +1,790 @@
+{/* CreatingComponents.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Guidelines/Creating Components" />
+
+# Creating Components
+
+A comprehensive guide to building components for the Zen Design System. Follow these
+patterns to ensure consistency, maintainability, and a great developer experience.
+
+export const FileCard = ({ name, description }) => (
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: '1rem',
+      padding: '1rem',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+      borderRadius: 'var(--radius-md)',
+      marginBottom: '0.5rem',
+    }}
+  >
+    <code
+      style={{
+        padding: '0.25rem 0.5rem',
+        backgroundColor: 'var(--color-primary-subtle)',
+        color: 'var(--color-primary)',
+        borderRadius: 'var(--radius-sm)',
+        fontFamily: 'var(--font-family-mono)',
+        fontSize: 'var(--font-size-sm)',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {name}
+    </code>
+    <span
+      style={{
+        fontSize: 'var(--font-size-sm)',
+        color: 'var(--color-text-secondary)',
+        lineHeight: 'var(--line-height-normal)',
+      }}
+    >
+      {description}
+    </span>
+  </div>
+)
+
+export const Guideline = ({ type, children }) => {
+  const colors = {
+    do: {
+      bg: 'var(--color-secondary-50)',
+      border: 'var(--color-secondary-500)',
+      label: '✓ Do',
+    },
+    dont: { bg: '#fef2f2', border: '#ef4444', label: "✗ Don't" },
+  }
+  const style = colors[type]
+  return (
+    <div
+      style={{
+        padding: '1rem',
+        backgroundColor: style.bg,
+        borderLeft: `4px solid ${style.border}`,
+        borderRadius: 'var(--radius-md)',
+        marginBottom: '0.75rem',
+      }}
+    >
+      <div
+        style={{
+          fontWeight: 'var(--font-weight-semibold)',
+          fontSize: 'var(--font-size-sm)',
+          color: style.border,
+          marginBottom: '0.5rem',
+        }}
+      >
+        {style.label}
+      </div>
+      <div
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+---
+
+## File Structure
+
+Each component should live in its own folder within `src/components/` with the
+following structure:
+
+<FileCard
+  name="ComponentName.tsx"
+  description="The main component implementation with TypeScript types and props interface."
+/>
+<FileCard
+  name="ComponentName.css"
+  description="Component-specific styles using CSS custom properties from design tokens."
+/>
+<FileCard
+  name="ComponentName.stories.tsx"
+  description="Storybook stories showcasing all variants, sizes, and states."
+/>
+<FileCard name="index.ts" description="Barrel export file for clean imports." />
+
+### Example Structure
+
+```
+src/components/
+└── ComponentName/
+    ├── ComponentName.tsx
+    ├── ComponentName.css
+    ├── ComponentName.stories.tsx
+    └── index.ts
+```
+
+---
+
+## Component Implementation
+
+### TypeScript & Props
+
+Define explicit types for all prop options using union types, and create a dedicated
+props interface that extends native HTML attributes.
+
+```tsx
+import { HTMLAttributes, forwardRef } from 'react'
+import './ComponentName.css'
+
+export type ComponentVariant = 'primary' | 'secondary' | 'outline'
+export type ComponentSize = 'sm' | 'md' | 'lg'
+
+export interface ComponentNameProps extends HTMLAttributes<HTMLDivElement> {
+  /** The visual style variant */
+  variant?: ComponentVariant
+  /** The size of the component */
+  size?: ComponentSize
+}
+```
+
+### Using forwardRef
+
+Always use `forwardRef` to allow consumers to access the underlying DOM element:
+
+```tsx
+export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
+  (
+    { variant = 'primary', size = 'md', className = '', children, ...props },
+    ref,
+  ) => {
+    // Implementation
+  },
+)
+
+ComponentName.displayName = 'ComponentName'
+```
+
+### CSS Class Construction
+
+Build class names systematically using a consistent pattern:
+
+```tsx
+const classNames = [
+  'zen-component',
+  `zen-component--${variant}`,
+  `zen-component--${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ')
+```
+
+---
+
+## Naming Conventions
+
+### Props
+
+<div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '1rem',
+    marginBottom: '1.5rem',
+  }}
+>
+  <div>
+    <Guideline type="do">
+      Use `variant` for visual style options (primary, secondary, outline,
+      ghost)
+    </Guideline>
+    <Guideline type="do">
+      Use `size` for dimension options (sm, md, lg)
+    </Guideline>
+    <Guideline type="do">
+      Use boolean props for binary states: `disabled`, `loading`, `selected`
+    </Guideline>
+    <Guideline type="do">
+      Use JSDoc comments with `/** */` to document each prop
+    </Guideline>
+  </div>
+  <div>
+    <Guideline type="dont">
+      Use `type` or `style` for variants (conflicts with native attributes)
+    </Guideline>
+    <Guideline type="dont">Abbreviate prop names: `var`, `sz`, `dis`</Guideline>
+    <Guideline type="dont">
+      Use negative booleans: `notDisabled`, `isNotLoading`
+    </Guideline>
+    <Guideline type="dont">Create props for single-use edge cases</Guideline>
+  </div>
+</div>
+
+### Common Prop Patterns
+
+<table
+  style={{
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: 'var(--font-size-sm)',
+  }}
+>
+  <thead>
+    <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Prop
+      </th>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Type
+      </th>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Purpose
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td style={{ padding: '0.75rem' }}>
+        <code>variant</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Union type
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Visual style (primary, secondary, outline, ghost)
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td style={{ padding: '0.75rem' }}>
+        <code>size</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        <code>'sm' | 'md' | 'lg'</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Component dimensions
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td style={{ padding: '0.75rem' }}>
+        <code>disabled</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        <code>boolean</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Disables interaction
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td style={{ padding: '0.75rem' }}>
+        <code>loading</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        <code>boolean</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Shows loading state
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td style={{ padding: '0.75rem' }}>
+        <code>selected</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        <code>boolean</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Indicates selection
+      </td>
+    </tr>
+    <tr>
+      <td style={{ padding: '0.75rem' }}>
+        <code>fullWidth</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        <code>boolean</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Expands to container width
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### CSS Classes
+
+- **Prefix all classes** with `zen-` to prevent collisions
+- Use **BEM-style modifiers** with double dashes: `zen-component--variant`
+- Keep class names **lowercase with hyphens**: `zen-card-header`
+
+```css
+.zen-component {
+  /* Base styles */
+}
+.zen-component--primary {
+  /* Variant styles */
+}
+.zen-component--sm {
+  /* Size styles */
+}
+```
+
+---
+
+## Styling Guidelines
+
+### Use Design Tokens
+
+Always use CSS custom properties from the design system. Never use hardcoded values.
+
+<Guideline type="do">
+
+```css
+.zen-component {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+}
+```
+
+</Guideline>
+
+<Guideline type="dont">
+
+```css
+.zen-component {
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  color: #333333;
+}
+```
+
+</Guideline>
+
+### CSS File Organization
+
+Structure your CSS file with clear sections:
+
+```css
+/* ============================================
+   COMPONENT NAME
+   ============================================ */
+
+.zen-component {
+  /* Reset */
+  /* Layout */
+  /* Typography */
+  /* Shape */
+  /* Interaction */
+}
+
+/* ----------------------------------------
+   SIZE VARIANTS
+   ---------------------------------------- */
+
+.zen-component--sm {
+}
+.zen-component--md {
+}
+.zen-component--lg {
+}
+
+/* ----------------------------------------
+   STYLE VARIANTS
+   ---------------------------------------- */
+
+.zen-component--primary {
+}
+.zen-component--secondary {
+}
+```
+
+### Interactive States
+
+Always define states in this order:
+
+1. Base styles
+2. `:hover:not(:disabled)`
+3. `:focus-visible`
+4. `:active:not(:disabled)`
+5. `:disabled`
+
+```css
+.zen-component {
+  transition: background-color var(--transition-fast), color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.zen-component:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.zen-component:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+```
+
+---
+
+## Storybook Stories
+
+### File Structure
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react'
+import { ComponentName } from './ComponentName'
+
+const meta: Meta<typeof ComponentName> = {
+  title: 'Components/ComponentName',
+  component: ComponentName,
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'fullscreen',
+  },
+  argTypes: {
+    // Define controls for each prop
+  },
+}
+
+export default meta
+type Story = StoryObj<typeof ComponentName>
+```
+
+### Configuring ArgTypes
+
+Provide meaningful controls and descriptions for each prop:
+
+```tsx
+argTypes: {
+  variant: {
+    control: 'select',
+    options: ['primary', 'secondary', 'outline', 'ghost'],
+    description: 'The visual style variant',
+  },
+  size: {
+    control: 'select',
+    options: ['sm', 'md', 'lg'],
+    description: 'The size of the component',
+  },
+  disabled: {
+    control: 'boolean',
+    description: 'Whether the component is disabled',
+  },
+}
+```
+
+---
+
+## Story Granularity
+
+Stories should be **comprehensive but focused**. Each story should demonstrate
+a specific aspect of the component.
+
+### Required Stories
+
+Every component should include these essential stories:
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    borderRadius: 'var(--radius-md)',
+    marginBottom: '1.5rem',
+  }}
+>
+  <h4
+    style={{
+      margin: '0 0 1rem 0',
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-text-primary)',
+    }}
+  >
+    Essential Stories Checklist
+  </h4>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <span style={{ color: 'var(--color-secondary-500)' }}>✓</span>
+      <strong>All Variants</strong>
+      <span
+        style={{
+          color: 'var(--color-text-muted)',
+          fontSize: 'var(--font-size-sm)',
+        }}
+      >
+        — Shows each variant side by side
+      </span>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <span style={{ color: 'var(--color-secondary-500)' }}>✓</span>
+      <strong>All Sizes</strong>
+      <span
+        style={{
+          color: 'var(--color-text-muted)',
+          fontSize: 'var(--font-size-sm)',
+        }}
+      >
+        — Shows each size side by side
+      </span>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <span style={{ color: 'var(--color-secondary-500)' }}>✓</span>
+      <strong>Disabled State</strong>
+      <span
+        style={{
+          color: 'var(--color-text-muted)',
+          fontSize: 'var(--font-size-sm)',
+        }}
+      >
+        — Shows disabled state for each variant
+      </span>
+    </div>
+  </div>
+</div>
+
+### Story Patterns
+
+#### Composite Stories (Preferred for Visual Comparison)
+
+Show multiple variations in a single story for easy visual comparison:
+
+```tsx
+export const AllVariants: Story = {
+  name: 'All Variants',
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <ComponentName variant="primary">Primary</ComponentName>
+      <ComponentName variant="secondary">Secondary</ComponentName>
+      <ComponentName variant="outline">Outline</ComponentName>
+    </div>
+  ),
+}
+```
+
+#### State Stories
+
+Group related states together:
+
+```tsx
+export const Disabled: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <ComponentName variant="primary" disabled>
+        Primary
+      </ComponentName>
+      <ComponentName variant="secondary" disabled>
+        Secondary
+      </ComponentName>
+      <ComponentName variant="outline" disabled>
+        Outline
+      </ComponentName>
+    </div>
+  ),
+}
+```
+
+### When to Create Separate Stories
+
+Create individual stories for:
+
+- **Complex interactions** that need isolated testing
+- **Edge cases** like very long content or unusual states
+- **Responsive behavior** that needs viewport controls
+- **Integration examples** showing component combinations
+
+### Story Naming
+
+Use clear, descriptive names with the `name` property:
+
+```tsx
+export const AllVariants: Story = {
+  name: 'All Variants',
+  // ...
+}
+
+export const WithLongContent: Story = {
+  name: 'With Long Content',
+  // ...
+}
+```
+
+---
+
+## Barrel Exports
+
+The `index.ts` file should export the component and all its types:
+
+```tsx
+export { ComponentName } from './ComponentName'
+export type {
+  ComponentNameProps,
+  ComponentVariant,
+  ComponentSize,
+} from './ComponentName'
+```
+
+---
+
+## Checklist
+
+Before submitting a new component, verify:
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    borderRadius: 'var(--radius-md)',
+  }}
+>
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: '1rem',
+    }}
+  >
+    <div>
+      <h4
+        style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Implementation
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: '1.25rem',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.8',
+        }}
+      >
+        <li>
+          Uses <code>forwardRef</code> for DOM access
+        </li>
+        <li>Extends appropriate native HTML attributes</li>
+        <li>Has JSDoc comments on all props</li>
+        <li>
+          Sets <code>displayName</code> for debugging
+        </li>
+        <li>Provides sensible default prop values</li>
+      </ul>
+    </div>
+    <div>
+      <h4
+        style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Styling
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: '1.25rem',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.8',
+        }}
+      >
+        <li>Uses only design tokens (no hardcoded values)</li>
+        <li>
+          Has <code>zen-</code> prefix on all classes
+        </li>
+        <li>Defines all interactive states</li>
+        <li>Includes focus-visible styles</li>
+        <li>Has disabled state with proper cursor</li>
+      </ul>
+    </div>
+    <div>
+      <h4
+        style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Storybook
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: '1.25rem',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.8',
+        }}
+      >
+        <li>
+          Has <code>autodocs</code> tag enabled
+        </li>
+        <li>Includes stories for all variants</li>
+        <li>Includes stories for all sizes</li>
+        <li>Shows disabled states</li>
+        <li>
+          Has descriptive <code>argTypes</code>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4
+        style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Exports
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: '1.25rem',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.8',
+        }}
+      >
+        <li>
+          Has barrel export in <code>index.ts</code>
+        </li>
+        <li>Exports component and all types</li>
+        <li>Added to main library exports</li>
+      </ul>
+    </div>
+  </div>
+</div>
