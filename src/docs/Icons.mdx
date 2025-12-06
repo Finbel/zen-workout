@@ -1,0 +1,726 @@
+{/* Icons.mdx */}
+import { Meta } from '@storybook/blocks';
+import { Icon, ICON_NAMES } from '../components/Icon';
+
+<Meta title="Foundations/Icons" />
+
+# Icons
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-primary-subtle)',
+    borderRadius: 'var(--radius-md)',
+    borderLeft: '4px solid var(--color-primary)',
+    marginBottom: '2rem',
+  }}
+>
+  <p
+    style={{
+      margin: 0,
+      fontSize: 'var(--font-size-base)',
+      color: 'var(--color-text-primary)',
+    }}
+  >
+    Zen Design uses{' '}
+    <a
+      href="https://phosphoricons.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        color: 'var(--color-primary)',
+        fontWeight: 'var(--font-weight-semibold)',
+      }}
+    >
+      Phosphor Icons
+    </a>{' '}
+    — a flexible icon family with over 1,200 icons.
+  </p>
+</div>
+
+---
+
+## Usage
+
+Import the `Icon` component and use a typed `name` prop to display an icon:
+
+```tsx
+import { Icon } from 'zen-design'
+
+// Basic usage
+<Icon name="check" />
+
+// With size
+<Icon name="arrow-right" size={24} />
+
+// With custom color
+<Icon name="warning" color="var(--color-warning)" />
+
+// With accessibility label
+<Icon name="x" alt="Close" />
+```
+
+---
+
+## Available Icons
+
+<div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+    gap: '1rem',
+    marginTop: '1.5rem',
+    marginBottom: '2rem',
+  }}
+>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="arrow-left" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      arrow-left
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="arrow-right" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      arrow-right
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="caret-down" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      caret-down
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="caret-up" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      caret-up
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="x" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      x
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="list" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      list
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="plus" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      plus
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="minus" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      minus
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="check" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      check
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="pencil" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      pencil
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="trash" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      trash
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="search" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      search
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="user" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      user
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="gear" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      gear
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="envelope" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      envelope
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="bell" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      bell
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="info" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      info
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="warning" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      warning
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="check-circle" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      check-circle
+    </code>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+    }}
+  >
+    <Icon name="x-circle" size={24} />
+    <code
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      x-circle
+    </code>
+  </div>
+</div>
+
+---
+
+## Sizes
+
+Icons can be sized using the `size` prop. Use numbers for pixel values or strings for other units.
+
+<div
+  style={{
+    display: 'flex',
+    gap: '2rem',
+    alignItems: 'flex-end',
+    marginTop: '1.5rem',
+    marginBottom: '2rem',
+  }}
+>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+    }}
+  >
+    <Icon name="bell" size={16} />
+    <span
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      16px
+    </span>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+    }}
+  >
+    <Icon name="bell" size={20} />
+    <span
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      20px (default)
+    </span>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+    }}
+  >
+    <Icon name="bell" size={24} />
+    <span
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      24px
+    </span>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+    }}
+  >
+    <Icon name="bell" size={32} />
+    <span
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      32px
+    </span>
+  </div>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+    }}
+  >
+    <Icon name="bell" size={48} />
+    <span
+      style={{
+        fontSize: 'var(--font-size-xs)',
+        color: 'var(--color-text-secondary)',
+      }}
+    >
+      48px
+    </span>
+  </div>
+</div>
+
+---
+
+## Colors
+
+Icons inherit `currentColor` by default, but can be colored using the `color` prop:
+
+```tsx
+<Icon name="info" color="var(--color-info)" />
+<Icon name="check-circle" color="var(--color-success)" />
+<Icon name="warning" color="var(--color-warning)" />
+<Icon name="x-circle" color="var(--color-error)" />
+```
+
+<div
+  style={{
+    display: 'flex',
+    gap: '1.5rem',
+    alignItems: 'center',
+    marginTop: '1.5rem',
+    marginBottom: '2rem',
+  }}
+>
+  <Icon name="info" size={24} color="var(--color-info)" />
+  <Icon name="check-circle" size={24} color="var(--color-success)" />
+  <Icon name="warning" size={24} color="var(--color-warning)" />
+  <Icon name="x-circle" size={24} color="var(--color-error)" />
+</div>
+
+---
+
+## Accessibility
+
+Use the `alt` prop to provide an accessible label for screen readers:
+
+```tsx
+// Decorative icon (hidden from screen readers)
+<Icon name="arrow-right" />
+
+// Meaningful icon (announced to screen readers)
+<Icon name="x" alt="Close dialog" />
+```
+
+When an icon conveys meaning (like a close button), always provide an `alt` label.
+
+---
+
+## Adding New Icons
+
+The Icon component includes 20 commonly used icons. To add more icons from Phosphor's library of 1,200+ icons:
+
+### Step 1: Find the Icon
+
+Browse [phosphoricons.com](https://phosphoricons.com/) to find the icon you need. Note the icon name (e.g., "Heart").
+
+### Step 2: Update Icon.tsx
+
+Open `src/components/Icon/Icon.tsx` and make these changes:
+
+**1. Add the import:**
+
+```tsx
+import {
+  // ... existing imports
+  HeartIcon, // Add your new icon
+} from '@phosphor-icons/react'
+```
+
+**2. Add to the IconName type:**
+
+```tsx
+export type IconName =
+  | 'arrow-left'
+  // ... existing names
+  | 'heart' // Add kebab-case name
+```
+
+**3. Add to ICON_MAP:**
+
+```tsx
+const ICON_MAP: Record<IconName, PhosphorIcon> = {
+  // ... existing mappings
+  heart: HeartIcon, // Add the mapping
+}
+```
+
+### Step 3: Use the Icon
+
+```tsx
+<Icon name="heart" size={24} color="var(--color-error)" />
+```
+
+---
+
+## Props
+
+| Prop        | Type               | Default          | Description                        |
+| ----------- | ------------------ | ---------------- | ---------------------------------- |
+| `name`      | `IconName`         | —                | The icon to display (required)     |
+| `size`      | `number \| string` | `20`             | Size of the icon                   |
+| `color`     | `string`           | `'currentColor'` | Color of the icon                  |
+| `className` | `string`           | —                | Additional CSS classes             |
+| `alt`       | `string`           | —                | Accessible label (adds aria-label) |

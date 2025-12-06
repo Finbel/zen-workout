@@ -22,7 +22,7 @@
   white-space: nowrap;
 
   /* Shape */
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 
   /* Interaction */
   transition: background-color var(--transition-fast),

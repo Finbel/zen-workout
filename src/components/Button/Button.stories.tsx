@@ -107,3 +107,71 @@ export const Disabled: Story = {
     </div>
   ),
 }
+
+/* ----------------------------------------
+   WITH ICONS
+   ---------------------------------------- */
+
+export const WithIconLeft: Story = {
+  name: 'With Icon (Left)',
+  render: () => (
+    <div
+      style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}
+    >
+      <Button icon={{ name: 'plus', position: 'left' }}>Add Item</Button>
+      <Button variant="secondary" icon={{ name: 'pencil', position: 'left' }}>
+        Edit
+      </Button>
+      <Button variant="outline" icon={{ name: 'trash', position: 'left' }}>
+        Delete
+      </Button>
+      <Button variant="ghost" icon={{ name: 'gear', position: 'left' }}>
+        Settings
+      </Button>
+    </div>
+  ),
+}
+
+export const WithIconRight: Story = {
+  name: 'With Icon (Right)',
+  render: () => (
+    <div
+      style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}
+    >
+      <Button icon={{ name: 'arrow-right', position: 'right' }}>
+        Continue
+      </Button>
+      <Button
+        variant="secondary"
+        icon={{ name: 'arrow-right', position: 'right' }}
+      >
+        Next Step
+      </Button>
+      <Button
+        variant="outline"
+        icon={{ name: 'caret-down', position: 'right' }}
+      >
+        Dropdown
+      </Button>
+    </div>
+  ),
+}
+
+export const IconButtonSizes: Story = {
+  name: 'Icon Button Sizes',
+  render: () => (
+    <div
+      style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}
+    >
+      <Button size="sm" icon={{ name: 'plus', position: 'left' }}>
+        Small
+      </Button>
+      <Button size="md" icon={{ name: 'plus', position: 'left' }}>
+        Medium
+      </Button>
+      <Button size="lg" icon={{ name: 'plus', position: 'left' }}>
+        Large
+      </Button>
+    </div>
+  ),
+}

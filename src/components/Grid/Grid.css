@@ -1,0 +1,109 @@
+/* ============================================
+   GRID COMPONENT
+   ============================================ */
+
+.zen-grid {
+  display: grid;
+}
+
+/* ----------------------------------------
+   GAP VARIANTS
+   ---------------------------------------- */
+
+.zen-grid--gap-none {
+  gap: 0;
+}
+
+.zen-grid--gap-xs {
+  gap: var(--space-1);
+}
+
+.zen-grid--gap-sm {
+  gap: var(--space-2);
+}
+
+.zen-grid--gap-md {
+  gap: var(--space-4);
+}
+
+.zen-grid--gap-lg {
+  gap: var(--space-6);
+}
+
+.zen-grid--gap-xl {
+  gap: var(--space-8);
+}
+
+/* ----------------------------------------
+   SHOJI VARIANTS
+   Japanese room divider styling
+   ---------------------------------------- */
+
+/* Shared shoji base styles */
+.zen-grid--shoji-heavy,
+.zen-grid--shoji-light {
+  background-color: var(--shoji-frame);
+}
+
+.zen-grid--shoji-heavy > *,
+.zen-grid--shoji-light > * {
+  background-color: var(--shoji-panel);
+}
+
+/* Heavy variant - for full-screen page layouts */
+.zen-grid--shoji-heavy {
+  --shoji-frame: var(--color-neutral-600);
+  --shoji-panel: var(--color-neutral-50);
+  --shoji-frame-width: 3px;
+}
+
+.zen-grid--shoji-heavy.zen-grid--gap-none,
+.zen-grid--shoji-heavy.zen-grid--gap-xs,
+.zen-grid--shoji-heavy.zen-grid--gap-sm {
+  gap: var(--shoji-frame-width);
+}
+
+.zen-grid--shoji-heavy.zen-grid--gap-md {
+  gap: calc(var(--shoji-frame-width) + 1px);
+}
+
+.zen-grid--shoji-heavy.zen-grid--gap-lg {
+  gap: calc(var(--shoji-frame-width) + 2px);
+}
+
+.zen-grid--shoji-heavy.zen-grid--gap-xl {
+  gap: calc(var(--shoji-frame-width) + 3px);
+}
+
+/* Light variant - for inset/nested grids */
+.zen-grid--shoji-light {
+  --shoji-frame: var(--color-neutral-400);
+  --shoji-panel: var(--color-neutral-0);
+  --shoji-frame-width: 1px;
+}
+
+.zen-grid--shoji-light.zen-grid--gap-none,
+.zen-grid--shoji-light.zen-grid--gap-xs,
+.zen-grid--shoji-light.zen-grid--gap-sm {
+  gap: var(--shoji-frame-width);
+}
+
+.zen-grid--shoji-light.zen-grid--gap-md {
+  gap: calc(var(--shoji-frame-width) + 1px);
+}
+
+.zen-grid--shoji-light.zen-grid--gap-lg {
+  gap: calc(var(--shoji-frame-width) + 1px);
+}
+
+.zen-grid--shoji-light.zen-grid--gap-xl {
+  gap: calc(var(--shoji-frame-width) + 2px);
+}
+
+/* ----------------------------------------
+   GRID CELL
+   ---------------------------------------- */
+
+.zen-grid-cell {
+  min-width: 0; /* Prevent grid blowout */
+}

@@ -1,0 +1,99 @@
+/* ============================================
+   FLEX COMPONENT
+   ============================================ */
+
+.zen-flex {
+  display: flex;
+}
+
+/* ----------------------------------------
+   WRAP
+   ---------------------------------------- */
+
+.zen-flex--wrap {
+  flex-wrap: wrap;
+}
+
+/* ----------------------------------------
+   DIRECTION
+   ---------------------------------------- */
+
+.zen-flex--row {
+  flex-direction: row;
+}
+
+.zen-flex--column {
+  flex-direction: column;
+}
+
+/* ----------------------------------------
+   GAP VARIANTS
+   ---------------------------------------- */
+
+.zen-flex--gap-none {
+  gap: 0;
+}
+
+.zen-flex--gap-xs {
+  gap: var(--space-1);
+}
+
+.zen-flex--gap-sm {
+  gap: var(--space-2);
+}
+
+.zen-flex--gap-md {
+  gap: var(--space-4);
+}
+
+.zen-flex--gap-lg {
+  gap: var(--space-6);
+}
+
+.zen-flex--gap-xl {
+  gap: var(--space-8);
+}
+
+/* ----------------------------------------
+   ALIGN ITEMS
+   ---------------------------------------- */
+
+.zen-flex--align-start {
+  align-items: flex-start;
+}
+
+.zen-flex--align-center {
+  align-items: center;
+}
+
+.zen-flex--align-end {
+  align-items: flex-end;
+}
+
+.zen-flex--align-stretch {
+  align-items: stretch;
+}
+
+/* ----------------------------------------
+   JUSTIFY CONTENT
+   ---------------------------------------- */
+
+.zen-flex--justify-start {
+  justify-content: flex-start;
+}
+
+.zen-flex--justify-center {
+  justify-content: center;
+}
+
+.zen-flex--justify-end {
+  justify-content: flex-end;
+}
+
+.zen-flex--justify-between {
+  justify-content: space-between;
+}
+
+.zen-flex--justify-around {
+  justify-content: space-around;
+}
