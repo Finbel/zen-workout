@@ -1,0 +1,184 @@
+{/* Spacing.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Spacing" />
+
+# Spacing
+
+Our spacing system uses a consistent scale based on a 4px base unit. 
+This creates visual rhythm and consistency throughout the interface.
+
+export const SpacingBlock = ({ name, variable, rem, px }) => (
+  <div style={{ 
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1.5rem',
+    padding: '0.75rem 1rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '0.5rem'
+  }}>
+    <div style={{ width: '6rem', flexShrink: 0 }}>
+      <div style={{ 
+        fontWeight: 600, 
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)'
+      }}>{name}</div>
+      <code style={{ 
+        fontSize: '0.75rem', 
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)'
+      }}>{variable}</code>
+    </div>
+    <div style={{ 
+      display: 'flex',
+      alignItems: 'center',
+      flex: 1
+    }}>
+      <div style={{ 
+        height: '1.5rem',
+        width: `var(${variable})`,
+        backgroundColor: 'var(--color-primary)',
+        borderRadius: '0.25rem',
+        minWidth: '2px'
+      }} />
+    </div>
+    <code style={{ 
+      fontSize: '0.75rem', 
+      color: 'var(--color-text-secondary)',
+      fontFamily: 'var(--font-family-mono)',
+      width: '5rem',
+      textAlign: 'right'
+    }}>{rem} · {px}</code>
+  </div>
+);
+
+export const SpacingExample = ({ spacing, label }) => (
+  <div style={{ 
+    display: 'inline-flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.5rem'
+  }}>
+    <div style={{ 
+      width: '4rem',
+      height: '4rem',
+      backgroundColor: 'var(--color-primary-subtle)',
+      border: '2px dashed var(--color-primary)',
+      borderRadius: '0.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: `var(${spacing})`
+    }}>
+      <div style={{ 
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'var(--color-primary)',
+        borderRadius: '0.25rem'
+      }} />
+    </div>
+    <code style={{ 
+      fontSize: '0.75rem', 
+      color: 'var(--color-text-muted)',
+      fontFamily: 'var(--font-family-mono)'
+    }}>{label}</code>
+  </div>
+);
+
+---
+
+## Spacing Scale
+
+Our spacing tokens follow a logical progression, making it easy to create 
+consistent layouts and component spacing.
+
+<SpacingBlock name="Space 0" variable="--space-0" rem="0" px="0px" />
+<SpacingBlock name="Space 1" variable="--space-1" rem="0.25rem" px="4px" />
+<SpacingBlock name="Space 2" variable="--space-2" rem="0.5rem" px="8px" />
+<SpacingBlock name="Space 3" variable="--space-3" rem="0.75rem" px="12px" />
+<SpacingBlock name="Space 4" variable="--space-4" rem="1rem" px="16px" />
+<SpacingBlock name="Space 5" variable="--space-5" rem="1.25rem" px="20px" />
+<SpacingBlock name="Space 6" variable="--space-6" rem="1.5rem" px="24px" />
+<SpacingBlock name="Space 8" variable="--space-8" rem="2rem" px="32px" />
+<SpacingBlock name="Space 10" variable="--space-10" rem="2.5rem" px="40px" />
+<SpacingBlock name="Space 12" variable="--space-12" rem="3rem" px="48px" />
+<SpacingBlock name="Space 16" variable="--space-16" rem="4rem" px="64px" />
+<SpacingBlock name="Space 20" variable="--space-20" rem="5rem" px="80px" />
+<SpacingBlock name="Space 24" variable="--space-24" rem="6rem" px="96px" />
+
+---
+
+## Visual Reference
+
+Padding applied to identical outer boxes, showing the inner content area:
+
+<div style={{ 
+  display: 'flex', 
+  flexWrap: 'wrap', 
+  gap: '1.5rem',
+  padding: '1.5rem',
+  backgroundColor: 'var(--color-surface)',
+  borderRadius: '0.5rem',
+  border: '1px solid var(--color-border-subtle)',
+  marginBottom: '2rem'
+}}>
+  <SpacingExample spacing="--space-1" label="space-1" />
+  <SpacingExample spacing="--space-2" label="space-2" />
+  <SpacingExample spacing="--space-3" label="space-3" />
+  <SpacingExample spacing="--space-4" label="space-4" />
+  <SpacingExample spacing="--space-6" label="space-6" />
+  <SpacingExample spacing="--space-8" label="space-8" />
+</div>
+
+---
+
+## Common Use Cases
+
+| Token | Use Case |
+|-------|----------|
+| `--space-1` (4px) | Tight inline spacing, icon gaps |
+| `--space-2` (8px) | Default inline spacing, small component padding |
+| `--space-3` (12px) | Medium component padding |
+| `--space-4` (16px) | Standard component padding, form field spacing |
+| `--space-6` (24px) | Section padding, card content |
+| `--space-8` (32px) | Large section gaps |
+| `--space-12` (48px) | Page section margins |
+| `--space-16`+ | Major layout spacing |
+
+---
+
+## Usage
+
+```css
+/* Component internal spacing */
+.button {
+  padding: var(--space-2) var(--space-4);
+  gap: var(--space-2);
+}
+
+/* Card layout */
+.card {
+  padding: var(--space-6);
+}
+
+.card-header {
+  margin-bottom: var(--space-4);
+}
+
+/* Form layout */
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+.form-group label {
+  margin-bottom: var(--space-1);
+}
+
+/* Section spacing */
+.section {
+  padding: var(--space-12) var(--space-6);
+}
+```
+

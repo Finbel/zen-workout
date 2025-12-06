@@ -1,0 +1,183 @@
+{/* Colors.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+Our color system is built with CSS custom properties, making it easy to maintain consistency 
+and support both light and dark themes.
+
+export const ColorSwatch = ({ name, variable, value }) => (
+  <div style={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: '1rem',
+    padding: '0.75rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '0.5rem'
+  }}>
+    <div style={{ 
+      width: '3rem', 
+      height: '3rem', 
+      borderRadius: '0.5rem',
+      backgroundColor: value,
+      border: '1px solid var(--color-border)',
+      flexShrink: 0
+    }} />
+    <div style={{ flex: 1 }}>
+      <div style={{ 
+        fontWeight: 600, 
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)'
+      }}>{name}</div>
+      <code style={{ 
+        fontSize: '0.75rem', 
+        color: 'var(--color-text-secondary)',
+        fontFamily: 'var(--font-family-mono)'
+      }}>{variable}</code>
+    </div>
+    <code style={{ 
+      fontSize: '0.75rem', 
+      color: 'var(--color-text-muted)',
+      fontFamily: 'var(--font-family-mono)'
+    }}>{value}</code>
+  </div>
+);
+
+export const ColorPalette = ({ title, colors }) => (
+  <div style={{ marginBottom: '2rem' }}>
+    <h3 style={{ 
+      marginBottom: '1rem',
+      color: 'var(--color-text-primary)',
+      fontSize: '1.125rem',
+      fontWeight: 600
+    }}>{title}</h3>
+    <div>
+      {colors.map((color) => (
+        <ColorSwatch key={color.name} {...color} />
+      ))}
+    </div>
+  </div>
+);
+
+---
+
+## Primary Palette
+
+Our primary color is a warm brown, used for primary actions and key UI elements.
+
+<ColorPalette 
+  title="Primary" 
+  colors={[
+    { name: 'Primary 50', variable: '--color-primary-50', value: '#faf6f1' },
+    { name: 'Primary 100', variable: '--color-primary-100', value: '#f0e6d9' },
+    { name: 'Primary 200', variable: '--color-primary-200', value: '#e0ccb3' },
+    { name: 'Primary 300', variable: '--color-primary-300', value: '#d4b896' },
+    { name: 'Primary 400', variable: '--color-primary-400', value: '#c19a6b' },
+    { name: 'Primary 500', variable: '--color-primary-500', value: '#a67c52' },
+    { name: 'Primary 600', variable: '--color-primary-600', value: '#8b6342' },
+    { name: 'Primary 700', variable: '--color-primary-700', value: '#664228' },
+    { name: 'Primary 800', variable: '--color-primary-800', value: '#4a3020' },
+    { name: 'Primary 900', variable: '--color-primary-900', value: '#2e1e14' },
+  ]} 
+/>
+
+---
+
+## Secondary Palette
+
+A warm amber used for highlights, warnings, and secondary accents.
+
+<ColorPalette 
+  title="Secondary" 
+  colors={[
+    { name: 'Secondary 50', variable: '--color-secondary-50', value: '#fff8e6' },
+    { name: 'Secondary 100', variable: '--color-secondary-100', value: '#ffeab3' },
+    { name: 'Secondary 200', variable: '--color-secondary-200', value: '#ffdc80' },
+    { name: 'Secondary 300', variable: '--color-secondary-300', value: '#ffce4d' },
+    { name: 'Secondary 400', variable: '--color-secondary-400', value: '#ffc31a' },
+    { name: 'Secondary 500', variable: '--color-secondary-500', value: '#f59e0b' },
+    { name: 'Secondary 600', variable: '--color-secondary-600', value: '#d97706' },
+    { name: 'Secondary 700', variable: '--color-secondary-700', value: '#b45309' },
+    { name: 'Secondary 800', variable: '--color-secondary-800', value: '#92400e' },
+    { name: 'Secondary 900', variable: '--color-secondary-900', value: '#78350f' },
+  ]} 
+/>
+
+---
+
+## Neutral Palette
+
+A warm cream-based neutral palette that forms the foundation of our UI.
+
+<ColorPalette 
+  title="Neutral" 
+  colors={[
+    { name: 'Neutral 0', variable: '--color-neutral-0', value: '#fdfbf6' },
+    { name: 'Neutral 50', variable: '--color-neutral-50', value: '#faf7f0' },
+    { name: 'Neutral 100', variable: '--color-neutral-100', value: '#f5efe3' },
+    { name: 'Neutral 200', variable: '--color-neutral-200', value: '#edd2a4' },
+    { name: 'Neutral 300', variable: '--color-neutral-300', value: '#d9bc8c' },
+    { name: 'Neutral 400', variable: '--color-neutral-400', value: '#b89a6a' },
+    { name: 'Neutral 500', variable: '--color-neutral-500', value: '#8b7355' },
+    { name: 'Neutral 600', variable: '--color-neutral-600', value: '#6b5740' },
+    { name: 'Neutral 700', variable: '--color-neutral-700', value: '#4d3f2e' },
+    { name: 'Neutral 800', variable: '--color-neutral-800', value: '#362c20' },
+    { name: 'Neutral 900', variable: '--color-neutral-900', value: '#231c15' },
+    { name: 'Neutral 950', variable: '--color-neutral-950', value: '#141009' },
+  ]} 
+/>
+
+---
+
+## Semantic Colors
+
+These colors adapt automatically based on the current theme (light or dark).
+
+<ColorPalette 
+  title="Backgrounds & Surfaces" 
+  colors={[
+    { name: 'Background', variable: '--color-background', value: 'var(--color-background)' },
+    { name: 'Surface', variable: '--color-surface', value: 'var(--color-surface)' },
+    { name: 'Surface Elevated', variable: '--color-surface-elevated', value: 'var(--color-surface-elevated)' },
+  ]} 
+/>
+
+<ColorPalette 
+  title="Text Colors" 
+  colors={[
+    { name: 'Text Primary', variable: '--color-text-primary', value: 'var(--color-text-primary)' },
+    { name: 'Text Secondary', variable: '--color-text-secondary', value: 'var(--color-text-secondary)' },
+    { name: 'Text Muted', variable: '--color-text-muted', value: 'var(--color-text-muted)' },
+  ]} 
+/>
+
+<ColorPalette 
+  title="Borders" 
+  colors={[
+    { name: 'Border', variable: '--color-border', value: 'var(--color-border)' },
+    { name: 'Border Subtle', variable: '--color-border-subtle', value: 'var(--color-border-subtle)' },
+  ]} 
+/>
+
+---
+
+## Usage
+
+```css
+/* Use semantic colors for theme-aware styling */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+/* Use palette colors for specific brand elements */
+.brand-accent {
+  background-color: var(--color-primary-500);
+}
+```
+

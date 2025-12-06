@@ -1,0 +1,245 @@
+{/* Typography.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+Our typography system uses CSS custom properties for consistent, scalable text styling 
+across the design system.
+
+export const TypeSample = ({ name, variable, size, weight, sample }) => (
+  <div style={{ 
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '0.75rem'
+  }}>
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+      marginBottom: '0.5rem',
+      gap: '1rem'
+    }}>
+      <span style={{ 
+        fontWeight: 600, 
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)'
+      }}>{name}</span>
+      <code style={{ 
+        fontSize: '0.75rem', 
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)'
+      }}>{variable} · {size}</code>
+    </div>
+    <div style={{ 
+      fontSize: `var(${variable})`,
+      fontWeight: weight || 400,
+      color: 'var(--color-text-primary)',
+      lineHeight: 'var(--line-height-normal)'
+    }}>
+      {sample || 'The quick brown fox jumps over the lazy dog'}
+    </div>
+  </div>
+);
+
+export const WeightSample = ({ name, variable, weight }) => (
+  <div style={{ 
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1.5rem',
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '0.5rem'
+  }}>
+    <div style={{ width: '8rem' }}>
+      <div style={{ 
+        fontWeight: 600, 
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)'
+      }}>{name}</div>
+      <code style={{ 
+        fontSize: '0.75rem', 
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)'
+      }}>{variable}</code>
+    </div>
+    <div style={{ 
+      fontSize: '1.25rem',
+      fontWeight: `var(${variable})`,
+      color: 'var(--color-text-primary)'
+    }}>
+      Aa Bb Cc Dd Ee Ff Gg
+    </div>
+    <code style={{ 
+      fontSize: '0.75rem', 
+      color: 'var(--color-text-muted)',
+      fontFamily: 'var(--font-family-mono)',
+      marginLeft: 'auto'
+    }}>{weight}</code>
+  </div>
+);
+
+export const LineHeightSample = ({ name, variable, value }) => (
+  <div style={{ 
+    display: 'flex',
+    gap: '1.5rem',
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '0.5rem'
+  }}>
+    <div style={{ width: '8rem', flexShrink: 0 }}>
+      <div style={{ 
+        fontWeight: 600, 
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)'
+      }}>{name}</div>
+      <code style={{ 
+        fontSize: '0.75rem', 
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)'
+      }}>{variable} · {value}</code>
+    </div>
+    <div style={{ 
+      fontSize: '1rem',
+      lineHeight: `var(${variable})`,
+      color: 'var(--color-text-primary)',
+      flex: 1,
+      backgroundColor: 'var(--color-primary-subtle)',
+      padding: '0.5rem',
+      borderRadius: '0.25rem'
+    }}>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+  </div>
+);
+
+---
+
+## Font Families
+
+<div style={{ 
+  padding: '1.5rem',
+  borderRadius: '0.5rem',
+  backgroundColor: 'var(--color-surface)',
+  border: '1px solid var(--color-border-subtle)',
+  marginBottom: '1rem'
+}}>
+  <div style={{ marginBottom: '0.5rem' }}>
+    <span style={{ 
+      fontWeight: 600, 
+      fontSize: '0.875rem',
+      color: 'var(--color-text-primary)'
+    }}>Sans Serif</span>
+    <code style={{ 
+      fontSize: '0.75rem', 
+      color: 'var(--color-text-muted)',
+      fontFamily: 'var(--font-family-mono)',
+      marginLeft: '1rem'
+    }}>--font-family-sans</code>
+  </div>
+  <div style={{ 
+    fontSize: '1.5rem',
+    fontFamily: 'var(--font-family-sans)',
+    color: 'var(--color-text-primary)'
+  }}>
+    DM Sans — The quick brown fox jumps over the lazy dog
+  </div>
+</div>
+
+<div style={{ 
+  padding: '1.5rem',
+  borderRadius: '0.5rem',
+  backgroundColor: 'var(--color-surface)',
+  border: '1px solid var(--color-border-subtle)',
+  marginBottom: '2rem'
+}}>
+  <div style={{ marginBottom: '0.5rem' }}>
+    <span style={{ 
+      fontWeight: 600, 
+      fontSize: '0.875rem',
+      color: 'var(--color-text-primary)'
+    }}>Monospace</span>
+    <code style={{ 
+      fontSize: '0.75rem', 
+      color: 'var(--color-text-muted)',
+      fontFamily: 'var(--font-family-mono)',
+      marginLeft: '1rem'
+    }}>--font-family-mono</code>
+  </div>
+  <div style={{ 
+    fontSize: '1.25rem',
+    fontFamily: 'var(--font-family-mono)',
+    color: 'var(--color-text-primary)'
+  }}>
+    JetBrains Mono — const greeting = "Hello, World!";
+  </div>
+</div>
+
+---
+
+## Font Sizes
+
+Our type scale uses a modular progression for visual hierarchy.
+
+<TypeSample name="4XL" variable="--font-size-4xl" size="2.25rem / 36px" />
+<TypeSample name="3XL" variable="--font-size-3xl" size="1.875rem / 30px" />
+<TypeSample name="2XL" variable="--font-size-2xl" size="1.5rem / 24px" />
+<TypeSample name="XL" variable="--font-size-xl" size="1.25rem / 20px" />
+<TypeSample name="LG" variable="--font-size-lg" size="1.125rem / 18px" />
+<TypeSample name="Base" variable="--font-size-base" size="1rem / 16px" />
+<TypeSample name="SM" variable="--font-size-sm" size="0.875rem / 14px" />
+<TypeSample name="XS" variable="--font-size-xs" size="0.75rem / 12px" />
+
+---
+
+## Font Weights
+
+<WeightSample name="Regular" variable="--font-weight-regular" weight="400" />
+<WeightSample name="Medium" variable="--font-weight-medium" weight="500" />
+<WeightSample name="Semibold" variable="--font-weight-semibold" weight="600" />
+<WeightSample name="Bold" variable="--font-weight-bold" weight="700" />
+
+---
+
+## Line Heights
+
+<LineHeightSample name="Tight" variable="--line-height-tight" value="1.25" />
+<LineHeightSample name="Normal" variable="--line-height-normal" value="1.5" />
+<LineHeightSample name="Relaxed" variable="--line-height-relaxed" value="1.75" />
+
+---
+
+## Usage
+
+```css
+/* Headings */
+.heading-1 {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+/* Body text */
+.body {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+}
+
+/* Code */
+.code {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+```
+
