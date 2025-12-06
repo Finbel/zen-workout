@@ -1,0 +1,591 @@
+{/* DesignSystem.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction/Design System" />
+
+# Zen Design System
+
+<div
+  style={{
+    padding: '2rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-lg)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '2rem',
+    textAlign: 'center',
+  }}
+>
+  <div
+    style={{
+      fontSize: 'var(--font-size-4xl)',
+      fontWeight: 'var(--font-weight-bold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.5rem',
+      letterSpacing: 'var(--letter-spacing-tight)',
+    }}
+  >
+    禅
+  </div>
+  <p
+    style={{
+      fontSize: 'var(--font-size-lg)',
+      color: 'var(--color-text-secondary)',
+      margin: 0,
+      fontStyle: 'italic',
+    }}
+  >
+    "Simplicity is the ultimate sophistication."
+  </p>
+</div>
+
+---
+
+## Philosophy
+
+Zen Design is a React component library built on the principles of **calm**, **clarity**, and **intentionality**. Inspired by the minimalist aesthetics of Japanese design and the warmth of natural materials, this system prioritizes user focus and reduces visual noise.
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+  gap: '1.5rem',
+  marginTop: '1.5rem',
+  marginBottom: '2rem'
+}}>
+  <div style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)'
+  }}>
+    <div style={{
+      fontSize: 'var(--font-size-2xl)',
+      marginBottom: '0.5rem'
+    }}>🍃</div>
+    <h4 style={{
+      margin: '0 0 0.5rem 0',
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-text-primary)'
+    }}>Natural & Warm</h4>
+    <p style={{
+      margin: 0,
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+      lineHeight: 'var(--line-height-normal)'
+    }}>Earthy browns and sage greens evoke the tranquility of nature.</p>
+  </div>
+
+{' '}
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+  }}
+>
+  <div
+    style={{
+      fontSize: 'var(--font-size-2xl)',
+      marginBottom: '0.5rem',
+    }}
+  >
+    ✨
+  </div>
+  <h4
+    style={{
+      margin: '0 0 0.5rem 0',
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-text-primary)',
+    }}
+  >
+    Minimal & Clean
+  </h4>
+  <p
+    style={{
+      margin: 0,
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+      lineHeight: 'var(--line-height-normal)',
+    }}
+  >
+    Every element serves a purpose. No visual clutter.
+  </p>
+</div>
+
+  <div style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)'
+  }}>
+    <div style={{
+      fontSize: 'var(--font-size-2xl)',
+      marginBottom: '0.5rem'
+    }}>⚡</div>
+    <h4 style={{
+      margin: '0 0 0.5rem 0',
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-text-primary)'
+    }}>Accessible</h4>
+    <p style={{
+      margin: 0,
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+      lineHeight: 'var(--line-height-normal)'
+    }}>Built with accessibility in mind from the ground up.</p>
+  </div>
+</div>
+
+---
+
+## Design Principles
+
+### 1. Embrace Simplicity
+
+Remove the unnecessary so the necessary may speak. Components are designed with only essential features, avoiding bloat while maintaining flexibility.
+
+### 2. Respect Whitespace
+
+Space is not empty—it's breathing room. Generous spacing creates visual hierarchy and reduces cognitive load.
+
+### 3. Use Nature's Palette
+
+Our color system draws from the natural world: warm browns like aged wood, soft greens like morning sage, and cream tones like natural paper.
+
+### 4. Subtle Interactions
+
+Animations and transitions are gentle and purposeful. They guide without distracting.
+
+---
+
+## The Color Story
+
+<div
+  style={{
+    display: 'flex',
+    gap: '0.5rem',
+    marginBottom: '1.5rem',
+    flexWrap: 'wrap',
+  }}
+>
+  <div
+    style={{
+      width: '4rem',
+      height: '4rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-primary-500)',
+      border: '1px solid var(--color-border)',
+    }}
+  />
+  <div
+    style={{
+      width: '4rem',
+      height: '4rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-primary-300)',
+      border: '1px solid var(--color-border)',
+    }}
+  />
+  <div
+    style={{
+      width: '4rem',
+      height: '4rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-secondary-500)',
+      border: '1px solid var(--color-border)',
+    }}
+  />
+  <div
+    style={{
+      width: '4rem',
+      height: '4rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-secondary-300)',
+      border: '1px solid var(--color-border)',
+    }}
+  />
+  <div
+    style={{
+      width: '4rem',
+      height: '4rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-neutral-100)',
+      border: '1px solid var(--color-border)',
+    }}
+  />
+  <div
+    style={{
+      width: '4rem',
+      height: '4rem',
+      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'var(--color-neutral-700)',
+      border: '1px solid var(--color-border)',
+    }}
+  />
+</div>
+
+**Primary (Warm Brown)** — Used for primary actions and key UI elements. Evokes reliability and groundedness.
+
+**Secondary (Sage Green)** — Used for success states and secondary accents. Brings freshness and calm.
+
+**Neutrals (Cream-based)** — A warm foundation that feels inviting rather than cold and clinical.
+
+---
+
+## Typography
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '1.5rem',
+  }}
+>
+  <div
+    style={{
+      fontFamily: 'var(--font-family-sans)',
+      fontSize: 'var(--font-size-2xl)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-text-primary)',
+      marginBottom: '0.5rem',
+    }}
+  >
+    DM Sans
+  </div>
+  <p
+    style={{
+      fontFamily: 'var(--font-family-sans)',
+      fontSize: 'var(--font-size-base)',
+      color: 'var(--color-text-secondary)',
+      margin: 0,
+    }}
+  >
+    A geometric sans-serif with a friendly, approachable character. Perfect for
+    both headings and body text.
+  </p>
+</div>
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+  }}
+>
+  <div
+    style={{
+      fontFamily: 'var(--font-family-mono)',
+      fontSize: 'var(--font-size-xl)',
+      fontWeight: 'var(--font-weight-medium)',
+      color: 'var(--color-text-primary)',
+      marginBottom: '0.5rem',
+    }}
+  >
+    JetBrains Mono
+  </div>
+  <p
+    style={{
+      fontFamily: 'var(--font-family-mono)',
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+      margin: 0,
+    }}
+  >
+    A developer-friendly monospace font for code snippets and technical content.
+  </p>
+</div>
+
+---
+
+## Goals
+
+<div
+  style={{
+    backgroundColor: 'var(--color-primary-subtle)',
+    padding: '1.5rem',
+    borderRadius: 'var(--radius-md)',
+    borderLeft: '4px solid var(--color-primary)',
+    marginBottom: '1.5rem',
+  }}
+>
+  <p
+    style={{
+      margin: 0,
+      fontSize: 'var(--font-size-base)',
+      color: 'var(--color-text-primary)',
+      fontWeight: 'var(--font-weight-medium)',
+    }}
+  >
+    Zen Design aims to be the foundation for applications that respect users'
+    attention and create a sense of calm productivity.
+  </p>
+</div>
+
+<table
+  style={{
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: 'var(--font-size-sm)',
+  }}
+>
+  <thead>
+    <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Goal
+      </th>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Consistency
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Unified design tokens ensure visual harmony across all components
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Developer Experience
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Well-typed components with sensible defaults and clear APIs
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Performance
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Lightweight CSS, no runtime overhead from CSS-in-JS
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Flexibility
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Components that adapt to your needs through props and CSS variables
+      </td>
+    </tr>
+    <tr>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Documentation
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Comprehensive Storybook docs for every component and token
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Getting Started
+
+### Installation
+
+```bash
+npm install zen-design
+# or
+yarn add zen-design
+```
+
+### Basic Usage
+
+```tsx
+import { Button } from 'zen-design'
+import 'zen-design/tokens.css'
+
+function App() {
+  return <Button variant="primary">Get Started</Button>
+}
+```
+
+### Using Design Tokens
+
+All design tokens are available as CSS custom properties:
+
+```css
+.my-component {
+  background: var(--color-surface);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-sans);
+}
+```
+
+---
+
+## Explore
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  gap: '1rem',
+  marginTop: '1rem'
+}}>
+  <a href="?path=/docs/foundations-colors--docs" style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}>
+    <div style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem'
+    }}>Colors →</div>
+    <div style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)'
+    }}>Explore the color palette</div>
+  </a>
+
+{' '}
+
+<a
+  href="?path=/docs/foundations-typography--docs"
+  style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}
+>
+  <div
+    style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem',
+    }}
+  >
+    Typography →
+  </div>
+  <div
+    style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+    }}
+  >
+    Fonts and text styles
+  </div>
+</a>
+
+{' '}
+
+<a
+  href="?path=/docs/foundations-spacing--docs"
+  style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}
+>
+  <div
+    style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem',
+    }}
+  >
+    Spacing →
+  </div>
+  <div
+    style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+    }}
+  >
+    The spacing scale
+  </div>
+</a>
+
+  <a href="?path=/docs/components-button--docs" style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}>
+    <div style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem'
+    }}>Button →</div>
+    <div style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)'
+    }}>Interactive button component</div>
+  </a>
+</div>

@@ -133,11 +133,3 @@
   background-color: var(--color-border-subtle);
 }
 
-/* ----------------------------------------
-   MODIFIERS
-   ---------------------------------------- */
-
-.zen-button--full-width {
-  width: 100%;
-}
-

@@ -21,10 +21,6 @@ const meta: Meta<typeof Button> = {
       options: ['sm', 'md', 'lg'],
       description: 'The size of the button',
     },
-    fullWidth: {
-      control: 'boolean',
-      description: 'Whether the button should take the full width',
-    },
     disabled: {
       control: 'boolean',
       description: 'Whether the button is disabled',
@@ -40,51 +36,11 @@ export default meta
 type Story = StoryObj<typeof Button>
 
 /* ----------------------------------------
-   PLAYGROUND
+   ALL VARIANTS
    ---------------------------------------- */
 
-export const Playground: Story = {
-  args: {
-    children: 'Button',
-    variant: 'primary',
-    size: 'md',
-    disabled: false,
-    fullWidth: false,
-  },
-}
-
-/* ----------------------------------------
-   VARIANTS - LIGHT MODE
-   ---------------------------------------- */
-
-export const AllVariantsLight: Story = {
-  name: 'All Variants (Light)',
-  parameters: {
-    themes: {
-      themeOverride: 'light',
-    },
-  },
-  render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <Button variant="primary">Primary</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="ghost">Ghost</Button>
-    </div>
-  ),
-}
-
-/* ----------------------------------------
-   VARIANTS - DARK MODE
-   ---------------------------------------- */
-
-export const AllVariantsDark: Story = {
-  name: 'All Variants (Dark)',
-  parameters: {
-    themes: {
-      themeOverride: 'dark',
-    },
-  },
+export const AllVariants: Story = {
+  name: 'All Variants',
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <Button variant="primary">Primary</Button>
@@ -111,38 +67,6 @@ export const AllSizes: Story = {
 }
 
 /* ----------------------------------------
-   INDIVIDUAL VARIANTS
-   ---------------------------------------- */
-
-export const Primary: Story = {
-  args: {
-    variant: 'primary',
-    children: 'Primary Button',
-  },
-}
-
-export const Secondary: Story = {
-  args: {
-    variant: 'secondary',
-    children: 'Secondary Button',
-  },
-}
-
-export const Outline: Story = {
-  args: {
-    variant: 'outline',
-    children: 'Outline Button',
-  },
-}
-
-export const Ghost: Story = {
-  args: {
-    variant: 'ghost',
-    children: 'Ghost Button',
-  },
-}
-
-/* ----------------------------------------
    STATES
    ---------------------------------------- */
 
@@ -163,11 +87,4 @@ export const Disabled: Story = {
       </Button>
     </div>
   ),
-}
-
-export const FullWidth: Story = {
-  args: {
-    children: 'Full Width Button',
-    fullWidth: true,
-  },
 }
