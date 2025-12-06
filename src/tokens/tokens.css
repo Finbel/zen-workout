@@ -170,6 +170,15 @@
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
+
+  /* ----------------------------------------
+     BREAKPOINTS
+     ---------------------------------------- */
+
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
 }
 
 /* ----------------------------------------

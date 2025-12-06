@@ -1,0 +1,561 @@
+{/* Breakpoints.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Breakpoints" />
+
+# Breakpoints
+
+The Zen Design System uses a mobile-first approach with five breakpoints that enable responsive design across all device sizes. Every visual prop in the system can accept responsive values that adapt to different screen widths.
+
+---
+
+## Breakpoint Scale
+
+Our breakpoint system uses five named breakpoints that correspond to common device sizes:
+
+<table
+  style={{
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: 'var(--font-size-sm)',
+    marginBottom: '2rem',
+  }}
+>
+  <thead>
+    <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Breakpoint
+      </th>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Min Width
+      </th>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Device Types
+      </th>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '0.75rem',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Use Case
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontFamily: 'var(--font-family-mono)',
+          fontWeight: 'var(--font-weight-medium)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        <code>base</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        0px
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Mobile (default)
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Base styles, mobile-first defaults
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontFamily: 'var(--font-family-mono)',
+          fontWeight: 'var(--font-weight-medium)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        <code>xs</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        480px
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Large phones
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Slightly larger mobile screens
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontFamily: 'var(--font-family-mono)',
+          fontWeight: 'var(--font-weight-medium)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        <code>sm</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        640px
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Small tablets
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Tablets in portrait mode
+      </td>
+    </tr>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontFamily: 'var(--font-family-mono)',
+          fontWeight: 'var(--font-weight-medium)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        <code>md</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        1024px
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Tablets, small laptops
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Tablets in landscape, small desktops
+      </td>
+    </tr>
+    <tr>
+      <td
+        style={{
+          padding: '0.75rem',
+          fontFamily: 'var(--font-family-mono)',
+          fontWeight: 'var(--font-weight-medium)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        <code>lg</code>
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        1280px
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Desktops, large screens
+      </td>
+      <td style={{ padding: '0.75rem', color: 'var(--color-text-secondary)' }}>
+        Large desktop displays
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Mobile-First Approach
+
+Zen Design follows a **mobile-first** philosophy. This means:
+
+1. **Base styles** are designed for mobile devices (0px+)
+2. **Larger breakpoints** progressively enhance the experience
+3. **CSS media queries** use `min-width`, not `max-width`
+
+### How It Works
+
+```css
+/* Base styles apply to all screen sizes */
+.component {
+  padding: var(--space-2);
+}
+
+/* sm breakpoint and above (640px+) */
+@media (min-width: 640px) {
+  .component {
+    padding: var(--space-4);
+  }
+}
+
+/* lg breakpoint and above (1280px+) */
+@media (min-width: 1280px) {
+  .component {
+    padding: var(--space-6);
+  }
+}
+```
+
+In this example:
+
+- **Mobile (0-639px)**: Uses `var(--space-2)`
+- **Tablet (640px-1279px)**: Uses `var(--space-4)`
+- **Desktop (1280px+)**: Uses `var(--space-6)`
+
+---
+
+## Using Breakpoints in CSS
+
+### CSS Custom Properties
+
+Breakpoint values are available as CSS custom properties in `tokens.css`:
+
+```css
+:root {
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
+}
+```
+
+**Important Note**: CSS media queries cannot directly use CSS custom properties. You must use the hardcoded pixel values in `@media` queries. However, the CSS custom properties are available for JavaScript usage and documentation.
+
+### Media Query Pattern
+
+Always use `min-width` with hardcoded pixel values:
+
+```css
+/* ✅ Correct */
+@media (min-width: 640px) {
+  .component {
+    /* styles */
+  }
+}
+
+/* ❌ Incorrect - CSS variables don't work in media queries */
+@media (min-width: var(--breakpoint-sm)) {
+  .component {
+    /* styles */
+  }
+}
+```
+
+When using breakpoints in CSS, add comments referencing the token:
+
+```css
+@media (min-width: 640px) {
+  /* --breakpoint-sm: 640px */
+  .zen-component {
+    /* responsive styles */
+  }
+}
+```
+
+---
+
+## Responsive Props
+
+Every visual prop in the design system can accept responsive values. This allows you to change styles at different breakpoints without writing custom CSS.
+
+### Basic Syntax
+
+Any prop that accepts a value `T` can also accept a responsive object:
+
+```tsx
+// Simple value (applies to all breakpoints)
+<Box padding="md" />
+
+// Responsive object (different values per breakpoint)
+<Box padding={{ base: 'xs', sm: 'md', lg: 'xl' }} />
+```
+
+### Type Definition
+
+```typescript
+type Responsive<T> =
+  | T
+  | {
+      base?: T
+      xs?: T
+      sm?: T
+      md?: T
+      lg?: T
+    }
+```
+
+### Examples
+
+**Example 1: Progressive Enhancement**
+
+```tsx
+<Box padding={{ base: 'xs', sm: 'md', lg: 'xl' }} />
+```
+
+This applies:
+
+- `xs` padding on mobile (base)
+- `md` padding from `sm` breakpoint (640px+) and up
+- `xl` padding from `lg` breakpoint (1280px+) and up
+
+**Example 2: Skipping Breakpoints**
+
+```tsx
+<Box padding={{ base: 'xs', lg: 'xl' }} />
+```
+
+This applies:
+
+- `xs` padding from mobile up to 1279px
+- `xl` padding from `lg` breakpoint (1280px+) and up
+
+**Example 3: Starting at a Breakpoint**
+
+```tsx
+<Flex gap={{ base: 'none', sm: 'md' }} />
+```
+
+This applies:
+
+- No gap on mobile
+- `md` gap from `sm` breakpoint (640px+) and up
+
+---
+
+## How Responsive Props Work
+
+### Behind the Scenes
+
+When you provide a responsive prop value:
+
+1. **Component processes the value**: Detects if it's a simple value or responsive object
+2. **CSS custom properties are set**: Creates variables like `--component-prop-base`, `--component-prop-sm`, etc.
+3. **Data attributes are added**: Adds `data-has-responsive-prop="true"` to enable CSS rules
+4. **CSS media queries apply**: Uses the CSS custom properties with fallback chains
+
+### CSS Custom Property Fallback Chains
+
+Responsive props use nested CSS variable fallbacks to create cascading values:
+
+```css
+@media (min-width: 640px) {
+  .zen-box[data-has-responsive-padding='true'] {
+    padding: var(
+      --box-padding-sm,
+      var(--box-padding-xs, var(--box-padding-base))
+    );
+  }
+}
+```
+
+**How the fallback works:**
+
+1. Try `--box-padding-sm` first
+2. If it doesn't exist, try `--box-padding-xs`
+3. If that doesn't exist, try `--box-padding-base`
+4. If none exist, the property becomes invalid (won't apply)
+
+This ensures that:
+
+- If you only set `base` and `lg`, intermediate breakpoints inherit from `base`
+- Missing breakpoint values gracefully fall back to smaller breakpoints
+- The system works with partial breakpoint specifications
+
+---
+
+## Breakpoint Inheritance
+
+When you don't specify a value for a breakpoint, the system inherits from the next smaller breakpoint:
+
+```tsx
+// You specify:
+padding={{ base: 'xs', lg: 'xl' }}
+
+// System behavior:
+// 0px - 1279px:     Uses 'xs' (from base)
+// 1280px and up:    Uses 'xl' (from lg)
+```
+
+The inheritance order is:
+
+1. Check if current breakpoint value exists
+2. If not, check next smaller breakpoint
+3. Continue until `base` is found
+4. If `base` doesn't exist, property is invalid
+
+---
+
+## Common Patterns
+
+### Mobile vs Desktop Split
+
+The most common pattern is to have different values for mobile and desktop:
+
+```tsx
+<Box padding={{ base: 'sm', md: 'xl' }} gap={{ base: 'xs', md: 'lg' }} />
+```
+
+### Three-Tier Responsive
+
+For more granular control:
+
+```tsx
+<Flex
+  direction={{ base: 'column', sm: 'row' }}
+  gap={{ base: 'xs', sm: 'md', lg: 'xl' }}
+/>
+```
+
+### Progressive Enhancement
+
+Start minimal and enhance at larger breakpoints:
+
+```tsx
+<Grid columns={{ base: 1, sm: 2, lg: 4 }} gap={{ base: 'xs', md: 'lg' }} />
+```
+
+---
+
+## Best Practices
+
+### When to Use Responsive Props
+
+**✅ Do use responsive props for:**
+
+- Layout properties (padding, margin, gap)
+- Spacing (padding, margin)
+- Grid/Flex properties (columns, gap, direction)
+- Visual sizing that needs to adapt to screen size
+
+**❌ Don't use responsive props for:**
+
+- Event handlers (`onClick`, `onChange`, etc.)
+- React refs
+- Content (`children`)
+- Non-visual props
+
+### Mobile-First Thinking
+
+Always think about the mobile experience first:
+
+```tsx
+// ✅ Good: Mobile-first thinking
+<Box padding={{ base: 'xs', lg: 'xl' }} />
+
+// ⚠️ Less ideal: Desktop-first thinking
+// (Works, but goes against mobile-first philosophy)
+<Box padding={{ base: 'xl', md: 'lg', sm: 'md' }} />
+```
+
+### Performance Considerations
+
+Responsive props use CSS custom properties and media queries, which are:
+
+- **Highly performant**: No JavaScript runtime overhead
+- **CSS-native**: Handled entirely by the browser
+- **Cacheable**: Standard CSS that browsers optimize well
+
+---
+
+## TypeScript Support
+
+All responsive props are fully typed for excellent developer experience:
+
+```tsx
+import type { Responsive } from 'zen-design'
+
+interface MyComponentProps {
+  padding?: Responsive<'xs' | 'sm' | 'md' | 'lg' | 'xl'>
+  gap?: Responsive<string>
+}
+```
+
+The `Responsive<T>` type ensures:
+
+- Type safety for breakpoint values
+- Autocomplete for breakpoint names
+- Compile-time checking for valid values
+
+---
+
+## Utilities
+
+### Breakpoint Utilities (TypeScript)
+
+```typescript
+import { breakpoints, getBreakpointValue } from 'zen-design/tokens/breakpoints'
+
+// Get breakpoint value
+const smValue = getBreakpointValue('sm') // 640
+
+// Access breakpoint object
+console.log(breakpoints.md) // 1024
+```
+
+### Type Guards
+
+```typescript
+import { isResponsiveObject } from 'zen-design/utils'
+
+if (isResponsiveObject(padding)) {
+  // TypeScript knows padding is a ResponsiveObject
+  console.log(padding.base)
+  console.log(padding.sm)
+}
+```
+
+---
+
+## Technical Details
+
+### CSS Custom Property Naming
+
+Responsive props generate CSS custom properties with this pattern:
+
+```
+--{componentName}-{propName}-{breakpoint}
+```
+
+Examples:
+
+- `--box-padding-base`
+- `--box-padding-sm`
+- `--flex-gap-md`
+- `--grid-columns-lg`
+
+### Data Attributes
+
+Components add data attributes to enable conditional CSS:
+
+- `data-has-responsive-padding="true"` when `padding` is responsive
+- `data-has-responsive-gap="true"` when `gap` is responsive
+
+This ensures CSS rules only apply when responsive props are actually used, preventing undefined CSS variable warnings.
+
+### Browser Support
+
+Responsive props work in all modern browsers that support:
+
+- CSS Custom Properties (CSS Variables)
+- CSS Media Queries
+- CSS `var()` function with fallbacks
+
+This includes all major browsers from the last 5+ years.
+
+---
+
+## See Also
+
+- [Creating Components](/docs/guidelines-creating-components--docs) - Learn how to implement responsive props in your components
+- [Spacing](/docs/foundations-spacing--docs) - Understand the spacing scale used in responsive props

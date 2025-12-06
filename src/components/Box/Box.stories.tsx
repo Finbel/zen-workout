@@ -227,3 +227,59 @@ export const CombinedPadding: Story = {
     </div>
   ),
 }
+
+export const ResponsivePadding: Story = {
+  name: 'Responsive Padding',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-4)',
+      }}
+    >
+      <Box
+        padding={{
+          base: 'xs',
+          sm: 'md',
+          lg: 'xl',
+        }}
+        style={{
+          backgroundColor: 'var(--color-secondary-100)',
+          borderRadius: 'var(--radius-md)',
+          border: '2px dashed var(--color-primary-400)',
+        }}
+      >
+        <ContentBlock />
+      </Box>
+      <p
+        style={{
+          fontFamily: 'var(--font-family-sans)',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          margin: 0,
+        }}
+      >
+        Resize the viewport to see the padding change:
+        <br />
+        <code
+          style={{
+            display: 'block',
+            marginTop: 'var(--space-2)',
+            padding: 'var(--space-2)',
+            backgroundColor: 'var(--color-surface)',
+            borderRadius: 'var(--radius-sm)',
+            fontFamily: 'var(--font-family-mono)',
+            fontSize: 'var(--font-size-xs)',
+          }}
+        >
+          base (mobile): xs
+          <br />
+          sm (640px+): md
+          <br />
+          lg (1280px+): xl
+        </code>
+      </p>
+    </div>
+  ),
+}

@@ -589,6 +589,265 @@ Always define states in this order:
 
 ---
 
+## Responsive Props
+
+Zen Design supports responsive props, allowing any visual prop to accept different values at different breakpoints. This enables components to adapt seamlessly to different screen sizes without writing custom CSS.
+
+### Understanding Responsive Props
+
+Every prop type `T` can be extended to accept `T | { base?: T, xs?: T, sm?: T, md?: T, lg?: T }`:
+
+```tsx
+// Simple value (applies to all breakpoints)
+<Box padding="md" />
+
+// Responsive object (different values per breakpoint)
+<Box padding={{ base: 'xs', sm: 'md', lg: 'xl' }} />
+```
+
+See the [Breakpoints documentation](/docs/foundations-breakpoints--docs) for complete details on the breakpoint system.
+
+### Making Props Responsive
+
+To make a prop responsive, use the `Responsive<T>` type:
+
+```tsx
+import type { Responsive } from '../../utils/Responsive'
+
+export interface ComponentNameProps extends HTMLAttributes<HTMLDivElement> {
+  /** Padding that adapts to screen size */
+  padding?: Responsive<'xs' | 'sm' | 'md' | 'lg' | 'xl'>
+  /** Gap between items */
+  gap?: Responsive<string>
+}
+```
+
+### Implementation Pattern
+
+Follow this pattern to implement responsive props:
+
+#### 1. Import Required Utilities
+
+```tsx
+import type { Responsive, ResponsiveObject } from '../../utils/Responsive'
+import { isResponsiveObject } from '../../utils/Responsive'
+import { processResponsiveProps } from '../../utils/responsiveProps'
+```
+
+#### 2. Normalize Values (if needed)
+
+If your prop accepts a union type that needs conversion to CSS values, create a normalization function:
+
+```tsx
+type ComponentGap = 'none' | 'xs' | 'sm' | 'md' | 'lg'
+
+function gapToCSS(gap: ComponentGap): string {
+  const mapping: Record<ComponentGap, string> = {
+    none: '0',
+    xs: 'var(--space-1)',
+    sm: 'var(--space-2)',
+    md: 'var(--space-4)',
+    lg: 'var(--space-6)',
+  }
+  return mapping[gap]
+}
+
+function normalizeResponsiveGap(
+  value: Responsive<ComponentGap> | undefined,
+): Responsive<string> | undefined {
+  if (value === undefined) return undefined
+
+  if (isResponsiveObject(value)) {
+    const normalized: ResponsiveObject<string> = {}
+    if (value.base !== undefined) normalized.base = gapToCSS(value.base)
+    if (value.xs !== undefined) normalized.xs = gapToCSS(value.xs)
+    if (value.sm !== undefined) normalized.sm = gapToCSS(value.sm)
+    if (value.md !== undefined) normalized.md = gapToCSS(value.md)
+    if (value.lg !== undefined) normalized.lg = gapToCSS(value.lg)
+    return normalized
+  }
+
+  return gapToCSS(value)
+}
+```
+
+#### 3. Process Responsive Props
+
+In your component, process responsive props and generate CSS custom properties:
+
+```tsx
+export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
+  ({ padding, gap, className = '', style, children, ...props }, ref) => {
+    // Process responsive props to CSS custom properties
+    const responsiveStyles = processResponsiveProps('component', {
+      padding: normalizeResponsivePadding(padding),
+      gap: normalizeResponsiveGap(gap),
+    })
+
+    // Add data attributes to enable CSS rules conditionally
+    const dataAttributes: Record<string, string> = {}
+    if (padding && isResponsiveObject(padding)) {
+      dataAttributes['data-has-responsive-padding'] = 'true'
+    }
+    if (gap && isResponsiveObject(gap)) {
+      dataAttributes['data-has-responsive-gap'] = 'true'
+    }
+
+    return (
+      <div
+        ref={ref}
+        className={className}
+        style={{ ...responsiveStyles, ...style }}
+        {...dataAttributes}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  },
+)
+```
+
+#### 4. Add CSS with Media Queries
+
+Create CSS rules that use CSS custom properties with fallback chains:
+
+```css
+/* Responsive padding */
+/* Only applies when data-has-responsive-padding attribute is present */
+.component[data-has-responsive-padding='true'] {
+  padding: var(--component-padding-base);
+}
+
+@media (min-width: 480px) {
+  /* --breakpoint-xs: 480px */
+  .component[data-has-responsive-padding='true'] {
+    padding: var(--component-padding-xs, var(--component-padding-base));
+  }
+}
+
+@media (min-width: 640px) {
+  /* --breakpoint-sm: 640px */
+  .component[data-has-responsive-padding='true'] {
+    padding: var(
+      --component-padding-sm,
+      var(--component-padding-xs, var(--component-padding-base))
+    );
+  }
+}
+
+@media (min-width: 1024px) {
+  /* --breakpoint-md: 1024px */
+  .component[data-has-responsive-padding='true'] {
+    padding: var(
+      --component-padding-md,
+      var(
+        --component-padding-sm,
+        var(--component-padding-xs, var(--component-padding-base))
+      )
+    );
+  }
+}
+
+@media (min-width: 1280px) {
+  /* --breakpoint-lg: 1280px */
+  .component[data-has-responsive-padding='true'] {
+    padding: var(
+      --component-padding-lg,
+      var(
+        --component-padding-md,
+        var(
+          --component-padding-sm,
+          var(--component-padding-xs, var(--component-padding-base))
+        )
+      )
+    );
+  }
+}
+```
+
+### Key Implementation Details
+
+**1. Data Attributes**
+
+Always add data attributes when responsive props are used. This ensures CSS rules only apply when the CSS custom properties actually exist, preventing undefined variable warnings:
+
+```tsx
+if (padding && isResponsiveObject(padding)) {
+  dataAttributes['data-has-responsive-padding'] = 'true'
+}
+```
+
+**2. CSS Custom Property Naming**
+
+CSS custom properties follow this pattern:
+
+```
+--{componentName}-{propName}-{breakpoint}
+```
+
+Examples:
+
+- `--box-padding-base`
+- `--flex-gap-sm`
+- `--grid-columns-lg`
+
+**3. Fallback Chains**
+
+Use nested `var()` functions to create fallback chains that inherit from smaller breakpoints:
+
+```css
+/* At sm breakpoint, try sm first, then xs, then base */
+padding: var(
+  --component-padding-sm,
+  var(--component-padding-xs, var(--component-padding-base))
+);
+```
+
+**4. Component Name Parameter**
+
+The first parameter to `processResponsiveProps` should be the component name (lowercase, no hyphens):
+
+```tsx
+processResponsiveProps('box', { padding: ... })      // ✅ Correct
+processResponsiveProps('zen-box', { padding: ... })  // ❌ Wrong
+processResponsiveProps('Box', { padding: ... })      // ❌ Wrong
+```
+
+### Backward Compatibility
+
+Responsive props maintain backward compatibility with simple values. If a user passes a simple value, it works exactly as before:
+
+```tsx
+// Both work identically for non-responsive usage
+<Box padding="md" />
+<Box padding={{ base: 'md' }} />
+```
+
+### Best Practices
+
+<Guideline type="do">
+  Make layout and spacing props responsive (padding, margin, gap, columns, etc.)
+</Guideline>
+
+<Guideline type="do">
+  Use data attributes to conditionally apply CSS rules
+</Guideline>
+
+<Guideline type="do">
+  Add comments in CSS referencing breakpoint tokens
+</Guideline>
+
+<Guideline type="dont">
+  Make event handlers, refs, or children responsive
+</Guideline>
+
+<Guideline type="dont">
+  Create responsive props for props that don't benefit from breakpoint changes
+</Guideline>
+
+---
+
 ## Storybook Stories
 
 ### File Structure
