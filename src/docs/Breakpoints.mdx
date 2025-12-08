@@ -188,20 +188,20 @@ Zen Design follows a **mobile-first** philosophy. This means:
 
 ```css
 /* Base styles apply to all screen sizes */
-.component {
+.zen-{component-name} {
   padding: var(--space-2);
 }
 
 /* sm breakpoint and above (640px+) */
 @media (min-width: 640px) {
-  .component {
+  .zen-{component-name} {
     padding: var(--space-4);
   }
 }
 
 /* lg breakpoint and above (1280px+) */
 @media (min-width: 1280px) {
-  .component {
+  .zen-{component-name} {
     padding: var(--space-6);
   }
 }
@@ -239,14 +239,14 @@ Always use `min-width` with hardcoded pixel values:
 ```css
 /* ✅ Correct */
 @media (min-width: 640px) {
-  .component {
+  .zen-{component-name} {
     /* styles */
   }
 }
 
 /* ❌ Incorrect - CSS variables don't work in media queries */
 @media (min-width: var(--breakpoint-sm)) {
-  .component {
+  .zen-{component-name} {
     /* styles */
   }
 }
@@ -275,10 +275,10 @@ Any prop that accepts a value `T` can also accept a responsive object:
 
 ```tsx
 // Simple value (applies to all breakpoints)
-<Box padding="md" />
+<Component padding="md" />
 
 // Responsive object (different values per breakpoint)
-<Box padding={{ base: 'xs', sm: 'md', lg: 'xl' }} />
+<Component padding={{ base: 'xs', sm: 'md', lg: 'xl' }} />
 ```
 
 ### Type Definition
@@ -300,7 +300,7 @@ type Responsive<T> =
 **Example 1: Progressive Enhancement**
 
 ```tsx
-<Box padding={{ base: 'xs', sm: 'md', lg: 'xl' }} />
+<Component padding={{ base: 'xs', sm: 'md', lg: 'xl' }} />
 ```
 
 This applies:
@@ -312,7 +312,7 @@ This applies:
 **Example 2: Skipping Breakpoints**
 
 ```tsx
-<Box padding={{ base: 'xs', lg: 'xl' }} />
+<Component padding={{ base: 'xs', lg: 'xl' }} />
 ```
 
 This applies:
@@ -323,7 +323,7 @@ This applies:
 **Example 3: Starting at a Breakpoint**
 
 ```tsx
-<Flex gap={{ base: 'none', sm: 'md' }} />
+<Component gap={{ base: 'none', sm: 'md' }} />
 ```
 
 This applies:
@@ -331,25 +331,25 @@ This applies:
 - No gap on mobile
 - `md` gap from `sm` breakpoint (640px+) and up
 
-**Example 4: ShojiGrid Cell Responsive Props**
+**Example 4: Component with Multiple Responsive Props**
 
-`ShojiGrid.Cell` extends `BoxProps`, so it supports all responsive padding props:
+Components can support multiple responsive props:
 
 ```tsx
-<ShojiGrid.Cell
+<Component
   padding={{ base: 'sm', md: 'lg' }}
   paddingHorizontal={{ base: 'xs', md: 'md' }}
   paddingVertical={{ base: 'sm', md: 'lg' }}
 >
-  Cell content
-</ShojiGrid.Cell>
+  Content
+</Component>
 ```
 
 This applies:
 
-- `sm` padding, `xs` gap, `column` direction on mobile
-- `md` gap and `row` direction from `sm` breakpoint (640px+) and up
-- `lg` padding from `md` breakpoint (1024px+) and up
+- `sm` padding, `xs` horizontal padding, `sm` vertical padding on mobile
+- `md` horizontal padding from `md` breakpoint (1024px+) and up
+- `lg` padding and `lg` vertical padding from `md` breakpoint (1024px+) and up
 
 ---
 
@@ -360,21 +360,73 @@ This applies:
 When you provide a responsive prop value:
 
 1. **Component processes the value**: Detects if it's a simple value or responsive object
-2. **CSS custom properties are set**: Creates variables like `--component-prop-base`, `--component-prop-sm`, etc.
-3. **Class names are maintained**: For responsive objects, the base value's class name is added (e.g., `zen-shoji-grid--gap-sm`) to maintain compatibility with existing CSS
-4. **Data attributes are added**: Adds `data-has-responsive-prop="true"` and breakpoint-specific attributes (e.g., `data-gap-md="md"`) to enable CSS rules
+2. **CSS custom properties are set**: Creates variables like `--{component-name}-{prop-name}-base`, `--{component-name}-{prop-name}-sm`, etc.
+   - TypeScript: Uses `processResponsiveProps('{component-name}', { ... })` where `{component-name}` is kebab-case WITHOUT `zen-` prefix
+   - SCSS: Uses `@include responsive-prop('zen-{component-name}', '{prop-name}', '{css-property}')` where class name includes `zen-` prefix (mixin strips it automatically)
+3. **Class names are maintained**: For responsive objects, the base value's class name is added (e.g., `zen-{component-name}--{prop-name}-{base-value}`) to maintain compatibility with existing CSS
+4. **Data attributes are added**: Adds `data-has-responsive-{prop-name}="true"` and breakpoint-specific attributes (e.g., `data-{prop-name}-{breakpoint}="{value}"`) to enable CSS rules
+   - For camelCase props: Data attributes use kebab-case (e.g., `gridTemplateColumns` → `data-has-responsive-grid-template-columns`)
 5. **CSS media queries apply**: Uses the CSS custom properties with fallback chains
 
 ### CSS Custom Property Fallback Chains
 
-Responsive props use nested CSS variable fallbacks to create cascading values:
+Responsive props use nested CSS variable fallbacks to create cascading values. Each breakpoint includes fallbacks for all previous breakpoints:
 
 ```css
+@media (min-width: 480px) {
+  /* --breakpoint-xs: 480px */
+  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
+    {css-property}: var(
+      --{component-name}-{prop-name}-xs,
+      var(--{component-name}-{prop-name}-base)
+    );
+  }
+}
+
 @media (min-width: 640px) {
-  .zen-box[data-has-responsive-padding='true'] {
-    padding: var(
-      --box-padding-sm,
-      var(--box-padding-xs, var(--box-padding-base))
+  /* --breakpoint-sm: 640px */
+  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
+    {css-property}: var(
+      --{component-name}-{prop-name}-sm,
+      var(
+        --{component-name}-{prop-name}-xs,
+        var(--{component-name}-{prop-name}-base)
+      )
+    );
+  }
+}
+
+@media (min-width: 1024px) {
+  /* --breakpoint-md: 1024px */
+  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
+    {css-property}: var(
+      --{component-name}-{prop-name}-md,
+      var(
+        --{component-name}-{prop-name}-sm,
+        var(
+          --{component-name}-{prop-name}-xs,
+          var(--{component-name}-{prop-name}-base)
+        )
+      )
+    );
+  }
+}
+
+@media (min-width: 1280px) {
+  /* --breakpoint-lg: 1280px */
+  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
+    {css-property}: var(
+      --{component-name}-{prop-name}-lg,
+      var(
+        --{component-name}-{prop-name}-md,
+        var(
+          --{component-name}-{prop-name}-sm,
+          var(
+            --{component-name}-{prop-name}-xs,
+            var(--{component-name}-{prop-name}-base)
+          )
+        )
+      )
     );
   }
 }
@@ -382,15 +434,17 @@ Responsive props use nested CSS variable fallbacks to create cascading values:
 
 **How the fallback works:**
 
-1. Try `--box-padding-sm` first
-2. If it doesn't exist, try `--box-padding-xs`
-3. If that doesn't exist, try `--box-padding-base`
-4. If none exist, the property becomes invalid (won't apply)
+At each breakpoint, the browser tries fallbacks in order:
+
+1. **xs breakpoint**: Try `--{component-name}-{prop-name}-xs`, fall back to `base`
+2. **sm breakpoint**: Try `sm`, then `xs`, then `base`
+3. **md breakpoint**: Try `md`, then `sm`, then `xs`, then `base`
+4. **lg breakpoint**: Try `lg`, then `md`, then `sm`, then `xs`, then `base`
 
 This ensures that:
 
 - If you only set `base` and `lg`, intermediate breakpoints inherit from `base`
-- Missing breakpoint values gracefully fall back to smaller breakpoints
+- Missing breakpoint values gracefully fall back through all smaller breakpoints
 - The system works with partial breakpoint specifications
 
 ---
@@ -424,7 +478,7 @@ The inheritance order is:
 The most common pattern is to have different values for mobile and desktop:
 
 ```tsx
-<Box padding={{ base: 'sm', md: 'xl' }} gap={{ base: 'xs', md: 'lg' }} />
+<Component padding={{ base: 'sm', md: 'xl' }} gap={{ base: 'xs', md: 'lg' }} />
 ```
 
 ### Three-Tier Responsive
@@ -432,7 +486,7 @@ The most common pattern is to have different values for mobile and desktop:
 For more granular control:
 
 ```tsx
-<Flex
+<Component
   direction={{ base: 'column', sm: 'row' }}
   gap={{ base: 'xs', sm: 'md', lg: 'xl' }}
 />
@@ -443,26 +497,26 @@ For more granular control:
 Start minimal and enhance at larger breakpoints:
 
 ```tsx
-<ShojiGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={{ base: 'sm', md: 'md' }} />
+<Component columns={{ base: 1, sm: 2, lg: 4 }} gap={{ base: 'sm', md: 'md' }} />
 ```
 
-### ShojiGrid Cell with Responsive Props
+### Nested Components with Responsive Props
 
-`ShojiGrid.Cell` extends `BoxProps`, so it supports all responsive padding props:
+Components can be nested and each can have its own responsive props:
 
 ```tsx
-<ShojiGrid columns={{ base: 1, md: 3 }} gap={{ base: 'sm', md: 'md' }}>
-  <ShojiGrid.Cell
+<Component columns={{ base: 1, md: 3 }} gap={{ base: 'sm', md: 'md' }}>
+  <Component.Cell
     padding={{ base: 'sm', md: 'lg' }}
     paddingHorizontal={{ base: 'xs', md: 'md' }}
     paddingVertical={{ base: 'sm', md: 'lg' }}
   >
     Content adapts to screen size
-  </ShojiGrid.Cell>
-</ShojiGrid>
+  </Component.Cell>
+</Component>
 ```
 
-This pattern allows grid cells to independently adapt their internal layout and spacing at different breakpoints.
+This pattern allows nested components to independently adapt their internal layout and spacing at different breakpoints.
 
 ---
 
@@ -474,7 +528,7 @@ This pattern allows grid cells to independently adapt their internal layout and 
 
 - Layout properties (padding, margin, gap)
 - Spacing (padding, margin)
-- ShojiGrid/Flex properties (columns, gap, direction)
+- Grid and flex properties (columns, gap, direction)
 - Visual sizing that needs to adapt to screen size
 
 **❌ Don't use responsive props for:**
@@ -490,11 +544,11 @@ Always think about the mobile experience first:
 
 ```tsx
 // ✅ Good: Mobile-first thinking
-<Box padding={{ base: 'xs', lg: 'xl' }} />
+<Component padding={{ base: 'xs', lg: 'xl' }} />
 
 // ⚠️ Less ideal: Desktop-first thinking
 // (Works, but goes against mobile-first philosophy)
-<Box padding={{ base: 'xl', md: 'lg', sm: 'md' }} />
+<Component padding={{ base: 'xl', md: 'lg', sm: 'md' }} />
 ```
 
 ### Performance Considerations
@@ -563,22 +617,49 @@ if (isResponsiveObject(padding)) {
 Responsive props generate CSS custom properties with this pattern:
 
 ```
---{componentName}-{propName}-{breakpoint}
+--{component-name}-{prop-name}-{breakpoint}
 ```
+
+**Component name rules:**
+
+- Component name should be kebab-case (e.g., `component-name`)
+- In TypeScript: Pass component name WITHOUT `zen-` prefix (e.g., `'component-name'`)
+- In SCSS: Pass full class name WITH `zen-` prefix (e.g., `'zen-component-name'`), the mixin automatically strips it
+
+**Prop name rules:**
+
+- Simple props: Use prop name as-is (e.g., `padding`, `gap`)
+- CamelCase props: Preserve camelCase in CSS custom properties (e.g., `gridTemplateColumns` → `--{component-name}-gridTemplateColumns-base`)
 
 Examples:
 
-- `--box-padding-base`
-- `--box-padding-sm`
-- `--flex-gap-md`
-- `--shoji-grid-columns-lg`
+- `--{component-name}-{prop-name}-base`
+- `--{component-name}-{prop-name}-xs`
+- `--{component-name}-{prop-name}-sm`
+- `--{component-name}-gridTemplateRows-base` (camelCase preserved)
+- `--{component-name}-gridTemplateColumns-md` (camelCase preserved)
 
 ### Data Attributes
 
 Components add data attributes to enable conditional CSS:
 
-- `data-has-responsive-padding="true"` when `padding` is responsive
-- `data-has-responsive-gap="true"` when `gap` is responsive
+**Pattern:**
+
+```
+data-has-responsive-{prop-name}="true"
+```
+
+**Rules:**
+
+- Simple props: Use prop name as-is (e.g., `data-has-responsive-padding`, `data-has-responsive-gap`)
+- CamelCase props: Convert to kebab-case (e.g., `gridTemplateColumns` → `data-has-responsive-grid-template-columns`)
+- Breakpoint-specific attributes: `data-{prop-name}-{breakpoint}="{value}"` (e.g., `data-gap-base="sm"`, `data-gap-md="md"`)
+
+Examples:
+
+- `data-has-responsive-{prop-name}="true"` when `{prop-name}` is responsive
+- `data-has-responsive-grid-template-columns="true"` when `gridTemplateColumns` is responsive (camelCase → kebab-case)
+- `data-{prop-name}-base="{value}"` for breakpoint-specific values
 
 This ensures CSS rules only apply when responsive props are actually used, preventing undefined CSS variable warnings.
 
