@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Grid } from './Grid'
+import { ShojiGrid } from './ShojiGrid'
+import { Flex } from '../Flex'
 
-const meta: Meta<typeof Grid> = {
-  title: 'Layout/Grid',
-  component: Grid,
+const meta: Meta<typeof ShojiGrid> = {
+  title: 'Layout/ShojiGrid',
+  component: ShojiGrid,
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
@@ -17,19 +18,8 @@ const meta: Meta<typeof Grid> = {
     },
     gap: {
       control: 'select',
-      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
+      options: ['none', 'sm', 'md'],
       description: 'Gap between grid items',
-    },
-    minChildWidth: {
-      control: 'text',
-      description:
-        'Minimum width for each child when using auto-fill or auto-fit',
-    },
-    shoji: {
-      control: 'select',
-      options: ['light', 'heavy', false],
-      description:
-        "Shoji frame style. 'heavy' for full-screen layouts, 'light' for inset grids",
     },
     gridTemplateRows: {
       control: 'text',
@@ -63,7 +53,7 @@ const meta: Meta<typeof Grid> = {
 }
 
 export default meta
-type Story = StoryObj<typeof Grid>
+type Story = StoryObj<typeof ShojiGrid>
 
 /* ----------------------------------------
    PLAYGROUND
@@ -76,7 +66,7 @@ export const Playground: Story = {
   },
   render: (args) => (
     <div style={{ padding: 'var(--space-4)' }}>
-      <Grid {...args}>
+      <ShojiGrid {...args}>
         <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
           Item 1
         </div>
@@ -95,7 +85,7 @@ export const Playground: Story = {
         <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
           Item 6
         </div>
-      </Grid>
+      </ShojiGrid>
     </div>
   ),
 }
@@ -105,52 +95,82 @@ export const Playground: Story = {
    ---------------------------------------- */
 
 export const HolyGrailLayout: Story = {
-  name: 'Holy Grail Layout with Grid.Cell',
+  name: 'Holy Grail Layout with ShojiGrid.Cell',
   parameters: {
     layout: 'fullscreen',
   },
   render: () => (
-    <Grid
-      gridTemplateAreas={`
-        "header header header"
-        "nav main aside"
-        "footer footer footer"
-      `}
-      gridTemplateRows="60px 1fr 50px"
-      gridTemplateColumns="200px 1fr 200px"
-      gap="none"
+    <ShojiGrid
+      gridTemplateAreas={{
+        base: `
+          "header"
+          "nav"
+          "main"
+          "aside"
+          "footer"
+        `,
+        md: `
+          "header header header"
+          "nav main aside"
+          "footer footer footer"
+        `,
+      }}
+      gridTemplateRows={{
+        base: '60px auto 1fr auto 50px',
+        md: '60px 1fr 50px',
+      }}
+      gridTemplateColumns={{
+        base: '1fr',
+        md: '200px 1fr 200px',
+      }}
       style={{ minHeight: '100vh' }}
     >
-      <Grid.Cell
-        area="header"
-        padding="md"
-        direction="row"
-        align="center"
-        justify="between"
-      >
-        <strong>Logo</strong>
-        <nav style={{ display: 'flex', gap: 'var(--space-4)' }}>
-          <span>Home</span>
-          <span>About</span>
-          <span>Contact</span>
-        </nav>
-      </Grid.Cell>
-      <Grid.Cell area="nav" padding="md" gap="sm">
-        <strong style={{ marginBottom: 'var(--space-2)' }}>Navigation</strong>
-        <div>Dashboard</div>
-        <div>Projects</div>
-        <div>Team</div>
-        <div>Settings</div>
-      </Grid.Cell>
-      <Grid.Cell area="main" padding="lg">
+      <ShojiGrid.Cell area="header" padding={{ base: 'sm', md: 'md' }}>
+        <Flex
+          direction={{ base: 'column', sm: 'row' }}
+          align="center"
+          justify={{ base: 'center', sm: 'between' }}
+          gap="md"
+        >
+          <strong>Logo</strong>
+          <nav style={{ display: 'flex', gap: 'var(--space-4)' }}>
+            <span>Home</span>
+            <span>About</span>
+            <span>Contact</span>
+          </nav>
+        </Flex>
+      </ShojiGrid.Cell>
+      <ShojiGrid.Cell area="nav" padding={{ base: 'sm', md: 'md' }}>
+        <Flex direction="column" gap="sm">
+          <strong style={{ marginBottom: 'var(--space-2)' }}>Navigation</strong>
+          <div>Dashboard</div>
+          <div>Projects</div>
+          <div>Team</div>
+          <div>Settings</div>
+        </Flex>
+      </ShojiGrid.Cell>
+      <ShojiGrid.Cell area="main" padding={{ base: 'md', md: 'lg' }}>
         <h2 style={{ marginTop: 0 }}>Main Content</h2>
         <p style={{ color: 'var(--color-text-secondary)' }}>
-          This is the main content area using Grid.Cell with area="main".
-          Grid.Cell extends Flex, so it can use padding, align, justify, and
-          other flex props.
+          This is the main content area using ShojiGrid.Cell with area="main". The
+          layout adapts responsively:
         </p>
-      </Grid.Cell>
-      <Grid.Cell area="aside" padding="md" gap="sm">
+        <ul style={{ color: 'var(--color-text-secondary)' }}>
+          <li>
+            <strong>Mobile (base):</strong> All sections stack vertically in a
+            single column
+          </li>
+          <li>
+            <strong>Tablet (md+):</strong> Classic holy grail layout with nav
+            and aside on the sides
+          </li>
+        </ul>
+        <p style={{ color: 'var(--color-text-secondary)' }}>
+          ShojiGrid.Cell extends Box, so it supports responsive padding. For flex
+          layouts, wrap content in a Flex component.
+        </p>
+      </ShojiGrid.Cell>
+      <ShojiGrid.Cell area="aside" padding={{ base: 'sm', md: 'md' }}>
         <strong style={{ marginBottom: 'var(--space-2)' }}>Sidebar</strong>
         <div
           style={{
@@ -168,16 +188,12 @@ export const HolyGrailLayout: Story = {
         >
           Widget 2
         </div>
-      </Grid.Cell>
-      <Grid.Cell
-        area="footer"
-        padding="md"
-        direction="row"
-        align="center"
-        justify="center"
-      >
-        Footer Content
-      </Grid.Cell>
-    </Grid>
+      </ShojiGrid.Cell>
+      <ShojiGrid.Cell area="footer" padding={{ base: 'sm', md: 'md' }}>
+        <Flex direction="row" align="center" justify="center">
+          Footer Content
+        </Flex>
+      </ShojiGrid.Cell>
+    </ShojiGrid>
   ),
 }

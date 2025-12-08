@@ -24,11 +24,10 @@ export type {
   FlexJustify,
 } from './components/Flex'
 
-export { Grid } from './components/Grid'
+export { ShojiGrid } from './components/ShojiGrid'
 export type {
-  GridProps,
-  GridCellProps,
-  GridGap,
-  GridColumns,
-  GridShoji,
-} from './components/Grid'
+  ShojiGridProps,
+  ShojiGridCellProps,
+  ShojiGridGap,
+  ShojiGridColumns,
+} from './components/ShojiGrid'

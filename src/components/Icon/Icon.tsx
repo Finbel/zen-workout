@@ -22,7 +22,11 @@ import {
   XCircleIcon,
   type Icon as PhosphorIcon,
 } from '@phosphor-icons/react'
-import './Icon.css'
+import type { Responsive } from '../../utils/Responsive'
+import { isResponsiveObject } from '../../utils/Responsive'
+import { processResponsiveProps } from '../../utils/responsiveProps'
+import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
+import './Icon.scss'
 
 /**
  * Supported icon names for the Icon component.
@@ -99,17 +103,29 @@ const ICON_MAP: Record<IconName, PhosphorIcon> = {
   'x-circle': XCircleIcon,
 }
 
-export interface IconProps extends Omit<SVGAttributes<SVGSVGElement>, 'ref'> {
+export interface IconProps
+  extends Omit<SVGAttributes<SVGSVGElement>, 'ref' | 'size' | 'color'> {
   /** The name of the icon to display */
   name: IconName
   /** The size of the icon (number for pixels, or string like "1.5rem") */
-  size?: number | string
+  size?: Responsive<number | string>
   /** The color of the icon (defaults to currentColor) */
-  color?: string
+  color?: Responsive<string>
   /** Additional CSS class names */
   className?: string
   /** Accessible label for the icon (adds aria-label) */
   alt?: string
+}
+
+/**
+ * Get the base value from a responsive prop for use in calculations
+ */
+function getBaseValue<T>(value: Responsive<T> | undefined, defaultValue: T): T {
+  if (!value) return defaultValue
+  if (isResponsiveObject(value)) {
+    return value.base !== undefined ? value.base : defaultValue
+  }
+  return value
 }
 
 /**
@@ -123,8 +139,14 @@ export interface IconProps extends Omit<SVGAttributes<SVGSVGElement>, 'ref'> {
  * // With size
  * <Icon name="arrow-right" size={24} />
  *
+ * // With responsive size
+ * <Icon name="arrow-right" size={{ base: 20, md: 24 }} />
+ *
  * // With custom color
  * <Icon name="warning" color="var(--color-warning)" />
+ *
+ * // With responsive color
+ * <Icon name="warning" color={{ base: 'currentColor', md: 'var(--color-warning)' }} />
  *
  * // With accessibility label
  * <Icon name="x" alt="Close" />
@@ -132,7 +154,15 @@ export interface IconProps extends Omit<SVGAttributes<SVGSVGElement>, 'ref'> {
  */
 export const Icon = forwardRef<SVGSVGElement, IconProps>(
   (
-    { name, size = 20, color = 'currentColor', className = '', alt, ...props },
+    {
+      name,
+      size = 20,
+      color = 'currentColor',
+      className = '',
+      alt,
+      style,
+      ...props
+    },
     ref,
   ) => {
     const IconComponent = ICON_MAP[name]
@@ -142,17 +172,38 @@ export const Icon = forwardRef<SVGSVGElement, IconProps>(
       return null
     }
 
+    // Process responsive props to CSS custom properties
+    const responsiveStyles = processResponsiveProps('icon', {
+      size,
+      color,
+    })
+
+    // Get base values for Phosphor icon props (Phosphor icons don't support responsive props directly)
+    const baseSize = getBaseValue(size, 20)
+    const baseColor = getBaseValue(color, 'currentColor')
+
+    // Generate data attributes for responsive props
+    const dataAttributes = generateResponsiveDataAttributes(
+      {
+        size,
+        color,
+      },
+      { includeBreakpointValues: true },
+    )
+
     const classNames = ['zen-icon', className].filter(Boolean).join(' ')
 
     return (
       <IconComponent
         ref={ref}
-        size={size}
+        size={baseSize}
         weight="light"
-        color={color}
+        color={baseColor}
         className={classNames}
+        style={{ ...responsiveStyles, ...style }}
         aria-label={alt}
         aria-hidden={!alt}
+        {...dataAttributes}
         {...props}
       />
     )

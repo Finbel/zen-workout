@@ -1,0 +1,99 @@
+{/* CodeStandard.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Development/Code Standards" />
+
+# Code Standards
+
+Guidelines and best practices for writing maintainable code in the Zen Design System.
+
+---
+
+## Avoiding Magic Values
+
+Magic values are hard-coded literals in code that lack clear meaning or context. They make code harder to understand, maintain, and modify.
+
+### What are Magic Values?
+
+Magic values are unexplained numbers, strings, or other literals that appear directly in code:
+
+```typescript
+// ❌ Magic value - what does 200px represent?
+const minWidth = minChildWidth || '200px'
+
+// ❌ Magic value - why 3 retries?
+if (retryCount < 3) {
+  // ...
+}
+
+// ❌ Magic value - what does 'sm' mean here?
+const breakpoint = 'sm'
+```
+
+### Best Practices
+
+1. **Extract constants with descriptive names**
+
+   ```typescript
+   // ✅ Clear constant with documentation
+   /**
+    * Default minimum width for grid children when using auto-fill or auto-fit columns
+    */
+   const DEFAULT_MIN_CHILD_WIDTH = '200px'
+
+   const minWidth = minChildWidth || DEFAULT_MIN_CHILD_WIDTH
+   ```
+
+2. **Use constants for reusable values**
+
+   If a value appears multiple times in your code, extract it to a constant:
+
+   ```typescript
+   // ✅ Single source of truth
+   const MAX_RETRY_ATTEMPTS = 3
+
+   if (retryCount < MAX_RETRY_ATTEMPTS) {
+     // ...
+   }
+   ```
+
+3. **Provide context through naming**
+
+   The constant name should clearly communicate what the value represents:
+
+   ```typescript
+   // ✅ Descriptive name
+   const DEFAULT_GRID_MIN_CHILD_WIDTH = '200px'
+   const MAX_API_RETRY_COUNT = 3
+   const DEFAULT_BREAKPOINT = 'sm'
+   ```
+
+4. **Document complex or non-obvious values**
+
+   If a value has specific business logic or design rationale, add a comment:
+
+   ```typescript
+   /**
+    * 200px provides a good balance between content readability and
+    * responsive layout flexibility for grid auto-fill/auto-fit columns
+    */
+   const DEFAULT_MIN_CHILD_WIDTH = '200px'
+   ```
+
+### Benefits
+
+- **Readability**: Code is self-documenting
+- **Maintainability**: Changes to values are made in one place
+- **Consistency**: Same values are used across the codebase
+- **Understanding**: Team members can understand the purpose of values
+
+### When Magic Values are Acceptable
+
+In some cases, magic values are acceptable:
+
+- **Obvious constants**: `0`, `1`, `-1` in mathematical contexts
+- **Standard values**: `'none'`, `'auto'` in CSS contexts
+- **Test values**: Hard-coded test data in test files
+- **Configuration**: Values that are intentionally meant to be changed (but still prefer constants for clarity)
+
+

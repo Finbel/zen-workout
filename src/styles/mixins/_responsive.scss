@@ -1,0 +1,90 @@
+/**
+ * Responsive prop mixins for generating responsive CSS
+ */
+
+@use '../variables/breakpoints' as bp;
+@use '../utils/functions' as fn;
+
+/**
+ * Generate responsive prop CSS with all breakpoint media queries and fallback chains
+ * 
+ * This mixin generates:
+ * - Base styles (no media query)
+ * - Media queries for each breakpoint (xs, sm, md, lg)
+ * - Properly nested var() fallback chains for each breakpoint
+ * 
+ * @param {string} $component-name - Component name (e.g., 'grid', 'box')
+ * @param {string} $prop-name - Prop name (e.g., 'gap', 'padding')
+ * @param {string} $css-property - CSS property to apply (e.g., 'gap', 'padding')
+ * 
+ * @example
+ *   @include responsive-prop('grid', 'gap', 'gap');
+ */
+@mixin responsive-prop($component-name, $prop-name, $css-property) {
+  // Extract CSS variable prefix (remove 'zen-' if present)
+  // Component classes use 'zen-grid', 'zen-box', etc., but CSS vars use 'grid', 'box', etc.
+  $var-prefix: fn.get-var-prefix($component-name);
+  $selector: '.#{$component-name}[data-has-responsive-#{$prop-name}="true"]';
+
+  // Base styles
+  #{$selector} {
+    #{$css-property}: var(--#{$var-prefix}-#{$prop-name}-base);
+  }
+
+  // Generate media queries for each breakpoint with cascading fallbacks
+  @each $breakpoint, $min-width in bp.$breakpoints {
+    @media (min-width: $min-width) {
+      /* --breakpoint-#{$breakpoint}: #{$min-width} */
+      #{$selector} {
+        #{$css-property}: var(
+          --#{$var-prefix}-#{$prop-name}-#{$breakpoint},
+          #{fn.generate-fallback-chain($var-prefix, $prop-name, $breakpoint)}
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Generate responsive prop CSS for properties that affect multiple CSS properties
+ * 
+ * Useful for properties like padding-horizontal (affects padding-left and padding-right)
+ * or padding-vertical (affects padding-top and padding-bottom)
+ * 
+ * @param {string} $component-name - Component name (e.g., 'box')
+ * @param {string} $prop-name - Prop name (e.g., 'paddingHorizontal')
+ * @param {list} $css-properties - List of CSS properties to apply (e.g., ('padding-left', 'padding-right'))
+ * 
+ * @example
+ *   @include responsive-prop-multi('box', 'paddingHorizontal', ('padding-left', 'padding-right'));
+ */
+@mixin responsive-prop-multi($component-name, $prop-name, $css-properties) {
+  // Extract CSS variable prefix (remove 'zen-' if present)
+  // Component classes use 'zen-grid', 'zen-box', etc., but CSS vars use 'grid', 'box', etc.
+  $var-prefix: fn.get-var-prefix($component-name);
+  $selector: '.#{$component-name}[data-has-responsive-#{$prop-name}="true"]';
+
+  // Base styles
+  #{$selector} {
+    @each $prop in $css-properties {
+      #{$prop}: var(--#{$var-prefix}-#{$prop-name}-base);
+    }
+  }
+
+  // Generate media queries for each breakpoint with cascading fallbacks
+  @each $breakpoint, $min-width in bp.$breakpoints {
+    @media (min-width: $min-width) {
+      /* --breakpoint-#{$breakpoint}: #{$min-width} */
+      #{$selector} {
+        @each $prop in $css-properties {
+          #{$prop}: var(
+            --#{$var-prefix}-#{$prop-name}-#{$breakpoint},
+            #{fn.generate-fallback-chain($var-prefix, $prop-name, $breakpoint)}
+          );
+        }
+      }
+    }
+  }
+}
+
+

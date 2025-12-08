@@ -175,3 +175,110 @@ export const IconButtonSizes: Story = {
     </div>
   ),
 }
+
+/* ----------------------------------------
+   RESPONSIVE PROPS
+   ---------------------------------------- */
+
+export const ResponsiveVariant: Story = {
+  name: 'Responsive Variant',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-4)',
+        alignItems: 'flex-start',
+      }}
+    >
+      <div
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
+        Resize the viewport to see the variant change:
+      </div>
+      <Button variant={{ base: 'primary', md: 'secondary', lg: 'outline' }}>
+        Responsive Variant
+      </Button>
+      <div
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
+        Primary on mobile, Secondary on tablet (md+), Outline on desktop (lg+)
+      </div>
+    </div>
+  ),
+}
+
+export const ResponsiveSize: Story = {
+  name: 'Responsive Size',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-4)',
+        alignItems: 'flex-start',
+      }}
+    >
+      <div
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
+        Resize the viewport to see the size change:
+      </div>
+      <Button size={{ base: 'sm', md: 'md', lg: 'lg' }}>Responsive Size</Button>
+      <div
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
+        Small on mobile, Medium on tablet (md+), Large on desktop (lg+)
+      </div>
+    </div>
+  ),
+}
+
+export const ResponsiveVariantAndSize: Story = {
+  name: 'Responsive Variant and Size',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-4)',
+        alignItems: 'flex-start',
+      }}
+    >
+      <div
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
+        Resize the viewport to see both variant and size change:
+      </div>
+      <Button
+        variant={{ base: 'primary', md: 'outline' }}
+        size={{ base: 'sm', md: 'lg' }}
+      >
+        Responsive Button
+      </Button>
+      <div
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
+        Primary/Small on mobile, Outline/Large on tablet (md+)
+      </div>
+    </div>
+  ),
+}

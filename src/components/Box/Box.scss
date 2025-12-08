@@ -2,66 +2,28 @@
    BOX COMPONENT
    ============================================ */
 
+@use '../../styles/mixins/responsive' as *;
+@use '../../styles/variables/breakpoints' as bp;
+@use 'sass:map';
+
 .zen-box {
   box-sizing: border-box;
 }
 
+/* ----------------------------------------
+   RESPONSIVE PROPS
+   ---------------------------------------- */
+
 /* Responsive padding - all sides */
-/* Note: Media query breakpoints must match --breakpoint-* values in tokens.css */
-/* CSS media queries cannot use CSS custom properties directly */
-/* Only applies when data-has-responsive-padding attribute is present */
-.zen-box[data-has-responsive-padding='true'] {
-  padding: var(--box-padding-base);
-}
+@include responsive-prop('zen-box', 'padding', 'padding');
 
-@media (min-width: 480px) {
-  /* --breakpoint-xs: 480px */
-  .zen-box[data-has-responsive-padding='true'] {
-    padding: var(--box-padding-xs, var(--box-padding-base));
-  }
-}
-
-@media (min-width: 640px) {
-  /* --breakpoint-sm: 640px */
-  .zen-box[data-has-responsive-padding='true'] {
-    padding: var(
-      --box-padding-sm,
-      var(--box-padding-xs, var(--box-padding-base))
-    );
-  }
-}
-
-@media (min-width: 1024px) {
-  /* --breakpoint-md: 1024px */
-  .zen-box[data-has-responsive-padding='true'] {
-    padding: var(
-      --box-padding-md,
-      var(--box-padding-sm, var(--box-padding-xs, var(--box-padding-base)))
-    );
-  }
-}
-
-@media (min-width: 1280px) {
-  /* --breakpoint-lg: 1280px */
-  .zen-box[data-has-responsive-padding='true'] {
-    padding: var(
-      --box-padding-lg,
-      var(
-        --box-padding-md,
-        var(--box-padding-sm, var(--box-padding-xs, var(--box-padding-base)))
-      )
-    );
-  }
-}
-
-/* Responsive padding - horizontal */
-/* Only applies when data-has-responsive-padding-horizontal attribute is present */
+/* Responsive padding - horizontal (camelCase prop name) */
 .zen-box[data-has-responsive-padding-horizontal='true'] {
   padding-left: var(--box-paddingHorizontal-base);
   padding-right: var(--box-paddingHorizontal-base);
 }
 
-@media (min-width: 480px) {
+@media (min-width: map.get(bp.$breakpoints, 'xs')) {
   /* --breakpoint-xs: 480px */
   .zen-box[data-has-responsive-padding-horizontal='true'] {
     padding-left: var(
@@ -75,7 +37,7 @@
   }
 }
 
-@media (min-width: 640px) {
+@media (min-width: map.get(bp.$breakpoints, 'sm')) {
   /* --breakpoint-sm: 640px */
   .zen-box[data-has-responsive-padding-horizontal='true'] {
     padding-left: var(
@@ -89,7 +51,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: map.get(bp.$breakpoints, 'md')) {
   /* --breakpoint-md: 1024px */
   .zen-box[data-has-responsive-padding-horizontal='true'] {
     padding-left: var(
@@ -109,7 +71,7 @@
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: map.get(bp.$breakpoints, 'lg')) {
   /* --breakpoint-lg: 1280px */
   .zen-box[data-has-responsive-padding-horizontal='true'] {
     padding-left: var(
@@ -135,14 +97,13 @@
   }
 }
 
-/* Responsive padding - vertical */
-/* Only applies when data-has-responsive-padding-vertical attribute is present */
+/* Responsive padding - vertical (camelCase prop name) */
 .zen-box[data-has-responsive-padding-vertical='true'] {
   padding-top: var(--box-paddingVertical-base);
   padding-bottom: var(--box-paddingVertical-base);
 }
 
-@media (min-width: 480px) {
+@media (min-width: map.get(bp.$breakpoints, 'xs')) {
   /* --breakpoint-xs: 480px */
   .zen-box[data-has-responsive-padding-vertical='true'] {
     padding-top: var(--box-paddingVertical-xs, var(--box-paddingVertical-base));
@@ -153,7 +114,7 @@
   }
 }
 
-@media (min-width: 640px) {
+@media (min-width: map.get(bp.$breakpoints, 'sm')) {
   /* --breakpoint-sm: 640px */
   .zen-box[data-has-responsive-padding-vertical='true'] {
     padding-top: var(
@@ -167,7 +128,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: map.get(bp.$breakpoints, 'md')) {
   /* --breakpoint-md: 1024px */
   .zen-box[data-has-responsive-padding-vertical='true'] {
     padding-top: var(
@@ -187,7 +148,7 @@
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: map.get(bp.$breakpoints, 'lg')) {
   /* --breakpoint-lg: 1280px */
   .zen-box[data-has-responsive-padding-vertical='true'] {
     padding-top: var(

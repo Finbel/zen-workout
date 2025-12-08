@@ -331,6 +331,26 @@ This applies:
 - No gap on mobile
 - `md` gap from `sm` breakpoint (640px+) and up
 
+**Example 4: ShojiGrid Cell Responsive Props**
+
+`ShojiGrid.Cell` extends `BoxProps`, so it supports all responsive padding props:
+
+```tsx
+<ShojiGrid.Cell
+  padding={{ base: 'sm', md: 'lg' }}
+  paddingHorizontal={{ base: 'xs', md: 'md' }}
+  paddingVertical={{ base: 'sm', md: 'lg' }}
+>
+  Cell content
+</ShojiGrid.Cell>
+```
+
+This applies:
+
+- `sm` padding, `xs` gap, `column` direction on mobile
+- `md` gap and `row` direction from `sm` breakpoint (640px+) and up
+- `lg` padding from `md` breakpoint (1024px+) and up
+
 ---
 
 ## How Responsive Props Work
@@ -341,8 +361,9 @@ When you provide a responsive prop value:
 
 1. **Component processes the value**: Detects if it's a simple value or responsive object
 2. **CSS custom properties are set**: Creates variables like `--component-prop-base`, `--component-prop-sm`, etc.
-3. **Data attributes are added**: Adds `data-has-responsive-prop="true"` to enable CSS rules
-4. **CSS media queries apply**: Uses the CSS custom properties with fallback chains
+3. **Class names are maintained**: For responsive objects, the base value's class name is added (e.g., `zen-shoji-grid--gap-sm`) to maintain compatibility with existing CSS
+4. **Data attributes are added**: Adds `data-has-responsive-prop="true"` and breakpoint-specific attributes (e.g., `data-gap-md="md"`) to enable CSS rules
+5. **CSS media queries apply**: Uses the CSS custom properties with fallback chains
 
 ### CSS Custom Property Fallback Chains
 
@@ -422,8 +443,26 @@ For more granular control:
 Start minimal and enhance at larger breakpoints:
 
 ```tsx
-<Grid columns={{ base: 1, sm: 2, lg: 4 }} gap={{ base: 'xs', md: 'lg' }} />
+<ShojiGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={{ base: 'sm', md: 'md' }} />
 ```
+
+### ShojiGrid Cell with Responsive Props
+
+`ShojiGrid.Cell` extends `BoxProps`, so it supports all responsive padding props:
+
+```tsx
+<ShojiGrid columns={{ base: 1, md: 3 }} gap={{ base: 'sm', md: 'md' }}>
+  <ShojiGrid.Cell
+    padding={{ base: 'sm', md: 'lg' }}
+    paddingHorizontal={{ base: 'xs', md: 'md' }}
+    paddingVertical={{ base: 'sm', md: 'lg' }}
+  >
+    Content adapts to screen size
+  </ShojiGrid.Cell>
+</ShojiGrid>
+```
+
+This pattern allows grid cells to independently adapt their internal layout and spacing at different breakpoints.
 
 ---
 
@@ -435,7 +474,7 @@ Start minimal and enhance at larger breakpoints:
 
 - Layout properties (padding, margin, gap)
 - Spacing (padding, margin)
-- Grid/Flex properties (columns, gap, direction)
+- ShojiGrid/Flex properties (columns, gap, direction)
 - Visual sizing that needs to adapt to screen size
 
 **❌ Don't use responsive props for:**
@@ -532,7 +571,7 @@ Examples:
 - `--box-padding-base`
 - `--box-padding-sm`
 - `--flex-gap-md`
-- `--grid-columns-lg`
+- `--shoji-grid-columns-lg`
 
 ### Data Attributes
 

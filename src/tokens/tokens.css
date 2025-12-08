@@ -148,6 +148,10 @@
   --space-20: 5rem; /* 80px */
   --space-24: 6rem; /* 96px */
 
+  /* Grid-specific gap tokens (smaller than standard spacing scale) */
+  --grid-gap-sm: 1px;
+  --grid-gap-md: 3px;
+
   /* ----------------------------------------
      EFFECTS
      ---------------------------------------- */

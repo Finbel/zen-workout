@@ -1,12 +1,12 @@
-import { HTMLAttributes, forwardRef } from 'react'
+import { forwardRef, CSSProperties } from 'react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
 import { processResponsiveProps } from '../../utils/responsiveProps'
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
 import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-import './Box.scss'
-
-export type BoxPadding = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+import { BoxProps, BoxPadding } from '../Box'
+import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
+import '../Box/Box.scss'
+import './ShojiGrid.scss'
 
 /**
  * Convert BoxPadding value to CSS spacing token
@@ -24,7 +24,7 @@ function paddingToCSS(padding: BoxPadding): string {
 }
 
 /**
- * Normalize responsive padding value to CSS value
+ * Convert responsive padding value to CSS value
  */
 const normalizeResponsivePadding = createNormalizeResponsive(paddingToCSS)
 
@@ -40,18 +40,21 @@ function getPaddingClassName(
     : false
 }
 
-export interface BoxProps extends HTMLAttributes<HTMLDivElement> {
-  /** Padding on all sides */
-  padding?: Responsive<BoxPadding>
-  /** Horizontal padding (left and right) */
-  paddingHorizontal?: Responsive<BoxPadding>
-  /** Vertical padding (top and bottom) */
-  paddingVertical?: Responsive<BoxPadding>
+export interface ShojiGridCellProps extends BoxProps {
+  /** Grid area name (for use with gridTemplateAreas) */
+  area?: string
+  /** Grid column placement (e.g., "1 / 3" or "span 2") */
+  column?: string
+  /** Grid row placement (e.g., "1 / 3" or "span 2") */
+  row?: string
 }
 
-export const Box = forwardRef<HTMLDivElement, BoxProps>(
+export const ShojiGridCell = forwardRef<HTMLDivElement, ShojiGridCellProps>(
   (
     {
+      area,
+      column,
+      row,
       padding,
       paddingHorizontal,
       paddingVertical,
@@ -72,7 +75,7 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const classNames = [
-      'zen-box',
+      'zen-shoji-grid-cell',
       getPaddingClassName(padding, 'p'),
       getPaddingClassName(paddingHorizontal, 'px'),
       getPaddingClassName(paddingVertical, 'py'),
@@ -81,30 +84,34 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
       .filter(Boolean)
       .join(' ')
 
-    // Generate data attributes to indicate which responsive props are used
-    // This allows CSS to conditionally apply styles only when needed
+    // Add data attributes to indicate which responsive props are used
     const dataAttributes = generateResponsiveDataAttributes({
       padding,
       paddingHorizontal,
       paddingVertical,
     })
 
-    // For camelCase prop names, convert data attributes to kebab-case
-    // The CSS custom properties use camelCase, but data attributes should use kebab-case
-    if (paddingHorizontal && isResponsiveObject(paddingHorizontal)) {
-      delete dataAttributes['data-has-responsive-paddingHorizontal']
-      dataAttributes['data-has-responsive-padding-horizontal'] = 'true'
+    const cellStyle: CSSProperties = {
+      ...style,
     }
-    if (paddingVertical && isResponsiveObject(paddingVertical)) {
-      delete dataAttributes['data-has-responsive-paddingVertical']
-      dataAttributes['data-has-responsive-padding-vertical'] = 'true'
+
+    if (area) {
+      cellStyle.gridArea = area
+    }
+
+    if (column) {
+      cellStyle.gridColumn = column
+    }
+
+    if (row) {
+      cellStyle.gridRow = row
     }
 
     return (
       <div
         ref={ref}
         className={classNames}
-        style={{ ...responsiveStyles, ...style }}
+        style={{ ...responsiveStyles, ...cellStyle }}
         {...dataAttributes}
         {...props}
       >
@@ -114,4 +121,4 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
   },
 )
 
-Box.displayName = 'Box'
+ShojiGridCell.displayName = 'ShojiGrid.Cell'

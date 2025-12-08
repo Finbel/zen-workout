@@ -100,16 +100,26 @@ following structure:
   description="The main component implementation with TypeScript types and props interface."
 />
 <FileCard
-  name="ComponentName.css"
+  name="ComponentName.css (or .scss)"
   description="Component-specific styles using CSS custom properties from design tokens."
 />
 <FileCard
   name="ComponentName.stories.tsx"
   description="Storybook stories showcasing all variants, sizes, and states."
 />
+<FileCard
+  name="ComponentName.test.tsx"
+  description="Component tests using Vitest and React Testing Library (optional but recommended)."
+/>
+<FileCard
+  name="{ComponentName}Constants.ts"
+  description="Typed constants for CSS custom property names (optional, for complex components)."
+/>
 <FileCard name="index.ts" description="Barrel export file for clean imports." />
 
 ### Example Structure
+
+**Basic component:**
 
 ```
 src/components/
@@ -117,7 +127,35 @@ src/components/
     ├── ComponentName.tsx
     ├── ComponentName.css
     ├── ComponentName.stories.tsx
+    ├── ComponentName.test.tsx
     └── index.ts
+```
+
+**Component with constants:**
+
+```
+src/components/
+└── ComponentName/
+    ├── ComponentName.tsx
+    ├── ComponentName.css
+    ├── ComponentName.stories.tsx
+    ├── ComponentName.test.tsx
+    ├── {ComponentName}Constants.ts
+    └── index.ts
+```
+
+**Note:** For compound components with sub-components, extract sub-components to separate files when they become complex:
+
+```
+src/components/
+└── ComponentName/
+    ├── ComponentName.tsx      # Main component
+    ├── ComponentNameSub.tsx    # Sub-component (e.g., GridCell)
+    ├── ComponentName.css
+    ├── ComponentName.stories.tsx
+    ├── ComponentName.test.tsx
+    ├── {ComponentName}Constants.ts  # Optional
+    └── index.ts               # Exports both components
 ```
 
 ---
@@ -555,10 +593,295 @@ This pattern allows consumers to override specific values without modifying the 
   vary by size or variant.
 </Guideline>
 
+<Guideline type="do">
+  Prefer dedicated CSS custom properties over `calc()` expressions for variant
+  values. Instead of `calc(var(--base-width) + 1px)`, define `--base-width-md`
+  directly.
+</Guideline>
+
 <Guideline type="dont">
   Use magic numbers directly in property values — always reference a design
   token or component variable.
 </Guideline>
+
+<Guideline type="dont">
+  Use `calc()` expressions for simple size variations — define separate custom
+  properties for each variant size.
+</Guideline>
+
+### Styling with SCSS
+
+All components in the Zen Design System should use SCSS (`.scss` files) for styling. SCSS provides essential features for building maintainable, responsive components.
+
+**Required SCSS Features:**
+
+1. **Responsive Prop Mixins** - Use the `responsive-prop` mixin to automatically generate all media queries and fallback chains for responsive props:
+
+```scss
+@use '../../styles/mixins/responsive' as *;
+
+.zen-component {
+  /* Base styles */
+}
+
+/* Automatically generates all breakpoints and fallback chains */
+@include responsive-prop('zen-component', 'padding', 'padding');
+@include responsive-prop('zen-component', 'gap', 'gap');
+```
+
+The mixin automatically generates:
+
+- Base styles (no media query)
+- Media queries for each breakpoint (xs, sm, md, lg)
+- Properly nested `var()` fallback chains for each breakpoint
+
+2. **SCSS Variables** - Use SCSS variables from the design system for breakpoints and other shared values:
+
+```scss
+@use '../../styles/variables/breakpoints' as bp;
+
+@media (min-width: bp.$breakpoints-sm) {
+  /* Custom responsive styles if needed */
+}
+```
+
+3. **Nesting** - Use SCSS nesting to organize related styles:
+
+```scss
+.zen-component {
+  /* Base styles */
+
+  &:hover {
+    /* Hover styles */
+  }
+
+  &--variant {
+    /* Variant styles */
+  }
+}
+```
+
+**When to Use SCSS Mixins vs Manual CSS:**
+
+**Use the `responsive-prop` mixin** for all responsive props:
+
+```scss
+/* ✅ Use mixin - automatically generates all breakpoints */
+@include responsive-prop('zen-component', 'padding', 'padding');
+@include responsive-prop('zen-component', 'gap', 'gap');
+```
+
+**Write manual CSS** only for:
+
+- Non-responsive styles (base component styles, variants, states)
+- Custom responsive behavior that doesn't fit the standard pattern
+- camelCase prop names that need manual handling (see Responsive Props section)
+
+**Example: Manual CSS for camelCase props:**
+
+```scss
+@use '../../styles/variables/breakpoints' as bp;
+@use 'sass:map';
+
+/* For camelCase prop names, write CSS manually */
+.zen-component[data-has-responsive-grid-template-areas='true'] {
+  grid-template-areas: var(--component-gridTemplateAreas-base);
+}
+
+@media (min-width: map.get(bp.$breakpoints, 'xs')) {
+  /* --breakpoint-xs: 480px */
+  .zen-component[data-has-responsive-grid-template-areas='true'] {
+    grid-template-areas: var(
+      --component-gridTemplateAreas-xs,
+      var(--component-gridTemplateAreas-base)
+    );
+  }
+}
+
+@media (min-width: map.get(bp.$breakpoints, 'sm')) {
+  /* --breakpoint-sm: 640px */
+  .zen-component[data-has-responsive-grid-template-areas='true'] {
+    grid-template-areas: var(
+      --component-gridTemplateAreas-sm,
+      var(
+        --component-gridTemplateAreas-xs,
+        var(--component-gridTemplateAreas-base)
+      )
+    );
+  }
+}
+
+@media (min-width: map.get(bp.$breakpoints, 'md')) {
+  /* --breakpoint-md: 1024px */
+  .zen-component[data-has-responsive-grid-template-areas='true'] {
+    grid-template-areas: var(
+      --component-gridTemplateAreas-md,
+      var(
+        --component-gridTemplateAreas-sm,
+        var(
+          --component-gridTemplateAreas-xs,
+          var(--component-gridTemplateAreas-base)
+        )
+      )
+    );
+  }
+}
+
+@media (min-width: map.get(bp.$breakpoints, 'lg')) {
+  /* --breakpoint-lg: 1280px */
+  .zen-component[data-has-responsive-grid-template-areas='true'] {
+    grid-template-areas: var(
+      --component-gridTemplateAreas-lg,
+      var(
+        --component-gridTemplateAreas-md,
+        var(
+          --component-gridTemplateAreas-sm,
+          var(
+            --component-gridTemplateAreas-xs,
+            var(--component-gridTemplateAreas-base)
+          )
+        )
+      )
+    );
+  }
+}
+```
+
+**SCSS File Organization:**
+
+Structure your SCSS file with clear sections:
+
+```scss
+/* ============================================
+   COMPONENT NAME
+   ============================================ */
+
+@use '../../styles/mixins/responsive' as *;
+
+.zen-component {
+  /* Base styles */
+}
+
+/* ----------------------------------------
+   RESPONSIVE PROPS
+   ---------------------------------------- */
+
+@include responsive-prop('zen-component', 'padding', 'padding');
+@include responsive-prop('zen-component', 'gap', 'gap');
+
+/* ----------------------------------------
+   VARIANTS
+   ---------------------------------------- */
+
+.zen-component--primary {
+  /* Variant styles */
+}
+
+.zen-component--secondary {
+  /* Variant styles */
+}
+```
+
+The mixin automatically generates:
+
+- Base styles (no media query)
+- Media queries for each breakpoint (xs, sm, md, lg)
+- Properly nested `var()` fallback chains for each breakpoint
+
+### CSS Custom Property Naming Conventions
+
+CSS custom properties follow a consistent naming pattern:
+
+**Pattern:**
+
+```
+--{componentName}-{propName}-{breakpoint}
+```
+
+**Examples:**
+
+- `--box-padding-base` (component: box, prop: padding, breakpoint: base)
+- `--flex-gap-sm` (component: flex, prop: gap, breakpoint: sm)
+- `--grid-columns-lg` (component: grid, prop: columns, breakpoint: lg)
+
+**Rules:**
+
+- Component name: lowercase, no hyphens (e.g., `box`, `flex`, `grid`)
+- Prop name: matches the prop name exactly (camelCase preserved for camelCase props)
+- Breakpoint: one of `base`, `xs`, `sm`, `md`, `lg`
+
+**For camelCase props:**
+
+- CSS custom property keeps camelCase: `--component-gridTemplateAreas-base`
+- Data attribute uses kebab-case: `data-has-responsive-grid-template-areas`
+
+### Data Attributes for Conditional CSS
+
+Data attributes enable CSS rules to apply only when responsive props are actually used:
+
+```css
+/* Only applies when responsive padding is used */
+.zen-component[data-has-responsive-padding='true'] {
+  padding: var(--component-padding-base);
+}
+```
+
+**Why this matters:**
+
+- Prevents undefined CSS variable warnings
+- Only applies responsive styles when needed
+- Allows CSS to work with both simple and responsive prop values
+
+**Pattern:**
+
+```scss
+@use '../../styles/variables/breakpoints' as bp;
+@use 'sass:map';
+
+/* Base rule - only applies with data attribute */
+.zen-component[data-has-responsive-{prop-name}='true'] {
+  {css-property}: var(--{component-name}-{prop-name}-base);
+}
+
+/* Media queries - only apply with data attribute */
+@media (min-width: map.get(bp.$breakpoints, 'sm')) {
+  /* --breakpoint-sm: 640px */
+  .zen-component[data-has-responsive-{prop-name}='true'] {
+    {css-property}: var(
+      --{component-name}-{prop-name}-sm,
+      var(--{component-name}-{prop-name}-base)
+    );
+  }
+}
+```
+
+### Fallback Chains in CSS
+
+CSS custom properties use nested `var()` functions to create fallback chains that inherit from smaller breakpoints:
+
+```css
+/* At sm breakpoint, try sm first, then xs, then base */
+padding: var(
+  --component-padding-sm,
+  var(--component-padding-xs, var(--component-padding-base))
+);
+```
+
+**How fallback chains work:**
+
+1. Browser tries the first value (`--component-padding-sm`)
+2. If undefined, falls back to the second value (`--component-padding-xs`)
+3. If still undefined, falls back to the third value (`--component-padding-base`)
+
+**Pattern for each breakpoint:**
+
+- **base**: `var(--component-prop-base)`
+- **xs**: `var(--component-prop-xs, var(--component-prop-base))`
+- **sm**: `var(--component-prop-sm, var(--component-prop-xs, var(--component-prop-base)))`
+- **md**: `var(--component-prop-md, var(--component-prop-sm, var(--component-prop-xs, var(--component-prop-base))))`
+- **lg**: `var(--component-prop-lg, var(--component-prop-md, var(--component-prop-sm, var(--component-prop-xs, var(--component-prop-base)))))`
+
+This ensures that if a breakpoint value isn't set, it inherits from the previous breakpoint.
 
 ### Interactive States
 
@@ -589,9 +912,163 @@ Always define states in this order:
 
 ---
 
+## Constants Handling
+
+For components with multiple responsive props or complex CSS custom property usage, create a constants file to provide type safety and prevent typos.
+
+### When to Create Constants
+
+Create a constants file when:
+
+- Your component has many responsive props (3+)
+- You reference CSS custom properties in multiple places (component, tests, stories)
+- You want type safety when referencing CSS variable names
+- You have complex prop names that are easy to mistype
+
+**Simple components** may not need a constants file. Use constants when they add value.
+
+### Constants File Structure
+
+Create a `{ComponentName}Constants.ts` file in your component directory (e.g., `ShojiGridConstants.ts` or `shojiGridConstants.ts`):
+
+```tsx
+/**
+ * Typed constants for {ComponentName} CSS custom property names
+ * These constants prevent typos and provide type safety when referencing CSS variables
+ */
+
+// Padding constants
+export const {COMPONENT_NAME}_PADDING_BASE = '--{componentName}-padding-base'
+export const {COMPONENT_NAME}_PADDING_XS = '--{componentName}-padding-xs'
+export const {COMPONENT_NAME}_PADDING_SM = '--{componentName}-padding-sm'
+export const {COMPONENT_NAME}_PADDING_MD = '--{componentName}-padding-md'
+export const {COMPONENT_NAME}_PADDING_LG = '--{componentName}-padding-lg'
+
+// Gap constants
+export const {COMPONENT_NAME}_GAP_BASE = '--{componentName}-gap-base'
+export const {COMPONENT_NAME}_GAP_XS = '--{componentName}-gap-xs'
+export const {COMPONENT_NAME}_GAP_SM = '--{componentName}-gap-sm'
+export const {COMPONENT_NAME}_GAP_MD = '--{componentName}-gap-md'
+export const {COMPONENT_NAME}_GAP_LG = '--{componentName}-gap-lg'
+
+// For camelCase prop names, keep camelCase in constant name
+export const {COMPONENT_NAME}_GRID_TEMPLATE_AREAS_BASE =
+  '--{componentName}-gridTemplateAreas-base'
+export const {COMPONENT_NAME}_GRID_TEMPLATE_AREAS_XS =
+  '--{componentName}-gridTemplateAreas-xs'
+export const {COMPONENT_NAME}_GRID_TEMPLATE_AREAS_SM =
+  '--{componentName}-gridTemplateAreas-sm'
+export const {COMPONENT_NAME}_GRID_TEMPLATE_AREAS_MD =
+  '--{componentName}-gridTemplateAreas-md'
+export const {COMPONENT_NAME}_GRID_TEMPLATE_AREAS_LG =
+  '--{componentName}-gridTemplateAreas-lg'
+```
+
+### Naming Conventions
+
+**Constant names:**
+
+- Use `UPPER_SNAKE_CASE`
+- Prefix with component name in uppercase with underscores: `{COMPONENT_NAME}_` (e.g., `SHOJI_GRID_`, `BOX_`, `FLEX_`)
+- Use descriptive prop name: `PADDING`, `GAP`, `GRID_TEMPLATE_AREAS`
+- Include breakpoint: `BASE`, `XS`, `SM`, `MD`, `LG`
+
+**Examples:**
+
+- `{COMPONENT_NAME}_PADDING_BASE` → `'--{componentName}-padding-base'` (e.g., `SHOJI_GRID_COLUMNS_BASE` → `'--shoji-grid-columns-base'`)
+- `{COMPONENT_NAME}_GAP_MD` → `'--{componentName}-gap-md'` (e.g., `SHOJI_GRID_GAP_MD` → `'--shoji-grid-gap-md'`)
+- `{COMPONENT_NAME}_GRID_TEMPLATE_AREAS_SM` → `'--{componentName}-gridTemplateAreas-sm'` (e.g., `SHOJI_GRID_GRID_TEMPLATE_AREAS_SM` → `'--shoji-grid-gridTemplateAreas-sm'`)
+
+### Using Constants
+
+**In component files:**
+
+```tsx
+import { {COMPONENT_NAME}_PADDING_BASE, {COMPONENT_NAME}_GAP_MD } from './{ComponentName}Constants'
+
+// Use constants when you need to reference CSS custom properties
+const basePadding = getComputedStyle(element).getPropertyValue(
+  {COMPONENT_NAME}_PADDING_BASE,
+)
+```
+
+**In test files:**
+
+```tsx
+import { {COMPONENT_NAME}_PADDING_BASE, {COMPONENT_NAME}_GAP_MD } from './{ComponentName}Constants'
+
+it('should set correct CSS custom properties', () => {
+  const { container } = render(
+    <ComponentName padding={{ base: 'sm', md: 'lg' }} />,
+  )
+  const element = container.querySelector('.zen-component') as HTMLElement
+
+  const baseValue = getComputedStyle(element).getPropertyValue(
+    {COMPONENT_NAME}_PADDING_BASE,
+  )
+  expect(baseValue.trim()).toBe('var(--space-2)')
+})
+```
+
+**In CSS/SCSS files:**
+
+Constants are TypeScript-only. In CSS, use the string values directly:
+
+```scss
+.zen-component[data-has-responsive-padding='true'] {
+  padding: var(--component-padding-base); // Use string directly in CSS
+}
+```
+
+### Benefits
+
+**Type Safety:**
+
+- TypeScript will catch typos at compile time
+- IDE autocomplete helps find the right constant
+- Refactoring is safer (rename constant, not strings)
+
+**Maintainability:**
+
+- Single source of truth for CSS custom property names
+- Easy to find all usages of a CSS variable
+- Clear documentation of which CSS variables exist
+
+**Example without constants (error-prone):**
+
+```tsx
+// Easy to make typos
+const value = getComputedStyle(el).getPropertyValue('--component-paddng-base') // typo!
+```
+
+**Example with constants (type-safe):**
+
+```tsx
+// TypeScript catches the error
+const value = getComputedStyle(el).getPropertyValue(COMPONENT_PADDNG_BASE) // Error: doesn't exist
+```
+
+### Integration with Responsive Props
+
+Constants work seamlessly with responsive props. The constants represent the CSS custom property names that `processResponsiveProps` generates:
+
+```tsx
+// TypeScript generates these CSS custom properties:
+processResponsiveProps('component', {
+  padding: normalizeResponsivePadding(padding),
+})
+// Generates: --component-padding-base, --component-padding-xs, etc.
+
+// Constants provide type-safe access to these names:
+import { {COMPONENT_NAME}_PADDING_BASE } from './{ComponentName}Constants'
+const value = getComputedStyle(element).getPropertyValue({COMPONENT_NAME}_PADDING_BASE)
+```
+
+---
+
 ## Responsive Props
 
-Zen Design supports responsive props, allowing any visual prop to accept different values at different breakpoints. This enables components to adapt seamlessly to different screen sizes without writing custom CSS.
+All visual props in Zen Design should be responsive, allowing them to accept different values at different breakpoints. This enables components to adapt seamlessly to different screen sizes without writing custom CSS.
 
 ### Understanding Responsive Props
 
@@ -609,7 +1086,7 @@ See the [Breakpoints documentation](/docs/foundations-breakpoints--docs) for com
 
 ### Making Props Responsive
 
-To make a prop responsive, use the `Responsive<T>` type:
+All visual props should use the `Responsive<T>` type to support responsive values:
 
 ```tsx
 import type { Responsive } from '../../utils/Responsive'
@@ -636,11 +1113,14 @@ import { processResponsiveProps } from '../../utils/responsiveProps'
 
 #### 2. Normalize Values (if needed)
 
-If your prop accepts a union type that needs conversion to CSS values, create a normalization function:
+If your prop accepts a union type that needs conversion to CSS values, you need to normalize it. Use the `createNormalizeResponsive` utility to create a normalization function:
 
 ```tsx
+import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
+
 type ComponentGap = 'none' | 'xs' | 'sm' | 'md' | 'lg'
 
+// First, create a function that converts a single value to CSS
 function gapToCSS(gap: ComponentGap): string {
   const mapping: Record<ComponentGap, string> = {
     none: '0',
@@ -652,23 +1132,41 @@ function gapToCSS(gap: ComponentGap): string {
   return mapping[gap]
 }
 
-function normalizeResponsiveGap(
-  value: Responsive<ComponentGap> | undefined,
-): Responsive<string> | undefined {
-  if (value === undefined) return undefined
+// Then use createNormalizeResponsive to create the responsive normalization function
+const normalizeResponsiveGap = createNormalizeResponsive(gapToCSS)
+```
 
-  if (isResponsiveObject(value)) {
-    const normalized: ResponsiveObject<string> = {}
-    if (value.base !== undefined) normalized.base = gapToCSS(value.base)
-    if (value.xs !== undefined) normalized.xs = gapToCSS(value.xs)
-    if (value.sm !== undefined) normalized.sm = gapToCSS(value.sm)
-    if (value.md !== undefined) normalized.md = gapToCSS(value.md)
-    if (value.lg !== undefined) normalized.lg = gapToCSS(value.lg)
-    return normalized
-  }
+**When to use normalization:**
 
-  return gapToCSS(value)
+- **Use normalization** when your prop accepts semantic values (like `'sm'`, `'md'`, `'lg'`) that need to be converted to CSS values (like `'var(--space-2)'`)
+- **Skip normalization** when your prop already accepts CSS values directly (like `string` for `gridTemplateRows`)
+
+**Example without normalization (direct CSS values):**
+
+```tsx
+// For props that accept CSS values directly, no normalization needed
+export interface ComponentNameProps {
+  gridTemplateRows?: Responsive<string> // Already a CSS value
 }
+
+// In component:
+const responsiveStyles = processResponsiveProps('component', {
+  gridTemplateRows: gridTemplateRows, // Use directly
+})
+```
+
+**Example with normalization (semantic values):**
+
+```tsx
+// For props that accept semantic values, normalize first
+export interface ComponentNameProps {
+  gap?: Responsive<'none' | 'sm' | 'md'> // Semantic values
+}
+
+// In component:
+const responsiveStyles = processResponsiveProps('component', {
+  gap: normalizeResponsiveGap(gap), // Normalize first
+})
 ```
 
 #### 3. Process Responsive Props
@@ -676,21 +1174,38 @@ function normalizeResponsiveGap(
 In your component, process responsive props and generate CSS custom properties:
 
 ```tsx
+import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
+
 export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
-  ({ padding, gap, className = '', style, children, ...props }, ref) => {
+  (
+    {
+      padding,
+      gap,
+      gridTemplateAreas,
+      className = '',
+      style,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     // Process responsive props to CSS custom properties
     const responsiveStyles = processResponsiveProps('component', {
       padding: normalizeResponsivePadding(padding),
       gap: normalizeResponsiveGap(gap),
+      gridTemplateAreas:
+        normalizeResponsiveGridTemplateAreas(gridTemplateAreas),
     })
 
-    // Add data attributes to enable CSS rules conditionally
-    const dataAttributes: Record<string, string> = {}
-    if (padding && isResponsiveObject(padding)) {
-      dataAttributes['data-has-responsive-padding'] = 'true'
-    }
-    if (gap && isResponsiveObject(gap)) {
-      dataAttributes['data-has-responsive-gap'] = 'true'
+    // Generate data attributes automatically using the utility
+    const dataAttributes = generateResponsiveDataAttributes({
+      padding,
+      gap,
+    })
+
+    // For camelCase prop names, manually add data attributes using kebab-case
+    if (gridTemplateAreas && isResponsiveObject(gridTemplateAreas)) {
+      dataAttributes['data-has-responsive-grid-template-areas'] = 'true'
     }
 
     return (
@@ -708,27 +1223,143 @@ export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
 )
 ```
 
+**Handling camelCase prop names:**
+
+When your prop name is camelCase (like `gridTemplateAreas`), the CSS custom property will use the camelCase name, but data attributes should use kebab-case:
+
+```tsx
+// CSS custom property: --component-gridTemplateAreas-base (keeps camelCase)
+// Data attribute: data-has-responsive-grid-template-areas (use kebab-case directly)
+
+if (gridTemplateAreas && isResponsiveObject(gridTemplateAreas)) {
+  dataAttributes['data-has-responsive-grid-template-areas'] = 'true'
+  // Results in: data-has-responsive-grid-template-areas="true"
+}
+```
+
+#### 3.5. Custom Processing Functions for Special Props
+
+Sometimes a prop needs special handling beyond normalization. For example, a `columns` prop that accepts both numbers and special values like `'auto-fill'` or `'auto-fit'` may need custom conversion logic.
+
+**When to create a custom processing function:**
+
+- Your prop accepts multiple types that need different conversion logic (e.g., `number | 'auto-fill' | 'auto-fit'`)
+- The conversion logic is more complex than a simple mapping
+- You need to generate CSS custom properties with a different pattern than `processResponsiveProps` provides
+
+**Example: Custom processing for columns prop**
+
+```tsx
+type ComponentColumns = number | 'auto-fill' | 'auto-fit'
+
+/**
+ * Convert ComponentColumns to grid-template-columns CSS value
+ */
+function columnsToCSS(columns: ComponentColumns): string {
+  if (typeof columns === 'number') {
+    return `repeat(${columns}, 1fr)`
+  }
+  return `repeat(${columns}, minmax(200px, 1fr))`
+}
+
+/**
+ * Process responsive columns into CSS custom properties
+ * This is a custom function because columns needs special conversion logic
+ */
+function processResponsiveColumns(
+  columns: Responsive<ComponentColumns> | undefined,
+): Record<string, string> {
+  const cssProps: Record<string, string> = {}
+
+  if (columns === undefined) return cssProps
+
+  if (isResponsiveObject(columns)) {
+    if (columns.base !== undefined) {
+      cssProps['--component-columns-base'] = columnsToCSS(columns.base)
+    }
+    for (const breakpoint of ['xs', 'sm', 'md', 'lg'] as const) {
+      if (columns[breakpoint] !== undefined) {
+        cssProps[`--component-columns-${breakpoint}`] = columnsToCSS(
+          columns[breakpoint],
+        )
+      }
+    }
+  } else {
+    cssProps['--component-columns-base'] = columnsToCSS(columns)
+  }
+
+  return cssProps
+}
+
+// In your component:
+const responsiveStyles = processResponsiveProps('component', {
+  gap: normalizeResponsiveGap(gap),
+  // ... other standard props
+})
+
+// Handle columns separately with custom processing
+if (!gridTemplateColumns) {
+  const columnsStyles = processResponsiveColumns(columns)
+  Object.assign(responsiveStyles, columnsStyles)
+}
+```
+
+**Guidelines for custom processing functions:**
+
+- Follow the same pattern as `processResponsiveProps`: handle both simple values and responsive objects
+- Generate CSS custom properties following the naming convention: `--{componentName}-{propName}-{breakpoint}`
+- Return a `Record<string, string>` that can be merged with other responsive styles
+- Only create custom functions when necessary - prefer normalization and `processResponsiveProps` when possible
+
 #### 4. Add CSS with Media Queries
 
-Create CSS rules that use CSS custom properties with fallback chains:
+Create CSS rules that use CSS custom properties with fallback chains. You can use SCSS mixins to generate this automatically, or write it manually in CSS.
+
+**Using SCSS Mixins (Recommended):**
+
+If you're using SCSS, use the `responsive-prop` mixin to generate all media queries and fallback chains automatically:
+
+```scss
+@use '../../styles/mixins/responsive' as *;
+
+.zen-component {
+  /* Base component styles */
+}
+
+/* Responsive padding - automatically generates all breakpoints and fallback chains */
+@include responsive-prop('zen-component', 'padding', 'padding');
+
+/* Responsive gap */
+@include responsive-prop('zen-component', 'gap', 'gap');
+```
+
+The mixin automatically generates:
+
+- Base styles (no media query)
+- Media queries for each breakpoint (xs, sm, md, lg)
+- Properly nested `var()` fallback chains for each breakpoint
+
+**Manual CSS (if not using SCSS):**
+
+If you're using plain CSS, write the media queries manually:
 
 ```css
 /* Responsive padding */
 /* Only applies when data-has-responsive-padding attribute is present */
-.component[data-has-responsive-padding='true'] {
+.zen-component[data-has-responsive-padding='true'] {
   padding: var(--component-padding-base);
 }
 
 @media (min-width: 480px) {
   /* --breakpoint-xs: 480px */
-  .component[data-has-responsive-padding='true'] {
+  .zen-component[data-has-responsive-padding='true'] {
     padding: var(--component-padding-xs, var(--component-padding-base));
   }
 }
 
 @media (min-width: 640px) {
   /* --breakpoint-sm: 640px */
-  .component[data-has-responsive-padding='true'] {
+  .zen-component[data-has-responsive-padding='true'] {
     padding: var(
       --component-padding-sm,
       var(--component-padding-xs, var(--component-padding-base))
@@ -738,7 +1369,7 @@ Create CSS rules that use CSS custom properties with fallback chains:
 
 @media (min-width: 1024px) {
   /* --breakpoint-md: 1024px */
-  .component[data-has-responsive-padding='true'] {
+  .zen-component[data-has-responsive-padding='true'] {
     padding: var(
       --component-padding-md,
       var(
@@ -751,7 +1382,7 @@ Create CSS rules that use CSS custom properties with fallback chains:
 
 @media (min-width: 1280px) {
   /* --breakpoint-lg: 1280px */
-  .component[data-has-responsive-padding='true'] {
+  .zen-component[data-has-responsive-padding='true'] {
     padding: var(
       --component-padding-lg,
       var(
@@ -766,15 +1397,56 @@ Create CSS rules that use CSS custom properties with fallback chains:
 }
 ```
 
+**For camelCase prop names in SCSS:**
+
+When using camelCase prop names (like `gridTemplateAreas`), write the CSS manually since the mixin expects kebab-case:
+
+```scss
+/* Responsive grid-template-areas (camelCase prop name) */
+.zen-component[data-has-responsive-grid-template-areas='true'] {
+  grid-template-areas: var(--component-gridTemplateAreas-base);
+}
+
+@media (min-width: 480px) {
+  .zen-component[data-has-responsive-grid-template-areas='true'] {
+    grid-template-areas: var(
+      --component-gridTemplateAreas-xs,
+      var(--component-gridTemplateAreas-base)
+    );
+  }
+}
+
+/* ... continue for other breakpoints */
+```
+
 ### Key Implementation Details
 
 **1. Data Attributes**
 
-Always add data attributes when responsive props are used. This ensures CSS rules only apply when the CSS custom properties actually exist, preventing undefined variable warnings:
+Always add data attributes when responsive props are used. This ensures CSS rules only apply when the CSS custom properties actually exist, preventing undefined variable warnings.
+
+**Using the utility (recommended):**
 
 ```tsx
+import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
+
+// Automatically generates data attributes for all responsive props
+const dataAttributes = generateResponsiveDataAttributes({
+  padding,
+  gap,
+  columns,
+})
+```
+
+**Manual approach (for camelCase props or custom logic):**
+
+```tsx
+const dataAttributes: Record<string, string> = {}
 if (padding && isResponsiveObject(padding)) {
   dataAttributes['data-has-responsive-padding'] = 'true'
+}
+if (gap && isResponsiveObject(gap)) {
+  dataAttributes['data-has-responsive-gap'] = 'true'
 }
 ```
 
@@ -806,12 +1478,14 @@ padding: var(
 
 **4. Component Name Parameter**
 
-The first parameter to `processResponsiveProps` should be the component name (lowercase, no hyphens):
+The first parameter to `processResponsiveProps` should be the component name (lowercase, kebab-case with hyphens allowed for multi-word components):
 
 ```tsx
-processResponsiveProps('box', { padding: ... })      // ✅ Correct
-processResponsiveProps('zen-box', { padding: ... })  // ❌ Wrong
-processResponsiveProps('Box', { padding: ... })      // ❌ Wrong
+processResponsiveProps('box', { padding: ... })        // ✅ Correct (single word)
+processResponsiveProps('shoji-grid', { gap: ... })     // ✅ Correct (multi-word, kebab-case)
+processResponsiveProps('zen-box', { padding: ... })    // ❌ Wrong (includes 'zen-' prefix)
+processResponsiveProps('Box', { padding: ... })        // ❌ Wrong (capitalized)
+processResponsiveProps('shojiGrid', { gap: ... })     // ❌ Wrong (camelCase, should be kebab-case)
 ```
 
 ### Backward Compatibility
@@ -824,14 +1498,155 @@ Responsive props maintain backward compatibility with simple values. If a user p
 <Box padding={{ base: 'md' }} />
 ```
 
+#### Maintaining Class Names with Responsive Props
+
+When your component has existing CSS that relies on class names (e.g., variant styles, size modifiers), you should maintain class names for the base value even when using responsive props. This allows existing CSS rules to continue working:
+
+```tsx
+/**
+ * Get class name for a prop
+ * For responsive objects, returns the base value's class name
+ * For simple values, returns the value's class name
+ * This allows existing CSS (like variant styles) to work with responsive props
+ */
+function getGapClassName(
+  value: Responsive<ComponentGap> | undefined,
+): string | false {
+  if (!value) return false
+
+  if (isResponsiveObject(value)) {
+    // For responsive objects, use the base value for the class name
+    // This allows variant styles to work with responsive props at the base breakpoint
+    return value.base !== undefined ? `zen-component--gap-${value.base}` : false
+  }
+
+  return `zen-component--gap-${value}`
+}
+
+// In your component:
+const classNames = [
+  'zen-component',
+  getGapClassName(gap), // Always adds base class, even for responsive props
+  className,
+]
+  .filter(Boolean)
+  .join(' ')
+```
+
+**Why this matters:**
+
+- Existing CSS rules that target class names (e.g., `.zen-shoji-grid--gap-md`) continue to work
+- The base breakpoint uses the class name, while responsive breakpoints use CSS custom properties
+- You can add data attributes for breakpoint-specific values to enable more complex CSS rules
+
+**When to use breakpoint-specific data attributes:**
+
+Breakpoint-specific data attributes (e.g., `data-gap-base`, `data-gap-md`) are useful when:
+
+- You need CSS rules that vary based on the specific breakpoint value (not just whether it's responsive)
+- You want to write CSS that targets specific prop values at specific breakpoints
+- Your component has variant styles that need to respond to breakpoint-specific prop values
+- You need to create complex CSS selectors that combine breakpoint data attributes with other selectors
+
+**Example: Using breakpoint-specific data attributes**
+
+```tsx
+// Add data attributes for breakpoint-specific values
+if (gap && isResponsiveObject(gap)) {
+  dataAttributes['data-has-responsive-gap'] = 'true'
+  if (gap.base !== undefined) {
+    dataAttributes['data-gap-base'] = gap.base
+  }
+  if (gap.xs !== undefined) {
+    dataAttributes['data-gap-xs'] = gap.xs
+  }
+  if (gap.sm !== undefined) {
+    dataAttributes['data-gap-sm'] = gap.sm
+  }
+  if (gap.md !== undefined) {
+    dataAttributes['data-gap-md'] = gap.md
+  }
+  if (gap.lg !== undefined) {
+    dataAttributes['data-gap-lg'] = gap.lg
+  }
+}
+```
+
+This enables CSS rules like:
+
+```css
+/* Apply different frame widths based on gap value at md breakpoint */
+.zen-component[data-has-responsive-gap='true'][data-gap-md='md'] {
+  --frame-width: var(--frame-width-md);
+}
+```
+
+This pattern allows you to write CSS that works with both class names and responsive props. **Prefer defining dedicated CSS custom properties instead of using `calc()` expressions:**
+
+```css
+/* Define all size variants as custom properties in the base variant */
+.component--variant {
+  --frame-width: 3px;
+  --frame-width-md: 4px;
+  --frame-width-lg: 5px;
+  --frame-width-xl: 6px;
+}
+
+/* Works with class name (base breakpoint) */
+.component--variant.component--gap-md {
+  gap: var(--frame-width-md);
+}
+
+/* Works with responsive props (all breakpoints) */
+.component--variant[data-has-responsive-gap='true'][data-gap-md='md'] {
+  gap: var(--frame-width-md);
+}
+```
+
+This approach makes values easier to customize, reduces computation, and improves maintainability compared to using `calc()` expressions.
+
+**5. TypeScript Constants for CSS Custom Properties**
+
+For complex components with many responsive props, consider creating a constants file with typed CSS custom property names. This prevents typos and provides type safety:
+
+```tsx
+// {ComponentName}Constants.ts
+export const {COMPONENT_NAME}_PADDING_BASE = '--{componentName}-padding-base'
+export const {COMPONENT_NAME}_PADDING_XS = '--{componentName}-padding-xs'
+export const {COMPONENT_NAME}_PADDING_SM = '--{componentName}-padding-sm'
+export const {COMPONENT_NAME}_PADDING_MD = '--{componentName}-padding-md'
+export const {COMPONENT_NAME}_PADDING_LG = '--{componentName}-padding-lg'
+
+export const {COMPONENT_NAME}_GAP_BASE = '--{componentName}-gap-base'
+export const {COMPONENT_NAME}_GAP_XS = '--{componentName}-gap-xs'
+// ... etc
+```
+
+Then use these constants when referencing CSS custom properties in your code:
+
+```tsx
+// In component or test files
+const baseValue = getComputedStyle(element).getPropertyValue(
+  {COMPONENT_NAME}_PADDING_BASE,
+)
+```
+
+**Note for Compound Components:** When sub-components extend other component props (like `BoxProps`), they should use the parent component's CSS prefix in `processResponsiveProps`. For example, a `GridCell` component that extends `BoxProps` should use `'box'` as the prefix, allowing it to reuse Box CSS rules.
+
 ### Best Practices
 
 <Guideline type="do">
-  Make layout and spacing props responsive (padding, margin, gap, columns, etc.)
+  Make all visual props responsive (padding, margin, gap, columns, sizes, etc.)
 </Guideline>
 
 <Guideline type="do">
   Use data attributes to conditionally apply CSS rules
+</Guideline>
+
+<Guideline type="do">
+  Define dedicated CSS custom properties for size variants instead of using
+  `calc()` expressions (e.g., `--component-size-md: 4px` instead of
+  `calc(var(--component-size) + 1px)`)
 </Guideline>
 
 <Guideline type="do">
@@ -843,7 +1658,396 @@ Responsive props maintain backward compatibility with simple values. If a user p
 </Guideline>
 
 <Guideline type="dont">
-  Create responsive props for props that don't benefit from breakpoint changes
+  Create responsive props for non-visual props (event handlers, refs, children,
+  etc.)
+</Guideline>
+
+---
+
+## Testing
+
+Comprehensive testing ensures your component works correctly across all scenarios. Use Vitest and React Testing Library for component testing.
+
+### Testing Framework Setup
+
+**Required dependencies:**
+
+```json
+{
+  "devDependencies": {
+    "vitest": "^1.0.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.0.0"
+  }
+}
+```
+
+**Test file structure:**
+
+Create a `ComponentName.test.tsx` file in your component directory:
+
+```tsx
+import { describe, it, expect } from 'vitest'
+import { render } from '@testing-library/react'
+import { ComponentName } from './ComponentName'
+
+describe('ComponentName', () => {
+  // Test cases here
+})
+```
+
+### What to Test
+
+#### 1. Component Rendering
+
+Test that your component renders correctly with basic props:
+
+```tsx
+it('should render with children', () => {
+  const { getByText } = render(<ComponentName>Test Content</ComponentName>)
+  expect(getByText('Test Content')).toBeInTheDocument()
+})
+
+it('should render with default props', () => {
+  const { container } = render(<ComponentName />)
+  const element = container.querySelector('.zen-component')
+  expect(element).toBeInTheDocument()
+})
+```
+
+#### 2. CSS Custom Properties
+
+Test that responsive props generate the correct CSS custom properties:
+
+```tsx
+it('should set correct CSS custom properties for responsive props', () => {
+  const { container } = render(
+    <ComponentName padding={{ base: 'sm', md: 'lg' }} />,
+  )
+  const element = container.querySelector('.zen-component') as HTMLElement
+
+  // Check base value
+  const baseValue = getComputedStyle(element).getPropertyValue(
+    '--component-padding-base',
+  )
+  expect(baseValue.trim()).toBe('var(--space-2)')
+
+  // Check md value
+  const mdValue = getComputedStyle(element).getPropertyValue(
+    '--component-padding-md',
+  )
+  expect(mdValue.trim()).toBe('var(--space-6)')
+})
+```
+
+**Using constants (recommended):**
+
+```tsx
+import {
+  {COMPONENT_NAME}_PADDING_BASE,
+  {COMPONENT_NAME}_PADDING_MD,
+} from './{ComponentName}Constants'
+
+it('should set correct CSS custom properties', () => {
+  const { container } = render(
+    <ComponentName padding={{ base: 'sm', md: 'lg' }} />,
+  )
+  const element = container.querySelector('.zen-component') as HTMLElement
+
+  const baseValue = getComputedStyle(element).getPropertyValue(
+    {COMPONENT_NAME}_PADDING_BASE,
+  )
+  expect(baseValue.trim()).toBe('var(--space-2)')
+})
+```
+
+#### 3. Data Attributes
+
+Test that data attributes are set correctly for responsive props:
+
+```tsx
+it('should set data-has-responsive-padding attribute when using responsive padding', () => {
+  const { container } = render(
+    <ComponentName padding={{ base: 'sm', md: 'lg' }} />,
+  )
+  const element = container.querySelector('.zen-component')
+
+  expect(element).toHaveAttribute('data-has-responsive-padding', 'true')
+})
+
+it('should not set data attribute for simple (non-responsive) values', () => {
+  const { container } = render(<ComponentName padding="sm" />)
+  const element = container.querySelector('.zen-component')
+
+  expect(element).not.toHaveAttribute('data-has-responsive-padding')
+})
+```
+
+#### 4. Responsive Behavior
+
+Test that responsive props work correctly at different breakpoints:
+
+```tsx
+it('should apply correct values at base breakpoint', () => {
+  const { container } = render(<ComponentName gap={{ base: 'sm', md: 'md' }} />)
+  const element = container.querySelector('.zen-component') as HTMLElement
+
+  const baseValue = getComputedStyle(element).getPropertyValue(
+    '--component-gap-base',
+  )
+  expect(baseValue.trim()).toBe('var(--grid-gap-sm)')
+})
+
+it('should set breakpoint-specific values', () => {
+  const { container } = render(<ComponentName gap={{ base: 'sm', md: 'md' }} />)
+  const element = container.querySelector('.zen-component') as HTMLElement
+
+  const mdValue =
+    getComputedStyle(element).getPropertyValue('--component-gap-md')
+  expect(mdValue.trim()).toBe('var(--grid-gap-md)')
+})
+```
+
+#### 5. CSS Variable Resolution
+
+Test that CSS variables resolve correctly (when tokens are loaded):
+
+```tsx
+it('should have root-level tokens defined with correct values', () => {
+  const rootStyles = getComputedStyle(document.documentElement)
+
+  const spaceSm = rootStyles.getPropertyValue('--space-2')
+  const spaceLg = rootStyles.getPropertyValue('--space-6')
+
+  expect(spaceSm.trim()).toBe('0.5rem') // Adjust to your actual token values
+  expect(spaceLg.trim()).toBe('1.5rem')
+})
+
+it('should set component-level variables that reference root tokens', () => {
+  const { container } = render(
+    <ComponentName padding={{ base: 'sm', md: 'lg' }} />,
+  )
+  const element = container.querySelector('.zen-component') as HTMLElement
+  const elementStyles = getComputedStyle(element)
+
+  const baseValue = elementStyles.getPropertyValue('--component-padding-base')
+  expect(baseValue.trim()).toBe('var(--space-2)')
+
+  // Verify root token exists
+  const rootStyles = getComputedStyle(document.documentElement)
+  const rootSpaceSm = rootStyles.getPropertyValue('--space-2')
+  expect(rootSpaceSm.trim()).toBe('0.5rem')
+})
+```
+
+#### 6. Component Props and Variants
+
+Test that all props and variants work correctly:
+
+```tsx
+it('should apply variant class correctly', () => {
+  const { container } = render(<ComponentName variant="primary" />)
+  const element = container.querySelector('.zen-component')
+
+  expect(element).toHaveClass('zen-component--primary')
+})
+
+it('should apply size class correctly', () => {
+  const { container } = render(<ComponentName size="lg" />)
+  const element = container.querySelector('.zen-component')
+
+  expect(element).toHaveClass('zen-component--lg')
+})
+
+it('should handle disabled state', () => {
+  const { container } = render(<ComponentName disabled />)
+  const element = container.querySelector('.zen-component')
+
+  expect(element).toHaveAttribute('aria-disabled', 'true')
+})
+```
+
+#### 7. Normalization Functions
+
+Test that normalization functions convert values correctly:
+
+```tsx
+import { normalizeResponsiveGap } from './ComponentName'
+
+describe('normalizeResponsiveGap', () => {
+  it('should convert simple value to CSS', () => {
+    const result = normalizeResponsiveGap('sm')
+    expect(result).toBe('var(--grid-gap-sm)')
+  })
+
+  it('should convert responsive object to CSS values', () => {
+    const result = normalizeResponsiveGap({ base: 'sm', md: 'md' })
+    expect(result).toEqual({
+      base: 'var(--grid-gap-sm)',
+      md: 'var(--grid-gap-md)',
+    })
+  })
+
+  it('should return undefined for undefined input', () => {
+    const result = normalizeResponsiveGap(undefined)
+    expect(result).toBeUndefined()
+  })
+})
+```
+
+#### 8. Compound Components
+
+Test compound components (components with sub-components):
+
+```tsx
+it('should render compound component correctly', () => {
+  const { container } = render(
+    <ComponentName>
+      <ComponentName.Item>Item 1</ComponentName.Item>
+      <ComponentName.Item>Item 2</ComponentName.Item>
+    </ComponentName>,
+  )
+
+  const items = container.querySelectorAll('.zen-component-item')
+  expect(items).toHaveLength(2)
+})
+
+it('should apply props to sub-components', () => {
+  const { container } = render(
+    <ComponentName>
+      <ComponentName.Item area="header">Header</ComponentName.Item>
+    </ComponentName>,
+  )
+
+  const item = container.querySelector('.zen-component-item') as HTMLElement
+  const style = getComputedStyle(item)
+  expect(style.gridArea).toBe('header')
+})
+```
+
+### How to Test
+
+#### Testing CSS Custom Properties
+
+Use `getComputedStyle` to read CSS custom properties:
+
+```tsx
+const element = container.querySelector('.zen-component') as HTMLElement
+const styles = getComputedStyle(element)
+
+// Read a CSS custom property
+const paddingBase = styles.getPropertyValue('--component-padding-base')
+expect(paddingBase.trim()).toBe('var(--space-2)')
+```
+
+**Note:** In jsdom (Vitest's default environment), CSS variables don't fully resolve. You can verify that:
+
+- CSS custom properties are set correctly
+- Data attributes are present
+- The structure is correct
+
+For full CSS variable resolution testing, use a browser-based test environment or Storybook.
+
+#### Testing Data Attributes
+
+Use React Testing Library's `toHaveAttribute` matcher:
+
+```tsx
+expect(element).toHaveAttribute('data-has-responsive-padding', 'true')
+expect(element).toHaveAttribute('data-gap-base', 'sm')
+```
+
+#### Testing Responsive Behavior
+
+Test responsive behavior by verifying:
+
+1. CSS custom properties are set for each breakpoint
+2. Data attributes indicate responsive usage
+3. Fallback chains are structured correctly
+
+```tsx
+it('should have correct fallback chain structure', () => {
+  const { container } = render(<ComponentName gap={{ base: 'sm', md: 'md' }} />)
+  const element = container.querySelector('.zen-component') as HTMLElement
+
+  // Verify base is set
+  const base = getComputedStyle(element).getPropertyValue(
+    '--component-gap-base',
+  )
+  expect(base.trim()).toBe('var(--grid-gap-sm)')
+
+  // Verify md is set (will fallback to base if not set)
+  const md = getComputedStyle(element).getPropertyValue('--component-gap-md')
+  expect(md.trim()).toBe('var(--grid-gap-md)')
+
+  // Verify xs is not set (should be empty)
+  const xs = getComputedStyle(element).getPropertyValue('--component-gap-xs')
+  expect(xs.trim()).toBe('')
+})
+```
+
+#### Testing Utilities and Helpers
+
+Create helper functions for common test patterns:
+
+```tsx
+// test-utils.tsx
+export function getComponentStyles(container: HTMLElement, selector: string) {
+  const element = container.querySelector(selector) as HTMLElement
+  return getComputedStyle(element)
+}
+
+export function getCSSVariable(
+  container: HTMLElement,
+  selector: string,
+  variable: string,
+): string {
+  const styles = getComponentStyles(container, selector)
+  return styles.getPropertyValue(variable).trim()
+}
+
+// Usage in tests:
+it('should set padding correctly', () => {
+  const { container } = render(<ComponentName padding="sm" />)
+  const padding = getCSSVariable(
+    container,
+    '.zen-component',
+    '--component-padding-base',
+  )
+  expect(padding).toBe('var(--space-2)')
+})
+```
+
+### Testing Best Practices
+
+<Guideline type="do">
+  Test CSS custom properties are set correctly for responsive props
+</Guideline>
+
+<Guideline type="do">
+  Test data attributes are applied when responsive props are used
+</Guideline>
+
+<Guideline type="do">
+  Test normalization functions separately from component rendering
+</Guideline>
+
+<Guideline type="do">Test both simple and responsive prop values</Guideline>
+
+<Guideline type="do">
+  Use constants for CSS custom property names in tests
+</Guideline>
+
+<Guideline type="dont">
+  Test CSS variable resolution in jsdom (they don't fully resolve)
+</Guideline>
+
+<Guideline type="dont">
+  Test media query behavior in unit tests (use Storybook or browser tests)
+</Guideline>
+
+<Guideline type="dont">
+  Test implementation details - focus on behavior and output
 </Guideline>
 
 ---
@@ -1107,6 +2311,96 @@ export type {
 
 ---
 
+## Compound Components
+
+When a component has sub-components (e.g., `ComponentName.Item`), follow this pattern:
+
+### File Structure
+
+Extract sub-components to separate files when they:
+
+- Have their own props interface
+- Support responsive props independently
+- Are complex enough to warrant separation
+
+Example: `ComponentName` and `ComponentNameItem`
+
+```
+src/components/ComponentName/
+├── ComponentName.tsx          # Main ComponentName component
+├── ComponentNameItem.tsx     # ComponentName.Item sub-component
+├── ComponentName.css
+├── ComponentName.stories.tsx
+└── index.ts
+```
+
+### Implementation Pattern
+
+```tsx
+// ComponentNameItem.tsx
+export interface ComponentNameItemProps extends BoxProps {
+  area?: string
+  column?: string
+  row?: string
+}
+
+export const ComponentNameItem = forwardRef<
+  HTMLDivElement,
+  ComponentNameItemProps
+>(({ area, column, row, ...props }, ref) => {
+  // Implementation with responsive props support
+})
+
+ComponentNameItem.displayName = 'ComponentName.Item'
+
+// ComponentName.tsx
+import { ComponentNameItem } from './ComponentNameItem'
+
+const ComponentNameRoot = forwardRef<HTMLDivElement, ComponentNameProps>(
+  ({ ...props }, ref) => {
+    // Implementation
+  },
+)
+
+ComponentNameRoot.displayName = 'ComponentName'
+
+// Compound component pattern
+export const ComponentName = Object.assign(ComponentNameRoot, {
+  Item: ComponentNameItem,
+})
+```
+
+### Export Pattern
+
+```tsx
+// index.ts
+export { ComponentName } from './ComponentName'
+export type { ComponentNameProps, ... } from './ComponentName'
+export type { ComponentNameItemProps } from './ComponentNameItem'
+```
+
+### Responsive Props in Sub-Components
+
+Sub-components that extend other component props (like `FlexProps`) should:
+
+- Use the parent component's CSS prefix (e.g., 'flex' for components extending FlexProps)
+- Support all responsive props from the parent interface
+- Add data attributes for responsive props
+- Only add class names for non-responsive values
+
+```tsx
+// GridCell uses 'flex' prefix since it extends FlexProps
+const responsiveStyles = processResponsiveProps('flex', {
+  gap: normalizeResponsiveGap(gap),
+  direction: normalizeResponsiveDirection(direction),
+  // ... other flex props
+})
+```
+
+This allows sub-components to reuse the parent component's CSS rules while maintaining their own implementation.
+
+---
+
 ## Checklist
 
 Before submitting a new component, verify:
@@ -1184,6 +2478,100 @@ Before submitting a new component, verify:
         <li>Defines all interactive states</li>
         <li>Includes focus-visible styles</li>
         <li>Has disabled state with proper cursor</li>
+        <li>Uses SCSS mixins for responsive props (if using SCSS)</li>
+        <li>Data attributes conditionally apply CSS rules</li>
+        <li>CSS custom properties use proper naming conventions</li>
+      </ul>
+    </div>
+    <div>
+      <h4
+        style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Responsive Props
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: '1.25rem',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.8',
+        }}
+      >
+        <li>
+          Uses <code>Responsive&lt;T&gt;</code> type for responsive props
+        </li>
+        <li>Normalizes semantic values to CSS (if needed)</li>
+        <li>
+          Uses <code>processResponsiveProps</code> to generate CSS custom
+          properties
+        </li>
+        <li>Adds data attributes for responsive props</li>
+        <li>Handles camelCase prop names correctly</li>
+        <li>Maintains class names for backward compatibility</li>
+        <li>CSS includes fallback chains for all breakpoints</li>
+      </ul>
+    </div>
+    <div>
+      <h4
+        style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Constants
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: '1.25rem',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.8',
+        }}
+      >
+        <li>Constants file created (if component has 3+ responsive props)</li>
+        <li>
+          Constants use <code>UPPER_SNAKE_CASE</code> naming
+        </li>
+        <li>Constants match CSS custom property naming pattern</li>
+        <li>Constants exported for use in tests and component</li>
+      </ul>
+    </div>
+    <div>
+      <h4
+        style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: 'var(--font-size-sm)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Testing
+      </h4>
+      <ul
+        style={{
+          margin: 0,
+          paddingLeft: '1.25rem',
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.8',
+        }}
+      >
+        <li>Test file created with component tests</li>
+        <li>Tests component rendering</li>
+        <li>Tests CSS custom properties are set correctly</li>
+        <li>Tests data attributes are applied</li>
+        <li>Tests responsive prop behavior</li>
+        <li>Tests normalization functions (if applicable)</li>
+        <li>Tests component variants and props</li>
       </ul>
     </div>
     <div>
@@ -1251,3 +2639,8 @@ Before submitting a new component, verify:
     </div>
   </div>
 </div>
+
+**Note:** Not all checklist items apply to every component. Use your judgment based on component complexity. For example:
+
+- Simple components may not need constants files
+- All components should have tests, but complexity varies

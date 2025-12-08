@@ -144,3 +144,51 @@ export const Disabled: Story = {
   ),
 }
 
+/* ----------------------------------------
+   RESPONSIVE SIZE
+   ---------------------------------------- */
+
+export const ResponsiveSize: Story = {
+  name: 'Responsive Size',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-6)',
+        maxWidth: '320px',
+      }}
+    >
+      <div>
+        <p
+          style={{
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+            marginBottom: 'var(--space-2)',
+          }}
+        >
+          Resize the viewport to see the size change:
+        </p>
+        <TextInput
+          size={{ base: 'sm', md: 'lg' }}
+          placeholder="Small on mobile, large on desktop"
+        />
+      </div>
+      <div>
+        <p
+          style={{
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+            marginBottom: 'var(--space-2)',
+          }}
+        >
+          Different breakpoint values:
+        </p>
+        <TextInput
+          size={{ base: 'sm', sm: 'md', lg: 'lg' }}
+          placeholder="Responsive across breakpoints"
+        />
+      </div>
+    </div>
+  ),
+}

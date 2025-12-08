@@ -2,6 +2,8 @@
    FLEX COMPONENT
    ============================================ */
 
+@use '../../styles/mixins/responsive' as *;
+
 .zen-flex {
   display: flex;
 }
@@ -97,3 +99,13 @@
 .zen-flex--justify-around {
   justify-content: space-around;
 }
+
+/* ----------------------------------------
+   RESPONSIVE PROPS
+   ---------------------------------------- */
+
+@include responsive-prop('zen-flex', 'gap', 'gap');
+@include responsive-prop('zen-flex', 'direction', 'flex-direction');
+@include responsive-prop('zen-flex', 'align', 'align-items');
+@include responsive-prop('zen-flex', 'justify', 'justify-content');
+@include responsive-prop('zen-flex', 'wrap', 'flex-wrap');

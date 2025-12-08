@@ -1,0 +1,51 @@
+/**
+ * Utility functions for SCSS responsive utilities
+ */
+
+@use 'sass:string';
+@use 'sass:list';
+
+/**
+ * Extract CSS variable prefix from component class name
+ * Removes 'zen-' prefix if present (e.g., 'zen-grid' -> 'grid')
+ * 
+ * @param {string} $component-name - Component class name
+ * @return {string} CSS variable prefix
+ */
+@function get-var-prefix($component-name) {
+  @if string.index($component-name, 'zen-') == 1 {
+    @return string.slice($component-name, 5);
+  }
+  @return $component-name;
+}
+
+/**
+ * Generate a nested var() fallback chain for CSS custom properties
+ * 
+ * Only includes the immediate previous breakpoint, then base.
+ * This prevents referencing undefined breakpoints and creates cleaner fallback chains.
+ * 
+ * Example: generate-fallback-chain('grid', 'gap', 'sm')
+ * Returns: var(--grid-gap-xs, var(--grid-gap-base))
+ * 
+ * Example: generate-fallback-chain('grid', 'gap', 'md')
+ * Returns: var(--grid-gap-sm, var(--grid-gap-base))
+ * 
+ * @param {string} $component-name - Component name prefix
+ * @param {string} $prop-name - Property name
+ * @param {string} $current-bp - Current breakpoint name
+ * @return {string} Nested var() fallback chain
+ */
+@function generate-fallback-chain($component-name, $prop-name, $current-bp) {
+  $breakpoint-order: ('xs', 'sm', 'md', 'lg');
+  $current-index: list.index($breakpoint-order, $current-bp);
+  $chain: 'var(--#{$component-name}-#{$prop-name}-base)';
+
+  @if $current-index and $current-index > 1 {
+    // Only include the immediate previous breakpoint (not all previous breakpoints)
+    $previous-bp: list.nth($breakpoint-order, $current-index - 1);
+    $chain: 'var(--#{$component-name}-#{$prop-name}-#{$previous-bp}, #{$chain})';
+  }
+
+  @return string.unquote($chain);
+}

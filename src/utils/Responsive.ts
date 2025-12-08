@@ -49,3 +49,5 @@ export type MakeResponsive<P> = {
     ? Responsive<T>
     : Responsive<P[K]>
 }
+
+

@@ -18,11 +18,11 @@ const meta: Meta<typeof Icon> = {
     },
     size: {
       control: { type: 'number', min: 12, max: 64, step: 4 },
-      description: 'Size of the icon in pixels',
+      description: 'Size of the icon in pixels (supports responsive values)',
     },
     color: {
       control: 'color',
-      description: 'The color of the icon',
+      description: 'The color of the icon (supports responsive values)',
     },
     alt: {
       control: 'text',
@@ -255,6 +255,208 @@ export const UseCases: Story = {
           <Icon name="gear" size={24} />
           <Icon name="envelope" size={24} />
           <Icon name="bell" size={24} />
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+/* ----------------------------------------
+   RESPONSIVE PROPS
+   ---------------------------------------- */
+
+export const ResponsiveSize: Story = {
+  name: 'Responsive Size',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-6)',
+      }}
+    >
+      <div>
+        <h4
+          style={{
+            margin: '0 0 var(--space-3) 0',
+            fontSize: 'var(--font-size-sm)',
+            fontWeight: 'var(--font-weight-semibold)',
+            color: 'var(--color-text-secondary)',
+            textTransform: 'uppercase',
+            letterSpacing: 'var(--letter-spacing-wide)',
+          }}
+        >
+          Responsive Size (Resize viewport to see changes)
+        </h4>
+        <p
+          style={{
+            margin: '0 0 var(--space-4) 0',
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          Base: 20px, MD: 32px, LG: 48px
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            gap: 'var(--space-4)',
+            alignItems: 'center',
+          }}
+        >
+          <Icon name="check-circle" size={{ base: 20, md: 32, lg: 48 }} />
+          <Icon name="info" size={{ base: 20, md: 32, lg: 48 }} />
+          <Icon name="warning" size={{ base: 20, md: 32, lg: 48 }} />
+        </div>
+      </div>
+
+      <div>
+        <h4
+          style={{
+            margin: '0 0 var(--space-3) 0',
+            fontSize: 'var(--font-size-sm)',
+            fontWeight: 'var(--font-weight-semibold)',
+            color: 'var(--color-text-secondary)',
+            textTransform: 'uppercase',
+            letterSpacing: 'var(--letter-spacing-wide)',
+          }}
+        >
+          Responsive Size with String Values
+        </h4>
+        <p
+          style={{
+            margin: '0 0 var(--space-4) 0',
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          Base: 1rem, MD: 1.5rem, LG: 2rem
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            gap: 'var(--space-4)',
+            alignItems: 'center',
+          }}
+        >
+          <Icon
+            name="check-circle"
+            size={{ base: '1rem', md: '1.5rem', lg: '2rem' }}
+          />
+          <Icon name="info" size={{ base: '1rem', md: '1.5rem', lg: '2rem' }} />
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const ResponsiveColor: Story = {
+  name: 'Responsive Color',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-6)',
+      }}
+    >
+      <div>
+        <h4
+          style={{
+            margin: '0 0 var(--space-3) 0',
+            fontSize: 'var(--font-size-sm)',
+            fontWeight: 'var(--font-weight-semibold)',
+            color: 'var(--color-text-secondary)',
+            textTransform: 'uppercase',
+            letterSpacing: 'var(--letter-spacing-wide)',
+          }}
+        >
+          Responsive Color (Resize viewport to see changes)
+        </h4>
+        <p
+          style={{
+            margin: '0 0 var(--space-4) 0',
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          Base: currentColor, MD: var(--color-primary), LG:
+          var(--color-secondary)
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            gap: 'var(--space-4)',
+            alignItems: 'center',
+          }}
+        >
+          <Icon
+            name="check-circle"
+            size={32}
+            color={{
+              base: 'currentColor',
+              md: 'var(--color-primary)',
+              lg: 'var(--color-secondary)',
+            }}
+          />
+          <Icon
+            name="info"
+            size={32}
+            color={{
+              base: 'currentColor',
+              md: 'var(--color-info)',
+              lg: 'var(--color-success)',
+            }}
+          />
+        </div>
+      </div>
+
+      <div>
+        <h4
+          style={{
+            margin: '0 0 var(--space-3) 0',
+            fontSize: 'var(--font-size-sm)',
+            fontWeight: 'var(--font-weight-semibold)',
+            color: 'var(--color-text-secondary)',
+            textTransform: 'uppercase',
+            letterSpacing: 'var(--letter-spacing-wide)',
+          }}
+        >
+          Responsive Size and Color Combined
+        </h4>
+        <p
+          style={{
+            margin: '0 0 var(--space-4) 0',
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          Size: base 20px → md 32px, Color: base currentColor → md
+          var(--color-primary)
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            gap: 'var(--space-4)',
+            alignItems: 'center',
+          }}
+        >
+          <Icon
+            name="check-circle"
+            size={{ base: 20, md: 32 }}
+            color={{
+              base: 'currentColor',
+              md: 'var(--color-primary)',
+            }}
+          />
+          <Icon
+            name="warning"
+            size={{ base: 20, md: 32 }}
+            color={{
+              base: 'currentColor',
+              md: 'var(--color-warning)',
+            }}
+          />
         </div>
       </div>
     </div>
