@@ -42,7 +42,9 @@ import { Meta } from '@storybook/blocks';
 
 ## Philosophy
 
-Zen Design is a React component library built on the principles of **calm**, **clarity**, and **intentionality**. Inspired by the minimalist aesthetics of Japanese design and the warmth of natural materials, this system prioritizes user focus and reduces visual noise.
+Zen Design is a **strongly opinionated** React component library built on the principles of **calm**, **clarity**, and **intentionality**. Inspired by the minimalist aesthetics of Japanese design and the warmth of natural materials, this system prioritizes user focus and reduces visual noise.
+
+We make deliberate, thoughtful choices about typography, spacing, colors, and component design. Rather than offering endless customization options, we provide a curated set of tools that work together harmoniously. This opinionated approach ensures consistency, reduces decision fatigue, and helps you build applications that feel cohesive and intentional.
 
 <div style={{
   display: 'grid',
@@ -71,7 +73,7 @@ Zen Design is a React component library built on the principles of **calm**, **c
       margin: 0,
       fontSize: 'var(--font-size-sm)',
       color: 'var(--color-text-secondary)',
-      lineHeight: 'var(--line-height-normal)'
+      lineHeight: 'var(--line-height-body)'
     }}>Earthy browns and sage greens evoke the tranquility of nature.</p>
   </div>
 
@@ -108,7 +110,7 @@ Zen Design is a React component library built on the principles of **calm**, **c
       margin: 0,
       fontSize: 'var(--font-size-sm)',
       color: 'var(--color-text-secondary)',
-      lineHeight: 'var(--line-height-normal)',
+      lineHeight: 'var(--line-height-body)',
     }}
   >
     Every element serves a purpose. No visual clutter.
@@ -135,7 +137,7 @@ Zen Design is a React component library built on the principles of **calm**, **c
       margin: 0,
       fontSize: 'var(--font-size-sm)',
       color: 'var(--color-text-secondary)',
-      lineHeight: 'var(--line-height-normal)'
+      lineHeight: 'var(--line-height-body)'
     }}>Built with accessibility in mind from the ground up.</p>
   </div>
 </div>
@@ -244,6 +246,41 @@ Animations and transitions are gentle and purposeful. They guide without distrac
     backgroundColor: 'var(--color-surface)',
     borderRadius: 'var(--radius-md)',
     border: '1px solid var(--color-border-subtle)',
+    marginBottom: '1rem',
+  }}
+>
+  <div
+    style={{
+      fontFamily: 'var(--font-family-heading)',
+      fontSize: 'var(--font-size-3xl)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-text-primary)',
+      marginBottom: '0.5rem',
+      letterSpacing: 'var(--letter-spacing-wide)',
+    }}
+  >
+    Cormorant Garamond
+  </div>
+  <p
+    style={{
+      fontFamily: 'var(--font-family-sans)',
+      fontSize: 'var(--font-size-base)',
+      color: 'var(--color-text-secondary)',
+      margin: 0,
+      lineHeight: 'var(--line-height-body)',
+    }}
+  >
+    An elegant serif font for headings that adds sophistication and luxury.
+    Paired with generous letter spacing for uppercase text.
+  </p>
+</div>
+
+<div
+  style={{
+    padding: '1.5rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
     marginBottom: '1.5rem',
   }}
 >
@@ -256,7 +293,7 @@ Animations and transitions are gentle and purposeful. They guide without distrac
       marginBottom: '0.5rem',
     }}
   >
-    DM Sans
+    Lato
   </div>
   <p
     style={{
@@ -264,10 +301,12 @@ Animations and transitions are gentle and purposeful. They guide without distrac
       fontSize: 'var(--font-size-base)',
       color: 'var(--color-text-secondary)',
       margin: 0,
+      lineHeight: 'var(--line-height-body)',
     }}
   >
-    A geometric sans-serif with a friendly, approachable character. Perfect for
-    both headings and body text.
+    A clean, friendly sans-serif optimized for comfortable reading. Used for all
+    body text with a generous line height (1.75) that creates breathing room and
+    reduces visual density.
   </p>
 </div>
 

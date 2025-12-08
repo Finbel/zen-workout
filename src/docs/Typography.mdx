@@ -5,180 +5,316 @@ import { Meta } from '@storybook/blocks';
 
 # Typography
 
-Our typography system uses CSS custom properties for consistent, scalable text styling 
-across the design system.
+Our typography system uses CSS custom properties for consistent, scalable text styling
+across the design system. As a **strongly opinionated** design system, we've made deliberate
+choices about fonts, line heights, and letter spacing to create a calm, elegant reading experience
+that embodies the Zen aesthetic.
 
 export const TypeSample = ({ name, variable, size, weight, sample }) => (
-  <div style={{ 
-    padding: '1rem',
-    borderRadius: '0.5rem',
-    backgroundColor: 'var(--color-surface)',
-    border: '1px solid var(--color-border-subtle)',
-    marginBottom: '0.75rem'
-  }}>
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'space-between',
-      alignItems: 'baseline',
-      marginBottom: '0.5rem',
-      gap: '1rem'
-    }}>
-      <span style={{ 
-        fontWeight: 600, 
-        fontSize: '0.875rem',
-        color: 'var(--color-text-primary)'
-      }}>{name}</span>
-      <code style={{ 
-        fontSize: '0.75rem', 
-        color: 'var(--color-text-muted)',
-        fontFamily: 'var(--font-family-mono)'
-      }}>{variable} · {size}</code>
+  <div
+    style={{
+      padding: '1rem',
+      borderRadius: '0.5rem',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+      marginBottom: '0.75rem',
+    }}
+  >
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'baseline',
+        marginBottom: '0.5rem',
+        gap: '1rem',
+      }}
+    >
+      <span
+        style={{
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {name}
+      </span>
+      <code
+        style={{
+          fontSize: '0.75rem',
+          color: 'var(--color-text-muted)',
+          fontFamily: 'var(--font-family-mono)',
+        }}
+      >
+        {variable} · {size}
+      </code>
     </div>
-    <div style={{ 
-      fontSize: `var(${variable})`,
-      fontWeight: weight || 400,
-      color: 'var(--color-text-primary)',
-      lineHeight: 'var(--line-height-normal)'
-    }}>
+    <div
+      style={{
+        fontSize: `var(${variable})`,
+        fontWeight: weight || 400,
+        color: 'var(--color-text-primary)',
+        lineHeight: 'var(--line-height-body)',
+      }}
+    >
       {sample || 'The quick brown fox jumps over the lazy dog'}
     </div>
   </div>
-);
+)
 
 export const WeightSample = ({ name, variable, weight }) => (
-  <div style={{ 
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.5rem',
-    padding: '1rem',
-    borderRadius: '0.5rem',
-    backgroundColor: 'var(--color-surface)',
-    border: '1px solid var(--color-border-subtle)',
-    marginBottom: '0.5rem'
-  }}>
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1.5rem',
+      padding: '1rem',
+      borderRadius: '0.5rem',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+      marginBottom: '0.5rem',
+    }}
+  >
     <div style={{ width: '8rem' }}>
-      <div style={{ 
-        fontWeight: 600, 
-        fontSize: '0.875rem',
-        color: 'var(--color-text-primary)'
-      }}>{name}</div>
-      <code style={{ 
-        fontSize: '0.75rem', 
-        color: 'var(--color-text-muted)',
-        fontFamily: 'var(--font-family-mono)'
-      }}>{variable}</code>
+      <div
+        style={{
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {name}
+      </div>
+      <code
+        style={{
+          fontSize: '0.75rem',
+          color: 'var(--color-text-muted)',
+          fontFamily: 'var(--font-family-mono)',
+        }}
+      >
+        {variable}
+      </code>
     </div>
-    <div style={{ 
-      fontSize: '1.25rem',
-      fontWeight: `var(${variable})`,
-      color: 'var(--color-text-primary)'
-    }}>
+    <div
+      style={{
+        fontSize: '1.25rem',
+        fontWeight: `var(${variable})`,
+        color: 'var(--color-text-primary)',
+      }}
+    >
       Aa Bb Cc Dd Ee Ff Gg
     </div>
-    <code style={{ 
-      fontSize: '0.75rem', 
-      color: 'var(--color-text-muted)',
-      fontFamily: 'var(--font-family-mono)',
-      marginLeft: 'auto'
-    }}>{weight}</code>
+    <code
+      style={{
+        fontSize: '0.75rem',
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)',
+        marginLeft: 'auto',
+      }}
+    >
+      {weight}
+    </code>
   </div>
-);
+)
 
 export const LineHeightSample = ({ name, variable, value }) => (
-  <div style={{ 
-    display: 'flex',
-    gap: '1.5rem',
-    padding: '1rem',
-    borderRadius: '0.5rem',
-    backgroundColor: 'var(--color-surface)',
-    border: '1px solid var(--color-border-subtle)',
-    marginBottom: '0.5rem'
-  }}>
+  <div
+    style={{
+      display: 'flex',
+      gap: '1.5rem',
+      padding: '1rem',
+      borderRadius: '0.5rem',
+      backgroundColor: 'var(--color-surface)',
+      border: '1px solid var(--color-border-subtle)',
+      marginBottom: '0.5rem',
+    }}
+  >
     <div style={{ width: '8rem', flexShrink: 0 }}>
-      <div style={{ 
-        fontWeight: 600, 
-        fontSize: '0.875rem',
-        color: 'var(--color-text-primary)'
-      }}>{name}</div>
-      <code style={{ 
-        fontSize: '0.75rem', 
-        color: 'var(--color-text-muted)',
-        fontFamily: 'var(--font-family-mono)'
-      }}>{variable} · {value}</code>
+      <div
+        style={{
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {name}
+      </div>
+      <code
+        style={{
+          fontSize: '0.75rem',
+          color: 'var(--color-text-muted)',
+          fontFamily: 'var(--font-family-mono)',
+        }}
+      >
+        {variable} · {value}
+      </code>
     </div>
-    <div style={{ 
-      fontSize: '1rem',
-      lineHeight: `var(${variable})`,
-      color: 'var(--color-text-primary)',
-      flex: 1,
-      backgroundColor: 'var(--color-primary-subtle)',
-      padding: '0.5rem',
-      borderRadius: '0.25rem'
-    }}>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    <div
+      style={{
+        fontSize: '1rem',
+        lineHeight: `var(${variable})`,
+        color: 'var(--color-text-primary)',
+        flex: 1,
+        backgroundColor: 'var(--color-primary-subtle)',
+        padding: '0.5rem',
+        borderRadius: '0.25rem',
+      }}
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua.
     </div>
   </div>
-);
+)
 
 ---
 
 ## Font Families
 
-<div style={{ 
-  padding: '1.5rem',
-  borderRadius: '0.5rem',
-  backgroundColor: 'var(--color-surface)',
-  border: '1px solid var(--color-border-subtle)',
-  marginBottom: '1rem'
-}}>
+<div
+  style={{
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '1rem',
+  }}
+>
   <div style={{ marginBottom: '0.5rem' }}>
-    <span style={{ 
-      fontWeight: 600, 
+    <span
+      style={{
+        fontWeight: 600,
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)',
+      }}
+    >
+      Heading Font
+    </span>
+    <code
+      style={{
+        fontSize: '0.75rem',
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)',
+        marginLeft: '1rem',
+      }}
+    >
+      --font-family-heading
+    </code>
+  </div>
+  <div
+    style={{
+      fontSize: '2rem',
+      fontFamily: 'var(--font-family-heading)',
+      color: 'var(--color-text-primary)',
+      fontWeight: 600,
+      letterSpacing: 'var(--letter-spacing-wide)',
+    }}
+  >
+    Cormorant Garamond — The quick brown fox jumps over the lazy dog
+  </div>
+  <p
+    style={{
       fontSize: '0.875rem',
-      color: 'var(--color-text-primary)'
-    }}>Sans Serif</span>
-    <code style={{ 
-      fontSize: '0.75rem', 
-      color: 'var(--color-text-muted)',
-      fontFamily: 'var(--font-family-mono)',
-      marginLeft: '1rem'
-    }}>--font-family-sans</code>
-  </div>
-  <div style={{ 
-    fontSize: '1.5rem',
-    fontFamily: 'var(--font-family-sans)',
-    color: 'var(--color-text-primary)'
-  }}>
-    DM Sans — The quick brown fox jumps over the lazy dog
-  </div>
+      color: 'var(--color-text-secondary)',
+      marginTop: '0.75rem',
+      marginBottom: 0,
+      lineHeight: 'var(--line-height-body)',
+    }}
+  >
+    An elegant serif font for headings that adds sophistication and luxury to
+    the design.
+  </p>
 </div>
 
-<div style={{ 
-  padding: '1.5rem',
-  borderRadius: '0.5rem',
-  backgroundColor: 'var(--color-surface)',
-  border: '1px solid var(--color-border-subtle)',
-  marginBottom: '2rem'
-}}>
+<div
+  style={{
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '1rem',
+  }}
+>
   <div style={{ marginBottom: '0.5rem' }}>
-    <span style={{ 
-      fontWeight: 600, 
-      fontSize: '0.875rem',
-      color: 'var(--color-text-primary)'
-    }}>Monospace</span>
-    <code style={{ 
-      fontSize: '0.75rem', 
-      color: 'var(--color-text-muted)',
-      fontFamily: 'var(--font-family-mono)',
-      marginLeft: '1rem'
-    }}>--font-family-mono</code>
+    <span
+      style={{
+        fontWeight: 600,
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)',
+      }}
+    >
+      Body Font
+    </span>
+    <code
+      style={{
+        fontSize: '0.75rem',
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)',
+        marginLeft: '1rem',
+      }}
+    >
+      --font-family-sans
+    </code>
   </div>
-  <div style={{ 
-    fontSize: '1.25rem',
-    fontFamily: 'var(--font-family-mono)',
-    color: 'var(--color-text-primary)'
-  }}>
+  <div
+    style={{
+      fontSize: '1.25rem',
+      fontFamily: 'var(--font-family-sans)',
+      color: 'var(--color-text-primary)',
+      lineHeight: 'var(--line-height-body)',
+    }}
+  >
+    Lato — The quick brown fox jumps over the lazy dog
+  </div>
+  <p
+    style={{
+      fontSize: '0.875rem',
+      color: 'var(--color-text-secondary)',
+      marginTop: '0.75rem',
+      marginBottom: 0,
+      lineHeight: 'var(--line-height-body)',
+    }}
+  >
+    A clean, friendly sans-serif font optimized for comfortable reading in body
+    text.
+  </p>
+</div>
+
+<div
+  style={{
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    backgroundColor: 'var(--color-surface)',
+    border: '1px solid var(--color-border-subtle)',
+    marginBottom: '2rem',
+  }}
+>
+  <div style={{ marginBottom: '0.5rem' }}>
+    <span
+      style={{
+        fontWeight: 600,
+        fontSize: '0.875rem',
+        color: 'var(--color-text-primary)',
+      }}
+    >
+      Monospace
+    </span>
+    <code
+      style={{
+        fontSize: '0.75rem',
+        color: 'var(--color-text-muted)',
+        fontFamily: 'var(--font-family-mono)',
+        marginLeft: '1rem',
+      }}
+    >
+      --font-family-mono
+    </code>
+  </div>
+  <div
+    style={{
+      fontSize: '1.25rem',
+      fontFamily: 'var(--font-family-mono)',
+      color: 'var(--color-text-primary)',
+    }}
+  >
     JetBrains Mono — const greeting = "Hello, World!";
   </div>
 </div>
@@ -209,11 +345,37 @@ Our type scale uses a modular progression for visual hierarchy.
 
 ---
 
-## Line Heights
+## Line Height
 
-<LineHeightSample name="Tight" variable="--line-height-tight" value="1.25" />
-<LineHeightSample name="Normal" variable="--line-height-normal" value="1.5" />
-<LineHeightSample name="Relaxed" variable="--line-height-relaxed" value="1.75" />
+<LineHeightSample name="Body" variable="--line-height-body" value="1.75" />
+
+We use a single, generous line height (1.75) for all body text. This relaxed spacing creates
+breathing room between lines, reducing visual density and creating a calm reading experience
+that aligns with our Zen philosophy. The text should never feel cramped.
+
+---
+
+## Typography Principles
+
+Our typography system follows specific principles to achieve the Zen aesthetic:
+
+### Generous Leading (Line Height)
+
+Zen is about breathing room. We use a relaxed line height of **1.75** for all body text.
+This generous spacing ensures text never feels cramped, especially within Shoji grid cells.
+The extra vertical space creates visual calm and improves readability.
+
+### Letter Spacing for Headings
+
+For headings, especially when using uppercase text, we apply slightly wide letter spacing
+(`--letter-spacing-wide: 0.025em`). This adds a sense of elegance and luxury, making
+headings feel more refined and intentional.
+
+### Font Pairing
+
+The combination of **Cormorant Garamond** (headings) and **Lato** (body) creates a
+sophisticated contrast: the elegant serif draws attention to important content, while
+the clean sans-serif ensures comfortable reading for longer passages.
 
 ---
 
@@ -222,10 +384,17 @@ Our type scale uses a modular progression for visual hierarchy.
 ```css
 /* Headings */
 .heading-1 {
-  font-family: var(--font-family-sans);
+  font-family: var(--font-family-heading);
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.heading-2 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 /* Body text */
@@ -233,7 +402,7 @@ Our type scale uses a modular progression for visual hierarchy.
   font-family: var(--font-family-sans);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-normal);
+  line-height: var(--line-height-body);
 }
 
 /* Code */
@@ -242,4 +411,3 @@ Our type scale uses a modular progression for visual hierarchy.
   font-size: var(--font-size-sm);
 }
 ```
-
