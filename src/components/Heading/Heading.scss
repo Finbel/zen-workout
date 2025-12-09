@@ -1,0 +1,83 @@
+/* ============================================
+   HEADING COMPONENT
+   ============================================ */
+
+@use '../../styles/mixins/responsive' as *;
+
+.zen-heading {
+  /* Typography */
+  font-family: var(--font-family-heading);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ----------------------------------------
+   LEVEL VARIANTS
+   ---------------------------------------- */
+
+.zen-heading--level-1 {
+  font-weight: var(--font-weight-bold);
+}
+
+.zen-heading--level-2 {
+  font-weight: var(--font-weight-semibold);
+}
+
+.zen-heading--level-3 {
+  font-weight: var(--font-weight-semibold);
+}
+
+.zen-heading--level-4 {
+  font-weight: var(--font-weight-semibold);
+}
+
+.zen-heading--level-5 {
+  font-weight: var(--font-weight-semibold);
+}
+
+.zen-heading--level-6 {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ----------------------------------------
+   SIZE VARIANTS
+   ---------------------------------------- */
+
+.zen-heading--xs {
+  font-size: var(--font-size-xs);
+}
+
+.zen-heading--sm {
+  font-size: var(--font-size-sm);
+}
+
+.zen-heading--base {
+  font-size: var(--font-size-base);
+}
+
+.zen-heading--lg {
+  font-size: var(--font-size-lg);
+}
+
+.zen-heading--xl {
+  font-size: var(--font-size-xl);
+}
+
+.zen-heading--2xl {
+  font-size: var(--font-size-2xl);
+}
+
+.zen-heading--3xl {
+  font-size: var(--font-size-3xl);
+}
+
+.zen-heading--4xl {
+  font-size: var(--font-size-4xl);
+}
+
+/* ----------------------------------------
+   RESPONSIVE SIZE
+   ---------------------------------------- */
+
+@include responsive-prop('zen-heading', 'size', 'font-size');

@@ -1,0 +1,68 @@
+/* ============================================
+   TABLE COMPONENT
+   ============================================ */
+
+.zen-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  /* Borderless design - no borders */
+  border: none;
+}
+
+/* ----------------------------------------
+   TABLE HEAD
+   ---------------------------------------- */
+
+.zen-table-head {
+  /* No additional styles needed - headers handle their own styling */
+}
+
+/* ----------------------------------------
+   TABLE BODY
+   ---------------------------------------- */
+
+.zen-table-body {
+  /* Row highlighting handled by row styles */
+}
+
+/* ----------------------------------------
+   TABLE ROW
+   ---------------------------------------- */
+
+.zen-table-row {
+  /* Subtle row highlights - alternating background colors */
+}
+
+/* Alternating row highlights in table body */
+.zen-table-body .zen-table-row:nth-child(odd) {
+  background-color: transparent;
+}
+
+.zen-table-body .zen-table-row:nth-child(even) {
+  background-color: var(--color-border-subtle);
+}
+
+/* ----------------------------------------
+   TABLE HEADER
+   ---------------------------------------- */
+
+.zen-table-header {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  /* Borderless - no borders */
+  border: none;
+}
+
+/* ----------------------------------------
+   TABLE CELL
+   ---------------------------------------- */
+
+.zen-table-cell {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-primary);
+  /* Borderless - no borders */
+  border: none;
+}

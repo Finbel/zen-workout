@@ -1,0 +1,119 @@
+/* ============================================
+   CHECKBOX COMPONENT
+   ============================================ */
+
+/* ----------------------------------------
+   WRAPPER
+   ---------------------------------------- */
+
+.zen-checkbox-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.zen-checkbox-wrapper--disabled {
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------
+   CHECKBOX INPUT
+   ---------------------------------------- */
+
+.zen-checkbox {
+  /* Reset */
+  appearance: none;
+  margin: 0;
+  padding: 0;
+
+  /* Layout */
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  opacity: 0;
+  cursor: inherit;
+
+  /* Ensure it's above the indicator for click handling */
+  z-index: 1;
+}
+
+/* ----------------------------------------
+   CHECKBOX INDICATOR
+   ---------------------------------------- */
+
+.zen-checkbox-indicator {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+
+  /* Shape */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+
+  /* Interaction */
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+/* ----------------------------------------
+   INTERACTIVE STATES
+   ---------------------------------------- */
+
+.zen-checkbox-wrapper:not(.zen-checkbox-wrapper--disabled):hover
+  .zen-checkbox-indicator {
+  border-color: var(--color-text-secondary);
+}
+
+.zen-checkbox:focus-visible + .zen-checkbox-indicator {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+  border-color: var(--color-primary);
+}
+
+.zen-checkbox:checked + .zen-checkbox-indicator {
+  border-color: var(--color-primary-600);
+}
+
+.zen-checkbox:checked:focus-visible + .zen-checkbox-indicator {
+  border-color: var(--color-primary-600);
+}
+
+.zen-checkbox-wrapper--disabled .zen-checkbox-indicator {
+  border-color: var(--color-primary-300);
+  cursor: not-allowed;
+}
+
+.zen-checkbox-wrapper--disabled
+  .zen-checkbox:checked
+  + .zen-checkbox-indicator {
+  border-color: var(--color-primary-300);
+}
+
+.zen-checkbox-wrapper--disabled .zen-checkbox {
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------
+   CHECK ICON
+   ---------------------------------------- */
+
+.zen-checkbox-icon {
+  color: var(--color-primary-600);
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility var(--transition-fast), color var(--transition-fast);
+}
+
+.zen-checkbox:checked + .zen-checkbox-indicator .zen-checkbox-icon {
+  visibility: visible;
+}
+
+.zen-checkbox-wrapper--disabled .zen-checkbox-icon {
+  color: var(--color-primary-300);
+}
