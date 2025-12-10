@@ -4,7 +4,7 @@ import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
 import { responsiveStyles } from '../../utils/responsiveStyles'
 import { Icon, IconName } from '../Icon'
-import './Button.scss'
+import './Button.css'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
 export type ButtonSize = 'sm' | 'md' | 'lg'
