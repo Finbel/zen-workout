@@ -1,5 +1,6 @@
 /**
- * Utility for generating data attributes for responsive props
+ * Generate data attributes for responsive props
+ * This is a legacy utility - new components should use responsiveStyles from Emotion
  */
 
 import type { Responsive } from './Responsive'
@@ -9,69 +10,47 @@ import { breakpointOrder } from '../tokens/breakpoints'
 /**
  * Options for generating responsive data attributes
  */
-export interface ResponsiveDataAttributesOptions {
-  /**
-   * Whether to include breakpoint-specific data attributes with their values
-   * (e.g., `data-gap-base="sm"`, `data-gap-md="md"`)
-   * Default: false
-   */
+export interface GenerateResponsiveDataAttributesOptions {
+  /** Whether to include breakpoint-specific data attributes (e.g., data-size-md="lg") */
   includeBreakpointValues?: boolean
-  /**
-   * Custom prop name to use in data attribute (defaults to the key from props object)
-   */
-  propName?: string
+}
+
+/**
+ * Convert camelCase to kebab-case for data attributes
+ */
+function camelToKebab(str: string): string {
+  return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
 }
 
 /**
  * Generate data attributes for responsive props
+ * Returns an object with data attribute names as keys and their values
  *
- * @param props - Object containing responsive prop values
+ * @param props - Object with prop names and their responsive values
  * @param options - Options for generating data attributes
- * @returns Object with data attribute keys and values
- *
- * @example
- * ```ts
- * const dataAttributes = generateResponsiveDataAttributes({
- *   gap: { base: 'sm', md: 'md' },
- *   columns: 3,
- * }, { includeBreakpointValues: true })
- * // Returns:
- * // {
- * //   'data-has-responsive-gap': 'true',
- * //   'data-gap-base': 'sm',
- * //   'data-gap-md': 'md'
- * // }
- * ```
+ * @returns Record of data attribute names to values
  */
 export function generateResponsiveDataAttributes(
   props: Record<string, Responsive<any> | undefined>,
-  options: ResponsiveDataAttributesOptions = {},
+  options: GenerateResponsiveDataAttributesOptions = {},
 ): Record<string, string> {
-  const { includeBreakpointValues = false } = options
   const dataAttributes: Record<string, string> = {}
 
-  for (const [key, value] of Object.entries(props)) {
+  for (const [propName, value] of Object.entries(props)) {
     if (value === undefined) continue
 
-    const propName = options.propName || key
-
     if (isResponsiveObject(value)) {
-      // Add the main data attribute indicating this prop is responsive
-      dataAttributes[`data-has-responsive-${propName}`] = 'true'
+      // Convert camelCase prop names to kebab-case for data attributes
+      const kebabPropName = camelToKebab(propName)
+      dataAttributes[`data-has-responsive-${kebabPropName}`] = 'true'
 
-      // Optionally add breakpoint-specific data attributes with values
-      if (includeBreakpointValues) {
+      // Include breakpoint-specific values if requested
+      if (options.includeBreakpointValues) {
         for (const breakpoint of breakpointOrder) {
           if (value[breakpoint] !== undefined) {
-            const breakpointValue = value[breakpoint]
-            // Only include if value is not false (for boolean props like shoji)
-            if (breakpointValue !== false && breakpointValue !== undefined) {
-              dataAttributes[`data-${propName}-${breakpoint}`] =
-                String(breakpointValue)
-            } else if (breakpointValue === true) {
-              // For boolean true values, just set the attribute to 'true'
-              dataAttributes[`data-${propName}-${breakpoint}`] = 'true'
-            }
+            dataAttributes[`data-${kebabPropName}-${breakpoint}`] = String(
+              value[breakpoint],
+            )
           }
         }
       }

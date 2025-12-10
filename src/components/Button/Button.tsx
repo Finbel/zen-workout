@@ -1,8 +1,8 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
+import { responsiveStyles } from '../../utils/responsiveStyles'
 import { Icon, IconName } from '../Icon'
 import './Button.scss'
 
@@ -29,6 +29,57 @@ const ICON_SIZE_MAP: Record<ButtonSize, number> = {
   sm: 16,
   md: 18,
   lg: 20,
+}
+
+/**
+ * Size to CSS value mappings
+ */
+const SIZE_STYLES: Record<
+  ButtonSize,
+  { height: string; paddingX: string; fontSize: string }
+> = {
+  sm: {
+    height: '2rem',
+    paddingX: 'var(--space-3)',
+    fontSize: 'var(--font-size-sm)',
+  },
+  md: {
+    height: '2.5rem',
+    paddingX: 'var(--space-4)',
+    fontSize: 'var(--font-size-base)',
+  },
+  lg: {
+    height: '3rem',
+    paddingX: 'var(--space-6)',
+    fontSize: 'var(--font-size-lg)',
+  },
+}
+
+/**
+ * Variant to CSS value mappings
+ */
+const VARIANT_STYLES: Record<
+  ButtonVariant,
+  { backgroundColor: string; color: string; border?: string }
+> = {
+  primary: {
+    backgroundColor: 'var(--color-primary)',
+    color: 'var(--color-text-inverse)',
+  },
+  secondary: {
+    backgroundColor: 'var(--color-surface-elevated)',
+    color: 'var(--color-text-primary)',
+    border: '1px solid var(--color-border)',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    color: 'var(--color-primary)',
+    border: '1px solid var(--color-primary)',
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    color: 'var(--color-text-primary)',
+  },
 }
 
 /**
@@ -80,12 +131,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('button', {
-      variant,
-      size,
-    })
-
     // Get base values for icon size calculation
     const baseSize = getBaseValue(size, 'md')
 
@@ -100,14 +145,55 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       .filter(Boolean)
       .join(' ')
 
-    // Generate data attributes for responsive props
-    const dataAttributes = generateResponsiveDataAttributes(
-      {
-        variant,
-        size,
-      },
-      { includeBreakpointValues: true },
+    // Generate Emotion styles for responsive size
+    const sizeHeightStyles = responsiveStyles(
+      'height',
+      size,
+      (s) => SIZE_STYLES[s].height,
     )
+    const sizePaddingLeftStyles = responsiveStyles(
+      'paddingLeft',
+      size,
+      (s) => SIZE_STYLES[s].paddingX,
+    )
+    const sizePaddingRightStyles = responsiveStyles(
+      'paddingRight',
+      size,
+      (s) => SIZE_STYLES[s].paddingX,
+    )
+    const sizeFontSizeStyles = responsiveStyles(
+      'fontSize',
+      size,
+      (s) => SIZE_STYLES[s].fontSize,
+    )
+
+    // Generate Emotion styles for responsive variant
+    const variantBackgroundColorStyles = responsiveStyles(
+      'backgroundColor',
+      variant,
+      (v) => VARIANT_STYLES[v].backgroundColor,
+    )
+    const variantColorStyles = responsiveStyles(
+      'color',
+      variant,
+      (v) => VARIANT_STYLES[v].color,
+    )
+    const variantBorderStyles = responsiveStyles(
+      'border',
+      variant,
+      (v) => VARIANT_STYLES[v].border || 'none',
+    )
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${sizeHeightStyles}
+      ${sizePaddingLeftStyles}
+      ${sizePaddingRightStyles}
+      ${sizeFontSizeStyles}
+      ${variantBackgroundColorStyles}
+      ${variantColorStyles}
+      ${variantBorderStyles}
+    `
 
     // Use base size for icon size (icons use base breakpoint size)
     const iconSize = ICON_SIZE_MAP[baseSize]
@@ -116,9 +202,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={classNames}
-        style={{ ...responsiveStyles, ...style }}
+        css={emotionStyles}
+        style={style}
         disabled={disabled}
-        {...dataAttributes}
         {...props}
       >
         {icon?.position === 'left' && <Icon name={icon.name} size={iconSize} />}

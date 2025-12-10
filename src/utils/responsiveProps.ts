@@ -1,74 +1,52 @@
 /**
- * Runtime utilities for processing responsive props into CSS custom properties
+ * Process responsive props into CSS custom properties
+ * This is a legacy utility - new components should use responsiveStyles from Emotion
  */
 
-import type { CSSProperties } from 'react'
-import type { Responsive } from './Responsive'
+import type { Responsive, ResponsiveObject } from './Responsive'
 import { isResponsiveObject } from './Responsive'
 import { breakpointOrder } from '../tokens/breakpoints'
 
 /**
- * Convert a responsive prop value to CSS custom properties
+ * Process responsive props into CSS custom properties
+ * Returns an object with CSS custom property names as keys and CSS values as values
  *
- * @param componentName - The component name prefix for CSS custom properties (e.g., 'box', 'flex')
- * @param propName - The prop name (e.g., 'padding', 'gap')
- * @param value - The responsive value (single value or breakpoint object)
- * @returns Object with CSS custom property keys and values
+ * @param componentName - Component name in kebab-case (e.g., 'box', 'shoji-grid')
+ * @param props - Object with prop names and their normalized responsive values
+ * @returns Record of CSS custom property names to CSS values
  */
-export function processResponsiveProp<T>(
+export function processResponsiveProps<T extends string | number>(
   componentName: string,
-  propName: string,
-  value: Responsive<T> | undefined,
+  props: Record<string, Responsive<T> | undefined>,
 ): Record<string, string> {
-  if (value === undefined) {
-    return {}
-  }
-
   const cssProps: Record<string, string> = {}
-  const cssVarPrefix = `--${componentName}-${propName}`
 
-  // If it's a simple value (not a responsive object), set it as base
-  if (!isResponsiveObject(value)) {
-    cssProps[`${cssVarPrefix}-base`] = String(value)
-    return cssProps
-  }
+  for (const [propName, value] of Object.entries(props)) {
+    if (value === undefined) continue
 
-  // Handle responsive object (now properly typed via type predicate)
-  if (value.base !== undefined) {
-    cssProps[`${cssVarPrefix}-base`] = String(value.base)
-  }
+    // Convert camelCase prop names to kebab-case for CSS custom properties
+    // But keep camelCase in the CSS variable name (as per documentation)
+    const cssPropName = propName
 
-  // Set breakpoint-specific values
-  for (const breakpoint of breakpointOrder) {
-    if (breakpoint === 'base') continue
+    if (isResponsiveObject(value)) {
+      // Handle responsive object
+      const responsiveObj = value as ResponsiveObject<T>
 
-    if (value[breakpoint] !== undefined) {
-      cssProps[`${cssVarPrefix}-${breakpoint}`] = String(value[breakpoint])
+      // Generate CSS custom properties for each breakpoint
+      for (const breakpoint of breakpointOrder) {
+        if (responsiveObj[breakpoint] !== undefined) {
+          const cssVarName = `--${componentName}-${cssPropName}-${breakpoint}`
+          // Convert to string (numbers become strings, strings stay strings)
+          cssProps[cssVarName] = String(responsiveObj[breakpoint]!)
+        }
+      }
+    } else {
+      // Handle simple value - set as base
+      const cssVarName = `--${componentName}-${cssPropName}-base`
+      // Convert to string (numbers become strings, strings stay strings)
+      cssProps[cssVarName] = String(value)
     }
   }
 
   return cssProps
 }
-
-/**
- * Process multiple responsive props and return CSS custom properties
- *
- * @param componentName - The component name prefix for CSS custom properties
- * @param props - Object containing responsive prop values
- * @returns React.CSSProperties object with CSS custom properties
- */
-export function processResponsiveProps(
-  componentName: string,
-  props: Record<string, Responsive<any> | undefined>,
-): CSSProperties {
-  const cssProps: CSSProperties = {}
-
-  for (const [propName, value] of Object.entries(props)) {
-    const propCssVars = processResponsiveProp(componentName, propName, value)
-    Object.assign(cssProps, propCssVars)
-  }
-
-  return cssProps
-}
-
-
