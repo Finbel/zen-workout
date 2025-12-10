@@ -1,10 +1,9 @@
 import { HTMLAttributes, forwardRef } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-import './Text.scss'
+import { responsiveStyles } from '../../utils/responsiveStyles'
+import './Text.css'
 
 export type TextSize =
   | 'xs'
@@ -34,11 +33,6 @@ function sizeToCSS(size: TextSize): string {
 }
 
 /**
- * Normalize responsive size value to CSS value
- */
-const normalizeResponsiveSize = createNormalizeResponsive(sizeToCSS)
-
-/**
  * Get class name for a size prop if it's a simple (non-responsive) value
  */
 function getSizeClassName(
@@ -57,29 +51,26 @@ export interface TextProps extends HTMLAttributes<HTMLParagraphElement> {
 
 export const Text = forwardRef<HTMLParagraphElement, TextProps>(
   ({ size = 'base', className = '', style, children, ...props }, ref) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('text', {
-      size: normalizeResponsiveSize(size),
-    })
-
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const classNames = ['zen-text', getSizeClassName(size, 'base'), className]
       .filter(Boolean)
       .join(' ')
 
-    // Generate data attributes to indicate which responsive props are used
-    // This allows CSS to conditionally apply styles only when needed
-    const dataAttributes = generateResponsiveDataAttributes({
-      size,
-    })
+    // Generate Emotion styles for responsive size
+    const fontSizeStyles = responsiveStyles('fontSize', size, sizeToCSS)
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${fontSizeStyles}
+    `
 
     return (
       <p
         ref={ref}
         className={classNames}
-        style={{ ...responsiveStyles, ...style }}
-        {...dataAttributes}
+        css={emotionStyles}
+        style={style}
         {...props}
       >
         {children}

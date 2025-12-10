@@ -4,7 +4,7 @@ import { TableBody } from './TableBody'
 import { TableRow } from './TableRow'
 import { TableHeader } from './TableHeader'
 import { TableCell } from './TableCell'
-import './Table.scss'
+import './Table.css'
 
 export interface TableProps extends HTMLAttributes<HTMLTableElement> {}
 

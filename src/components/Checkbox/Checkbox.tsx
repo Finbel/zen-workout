@@ -1,6 +1,6 @@
 import { InputHTMLAttributes, forwardRef } from 'react'
 import { Icon } from '../Icon/Icon'
-import './Checkbox.scss'
+import './Checkbox.css'
 
 export interface CheckboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {

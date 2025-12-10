@@ -1,5 +1,5 @@
 import { HTMLAttributes, forwardRef } from 'react'
-import './Table.scss'
+import './Table.css'
 
 export interface TableBodyProps
   extends HTMLAttributes<HTMLTableSectionElement> {}

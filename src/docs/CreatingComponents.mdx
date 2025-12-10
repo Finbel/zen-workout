@@ -100,8 +100,8 @@ following structure:
   description="The main component implementation with TypeScript types and props interface."
 />
 <FileCard
-  name="ComponentName.css (or .scss)"
-  description="Component-specific styles using CSS custom properties from design tokens."
+  name="ComponentName.css"
+  description="Component-specific base styles using CSS custom properties from design tokens. Responsive styles are handled with Emotion."
 />
 <FileCard
   name="ComponentName.stories.tsx"
@@ -609,169 +609,196 @@ This pattern allows consumers to override specific values without modifying the 
   properties for each variant size.
 </Guideline>
 
-### Styling with SCSS
+### Styling with Emotion
 
-All components in the Zen Design System should use SCSS (`.scss` files) for styling. SCSS provides essential features for building maintainable, responsive components.
+All components in the Zen Design System use Emotion for handling responsive styles. Emotion generates CSS-in-JS at runtime, automatically creating media queries for responsive props. Base component styles are still defined in CSS files (`.css`), while responsive behavior is handled through Emotion.
 
-**Required SCSS Features:**
+**Required Emotion Features:**
 
-1. **Responsive Prop Mixins** - Use the `responsive-prop` mixin to automatically generate all media queries and fallback chains for responsive props:
+1. **Responsive Styles Utility** - Use the `responsiveStyles` utility to automatically generate Emotion CSS with media queries for responsive props:
 
-```scss
-@use '../../styles/mixins/responsive' as *;
+```tsx
+import { css } from '@emotion/react'
+import { responsiveStyles } from '../../utils/responsiveStyles'
 
+// Convert prop values to CSS strings
+function gapToCSS(gap: ComponentGap): string {
+  const mapping: Record<ComponentGap, string> = {
+    none: '0',
+    sm: 'var(--space-2)',
+    md: 'var(--space-4)',
+  }
+  return mapping[gap]
+}
+
+// In your component:
+const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+const paddingStyles = responsiveStyles('padding', padding, paddingToCSS)
+
+// Combine all Emotion styles
+const emotionStyles = css`
+  ${gapStyles}
+  ${paddingStyles}
+`
+
+// Apply to element
+<div css={emotionStyles} className="zen-component">
+  {children}
+</div>
+```
+
+The `responsiveStyles` utility automatically generates:
+
+- Base styles (no media query) for simple values or `base` breakpoint
+- Media queries for each breakpoint (xs, sm, md, lg) when using responsive objects
+- Proper CSS with media queries that Emotion injects at runtime
+
+2. **CSS Files for Base Styles** - Use CSS files (`.css`) for non-responsive base styles, variants, and states:
+
+```css
+/* ComponentName.css */
+.zen-component {
+  /* Base styles */
+  display: flex;
+  align-items: center;
+}
+
+.zen-component:hover {
+  /* Hover styles */
+}
+
+.zen-component--variant {
+  /* Variant styles */
+}
+```
+
+3. **Combining CSS Classes and Emotion** - Use CSS classes for non-responsive styles and Emotion for responsive behavior:
+
+```tsx
+// Build class names for non-responsive usage (backward compatibility)
+const classNames = [
+  'zen-component',
+  variant && `zen-component--${variant}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ')
+
+// Generate Emotion styles for responsive props
+const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+const emotionStyles = css`${gapStyles}`
+
+// Apply both
+<div className={classNames} css={emotionStyles}>
+  {children}
+</div>
+```
+
+**When to Use Emotion vs CSS:**
+
+**Use Emotion (`responsiveStyles`)** for all responsive props:
+
+```tsx
+/* ✅ Use Emotion - automatically generates media queries */
+const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+const paddingStyles = responsiveStyles('padding', padding, paddingToCSS)
+const emotionStyles = css`
+  ${gapStyles} ${paddingStyles}
+`
+```
+
+**Use CSS files** for:
+
+- Non-responsive base component styles
+- Variant styles (primary, secondary, etc.)
+- Interactive states (hover, focus, disabled)
+- Static layout and typography
+
+**Example: Handling Multiple Responsive Props:**
+
+```tsx
+import { css } from '@emotion/react'
+import { responsiveStyles } from '../../utils/responsiveStyles'
+
+export const Component = forwardRef<HTMLDivElement, ComponentProps>(
+  ({ gap, padding, gridTemplateAreas, className = '', ...props }, ref) => {
+    // Generate Emotion styles for each responsive prop
+    const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+    const paddingStyles = responsiveStyles('padding', padding, paddingToCSS)
+
+    // For camelCase props, use the CSS property name directly
+    const gridTemplateAreasStyles = responsiveStyles(
+      'gridTemplateAreas',
+      gridTemplateAreas,
+      (val) => val, // Already a CSS value
+    )
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${gapStyles}
+      ${paddingStyles}
+      ${gridTemplateAreasStyles}
+    `
+
+    // Build class names for non-responsive usage
+    const classNames = ['zen-component', className].filter(Boolean).join(' ')
+
+    return (
+      <div ref={ref} className={classNames} css={emotionStyles} {...props}>
+        {children}
+      </div>
+    )
+  },
+)
+```
+
+**File Organization:**
+
+Structure your component files:
+
+```
+ComponentName/
+├── ComponentName.tsx    # Component with Emotion styles
+├── ComponentName.css    # Base styles, variants, states
+├── ComponentName.stories.tsx
+└── index.ts
+```
+
+**Component Implementation Pattern:**
+
+```tsx
+// ComponentName.tsx
+import { css } from '@emotion/react'
+import { responsiveStyles } from '../../utils/responsiveStyles'
+import './ComponentName.css'
+
+export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
+  ({ gap, padding, className = '', ...props }, ref) => {
+    // Generate responsive styles with Emotion
+    const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+    const paddingStyles = responsiveStyles('padding', padding, paddingToCSS)
+
+    const emotionStyles = css`
+      ${gapStyles}
+      ${paddingStyles}
+    `
+
+    const classNames = ['zen-component', className].filter(Boolean).join(' ')
+
+    return (
+      <div ref={ref} className={classNames} css={emotionStyles} {...props}>
+        {children}
+      </div>
+    )
+  },
+)
+```
+
+```css
+/* ComponentName.css */
 .zen-component {
   /* Base styles */
 }
-
-/* Automatically generates all breakpoints and fallback chains */
-@include responsive-prop('zen-component', 'padding', 'padding');
-@include responsive-prop('zen-component', 'gap', 'gap');
-```
-
-The mixin automatically generates:
-
-- Base styles (no media query)
-- Media queries for each breakpoint (xs, sm, md, lg)
-- Properly nested `var()` fallback chains for each breakpoint
-
-2. **SCSS Variables** - Use SCSS variables from the design system for breakpoints and other shared values:
-
-```scss
-@use '../../styles/variables/breakpoints' as bp;
-
-@media (min-width: bp.$breakpoints-sm) {
-  /* Custom responsive styles if needed */
-}
-```
-
-3. **Nesting** - Use SCSS nesting to organize related styles:
-
-```scss
-.zen-component {
-  /* Base styles */
-
-  &:hover {
-    /* Hover styles */
-  }
-
-  &--variant {
-    /* Variant styles */
-  }
-}
-```
-
-**When to Use SCSS Mixins vs Manual CSS:**
-
-**Use the `responsive-prop` mixin** for all responsive props:
-
-```scss
-/* ✅ Use mixin - automatically generates all breakpoints */
-@include responsive-prop('zen-component', 'padding', 'padding');
-@include responsive-prop('zen-component', 'gap', 'gap');
-```
-
-**Write manual CSS** only for:
-
-- Non-responsive styles (base component styles, variants, states)
-- Custom responsive behavior that doesn't fit the standard pattern
-- camelCase prop names that need manual handling (see Responsive Props section)
-
-**Example: Manual CSS for camelCase props:**
-
-```scss
-@use '../../styles/variables/breakpoints' as bp;
-@use 'sass:map';
-
-/* For camelCase prop names, write CSS manually */
-.zen-component[data-has-responsive-grid-template-areas='true'] {
-  grid-template-areas: var(--component-gridTemplateAreas-base);
-}
-
-@media (min-width: map.get(bp.$breakpoints, 'xs')) {
-  /* --breakpoint-xs: 480px */
-  .zen-component[data-has-responsive-grid-template-areas='true'] {
-    grid-template-areas: var(
-      --component-gridTemplateAreas-xs,
-      var(--component-gridTemplateAreas-base)
-    );
-  }
-}
-
-@media (min-width: map.get(bp.$breakpoints, 'sm')) {
-  /* --breakpoint-sm: 640px */
-  .zen-component[data-has-responsive-grid-template-areas='true'] {
-    grid-template-areas: var(
-      --component-gridTemplateAreas-sm,
-      var(
-        --component-gridTemplateAreas-xs,
-        var(--component-gridTemplateAreas-base)
-      )
-    );
-  }
-}
-
-@media (min-width: map.get(bp.$breakpoints, 'md')) {
-  /* --breakpoint-md: 1024px */
-  .zen-component[data-has-responsive-grid-template-areas='true'] {
-    grid-template-areas: var(
-      --component-gridTemplateAreas-md,
-      var(
-        --component-gridTemplateAreas-sm,
-        var(
-          --component-gridTemplateAreas-xs,
-          var(--component-gridTemplateAreas-base)
-        )
-      )
-    );
-  }
-}
-
-@media (min-width: map.get(bp.$breakpoints, 'lg')) {
-  /* --breakpoint-lg: 1280px */
-  .zen-component[data-has-responsive-grid-template-areas='true'] {
-    grid-template-areas: var(
-      --component-gridTemplateAreas-lg,
-      var(
-        --component-gridTemplateAreas-md,
-        var(
-          --component-gridTemplateAreas-sm,
-          var(
-            --component-gridTemplateAreas-xs,
-            var(--component-gridTemplateAreas-base)
-          )
-        )
-      )
-    );
-  }
-}
-```
-
-**SCSS File Organization:**
-
-Structure your SCSS file with clear sections:
-
-```scss
-/* ============================================
-   COMPONENT NAME
-   ============================================ */
-
-@use '../../styles/mixins/responsive' as *;
-
-.zen-component {
-  /* Base styles */
-}
-
-/* ----------------------------------------
-   RESPONSIVE PROPS
-   ---------------------------------------- */
-
-@include responsive-prop('zen-component', 'padding', 'padding');
-@include responsive-prop('zen-component', 'gap', 'gap');
-
-/* ----------------------------------------
-   VARIANTS
-   ---------------------------------------- */
 
 .zen-component--primary {
   /* Variant styles */
@@ -782,11 +809,11 @@ Structure your SCSS file with clear sections:
 }
 ```
 
-The mixin automatically generates:
+Emotion automatically handles:
 
-- Base styles (no media query)
-- Media queries for each breakpoint (xs, sm, md, lg)
-- Properly nested `var()` fallback chains for each breakpoint
+- Media query generation for responsive breakpoints
+- Runtime CSS injection
+- Proper CSS specificity
 
 ### CSS Custom Property Naming Conventions
 
@@ -1014,9 +1041,11 @@ it('should set correct CSS custom properties', () => {
 
 Constants are TypeScript-only. In CSS, use the string values directly:
 
-```scss
-.zen-component[data-has-responsive-padding='true'] {
-  padding: var(--component-padding-base); // Use string directly in CSS
+```css
+/* With Emotion, you typically don't need CSS custom properties in CSS files */
+/* Emotion handles responsive styles automatically */
+.zen-component {
+  /* Base styles only */
 }
 ```
 
@@ -1050,19 +1079,19 @@ const value = getComputedStyle(el).getPropertyValue(COMPONENT_PADDNG_BASE) // Er
 
 ### Integration with Responsive Props
 
-Constants work seamlessly with responsive props. The constants represent the CSS custom property names that `processResponsiveProps` generates:
+Constants work seamlessly with responsive props. With Emotion, CSS custom properties are generated internally by Emotion, but constants can still be useful for testing and accessing computed styles:
 
 ```tsx
-// TypeScript generates these CSS custom properties:
-processResponsiveProps('component', {
-  padding: normalizeResponsivePadding(padding),
-})
-// Generates: --component-padding-base, --component-padding-xs, etc.
+// Emotion generates CSS with media queries automatically
+const paddingStyles = responsiveStyles('padding', padding, paddingToCSS)
+const emotionStyles = css`${paddingStyles}`
 
-// Constants provide type-safe access to these names:
+// Constants provide type-safe access to computed styles in tests:
 import { {COMPONENT_NAME}_PADDING_BASE } from './{ComponentName}Constants'
 const value = getComputedStyle(element).getPropertyValue({COMPONENT_NAME}_PADDING_BASE)
 ```
+
+**Note:** With Emotion, you typically don't need to reference CSS custom properties directly in component code, as Emotion handles everything. Constants are most useful for testing scenarios.
 
 ---
 
@@ -1106,21 +1135,20 @@ Follow this pattern to implement responsive props:
 #### 1. Import Required Utilities
 
 ```tsx
+import { css } from '@emotion/react'
 import type { Responsive, ResponsiveObject } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
+import { responsiveStyles } from '../../utils/responsiveStyles'
 ```
 
-#### 2. Normalize Values (if needed)
+#### 2. Create Conversion Function (if needed)
 
-If your prop accepts a union type that needs conversion to CSS values, you need to normalize it. Use the `createNormalizeResponsive` utility to create a normalization function:
+If your prop accepts a union type that needs conversion to CSS values, create a function that converts a single value to its CSS representation:
 
 ```tsx
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
-
 type ComponentGap = 'none' | 'xs' | 'sm' | 'md' | 'lg'
 
-// First, create a function that converts a single value to CSS
+// Create a function that converts a single value to CSS
 function gapToCSS(gap: ComponentGap): string {
   const mapping: Record<ComponentGap, string> = {
     none: '0',
@@ -1132,14 +1160,14 @@ function gapToCSS(gap: ComponentGap): string {
   return mapping[gap]
 }
 
-// Then use createNormalizeResponsive to create the responsive normalization function
-const normalizeResponsiveGap = createNormalizeResponsive(gapToCSS)
+// Use it directly with responsiveStyles
+const gapStyles = responsiveStyles('gap', gap, gapToCSS)
 ```
 
-**When to use normalization:**
+**When to create a conversion function:**
 
-- **Use normalization** when your prop accepts semantic values (like `'sm'`, `'md'`, `'lg'`) that need to be converted to CSS values (like `'var(--space-2)'`)
-- **Skip normalization** when your prop already accepts CSS values directly (like `string` for `gridTemplateRows`)
+- **Create a conversion function** when your prop accepts semantic values (like `'sm'`, `'md'`, `'lg'`) that need to be converted to CSS values (like `'var(--space-2)'`)
+- **Skip conversion** when your prop already accepts CSS values directly (like `string` for `gridTemplateRows`) - just pass `(val) => val` as the conversion function
 
 **Example without normalization (direct CSS values):**
 
@@ -1150,32 +1178,36 @@ export interface ComponentNameProps {
 }
 
 // In component:
-const responsiveStyles = processResponsiveProps('component', {
-  gridTemplateRows: gridTemplateRows, // Use directly
-})
+const gridTemplateRowsStyles = responsiveStyles(
+  'gridTemplateRows',
+  gridTemplateRows,
+  (val) => val, // Already a CSS value, pass through
+)
+const emotionStyles = css`
+  ${gridTemplateRowsStyles}
+`
 ```
 
 **Example with normalization (semantic values):**
 
 ```tsx
-// For props that accept semantic values, normalize first
+// For props that accept semantic values, use the conversion function directly
 export interface ComponentNameProps {
   gap?: Responsive<'none' | 'sm' | 'md'> // Semantic values
 }
 
 // In component:
-const responsiveStyles = processResponsiveProps('component', {
-  gap: normalizeResponsiveGap(gap), // Normalize first
-})
+const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+const emotionStyles = css`
+  ${gapStyles}
+`
 ```
 
-#### 3. Process Responsive Props
+#### 3. Generate Emotion Styles
 
-In your component, process responsive props and generate CSS custom properties:
+In your component, generate Emotion styles for responsive props:
 
 ```tsx
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-
 export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
   (
     {
@@ -1189,31 +1221,33 @@ export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
     },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('component', {
-      padding: normalizeResponsivePadding(padding),
-      gap: normalizeResponsiveGap(gap),
-      gridTemplateAreas:
-        normalizeResponsiveGridTemplateAreas(gridTemplateAreas),
-    })
+    // Generate Emotion styles for each responsive prop
+    const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+    const paddingStyles = responsiveStyles('padding', padding, paddingToCSS)
 
-    // Generate data attributes automatically using the utility
-    const dataAttributes = generateResponsiveDataAttributes({
-      padding,
-      gap,
-    })
+    // For camelCase prop names, use the CSS property name directly
+    const gridTemplateAreasStyles = responsiveStyles(
+      'gridTemplateAreas',
+      gridTemplateAreas,
+      (val) => val, // Already a CSS value
+    )
 
-    // For camelCase prop names, manually add data attributes using kebab-case
-    if (gridTemplateAreas && isResponsiveObject(gridTemplateAreas)) {
-      dataAttributes['data-has-responsive-grid-template-areas'] = 'true'
-    }
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${gapStyles}
+      ${paddingStyles}
+      ${gridTemplateAreasStyles}
+    `
+
+    // Build class names for non-responsive usage (backward compatibility)
+    const classNames = ['zen-component', className].filter(Boolean).join(' ')
 
     return (
       <div
         ref={ref}
-        className={className}
-        style={{ ...responsiveStyles, ...style }}
-        {...dataAttributes}
+        className={classNames}
+        css={emotionStyles}
+        style={style}
         {...props}
       >
         {children}
@@ -1225,29 +1259,30 @@ export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
 
 **Handling camelCase prop names:**
 
-When your prop name is camelCase (like `gridTemplateAreas`), the CSS custom property will use the camelCase name, but data attributes should use kebab-case:
+When your prop name is camelCase (like `gridTemplateAreas`), use the camelCase CSS property name directly in `responsiveStyles`:
 
 ```tsx
-// CSS custom property: --component-gridTemplateAreas-base (keeps camelCase)
-// Data attribute: data-has-responsive-grid-template-areas (use kebab-case directly)
-
-if (gridTemplateAreas && isResponsiveObject(gridTemplateAreas)) {
-  dataAttributes['data-has-responsive-grid-template-areas'] = 'true'
-  // Results in: data-has-responsive-grid-template-areas="true"
-}
+// Use camelCase CSS property name directly
+const gridTemplateAreasStyles = responsiveStyles(
+  'gridTemplateAreas', // CSS property name (camelCase)
+  gridTemplateAreas,
+  (val) => val,
+)
 ```
 
-#### 3.5. Custom Processing Functions for Special Props
+Emotion automatically handles the CSS property name conversion and generates the appropriate media queries.
 
-Sometimes a prop needs special handling beyond normalization. For example, a `columns` prop that accepts both numbers and special values like `'auto-fill'` or `'auto-fit'` may need custom conversion logic.
+#### 3.5. Custom Conversion Functions for Special Props
 
-**When to create a custom processing function:**
+Sometimes a prop needs special handling beyond a simple mapping. For example, a `columns` prop that accepts both numbers and special values like `'auto-fill'` or `'auto-fit'` may need custom conversion logic.
+
+**When to create a custom conversion function:**
 
 - Your prop accepts multiple types that need different conversion logic (e.g., `number | 'auto-fill' | 'auto-fit'`)
 - The conversion logic is more complex than a simple mapping
-- You need to generate CSS custom properties with a different pattern than `processResponsiveProps` provides
+- You need to transform the value before it's used in CSS
 
-**Example: Custom processing for columns prop**
+**Example: Custom conversion for columns prop**
 
 ```tsx
 type ComponentColumns = number | 'auto-fill' | 'auto-fit'
@@ -1262,195 +1297,56 @@ function columnsToCSS(columns: ComponentColumns): string {
   return `repeat(${columns}, minmax(200px, 1fr))`
 }
 
-/**
- * Process responsive columns into CSS custom properties
- * This is a custom function because columns needs special conversion logic
- */
-function processResponsiveColumns(
-  columns: Responsive<ComponentColumns> | undefined,
-): Record<string, string> {
-  const cssProps: Record<string, string> = {}
-
-  if (columns === undefined) return cssProps
-
-  if (isResponsiveObject(columns)) {
-    if (columns.base !== undefined) {
-      cssProps['--component-columns-base'] = columnsToCSS(columns.base)
-    }
-    for (const breakpoint of ['xs', 'sm', 'md', 'lg'] as const) {
-      if (columns[breakpoint] !== undefined) {
-        cssProps[`--component-columns-${breakpoint}`] = columnsToCSS(
-          columns[breakpoint],
-        )
-      }
-    }
-  } else {
-    cssProps['--component-columns-base'] = columnsToCSS(columns)
-  }
-
-  return cssProps
-}
-
 // In your component:
-const responsiveStyles = processResponsiveProps('component', {
-  gap: normalizeResponsiveGap(gap),
-  // ... other standard props
-})
-
-// Handle columns separately with custom processing
-if (!gridTemplateColumns) {
-  const columnsStyles = processResponsiveColumns(columns)
-  Object.assign(responsiveStyles, columnsStyles)
-}
+const columnsStyles = responsiveStyles(
+  'gridTemplateColumns',
+  columns,
+  columnsToCSS,
+)
+const emotionStyles = css`
+  ${columnsStyles}
+`
 ```
 
-**Guidelines for custom processing functions:**
+**Guidelines for custom conversion functions:**
 
-- Follow the same pattern as `processResponsiveProps`: handle both simple values and responsive objects
-- Generate CSS custom properties following the naming convention: `--{componentName}-{propName}-{breakpoint}`
-- Return a `Record<string, string>` that can be merged with other responsive styles
-- Only create custom functions when necessary - prefer normalization and `processResponsiveProps` when possible
+- Create a function that converts a single value to its CSS string representation
+- Pass this function as the third argument to `responsiveStyles`
+- The function should handle all possible input types for that prop
+- Keep conversion logic simple and focused on transforming values to CSS strings
 
-#### 4. Add CSS with Media Queries
+#### 4. Emotion Handles Media Queries Automatically
 
-Create CSS rules that use CSS custom properties with fallback chains. You can use SCSS mixins to generate this automatically, or write it manually in CSS.
+Emotion automatically generates all media queries at runtime. You don't need to write any CSS media queries manually. The `responsiveStyles` utility handles:
 
-**Using SCSS Mixins (Recommended):**
+- Base styles (no media query) for simple values or `base` breakpoint
+- Media queries for each breakpoint (xs, sm, md, lg) when using responsive objects
+- Proper CSS with correct breakpoint values from `tokens/breakpoints.ts`
 
-If you're using SCSS, use the `responsive-prop` mixin to generate all media queries and fallback chains automatically:
+**How it works:**
 
-```scss
-@use '../../styles/mixins/responsive' as *;
+When you use `responsiveStyles`, Emotion generates CSS like this at runtime:
 
-.zen-component {
-  /* Base component styles */
-}
+```tsx
+// Input:
+const gapStyles = responsiveStyles('gap', { base: 'sm', md: 'lg' }, gapToCSS)
 
-/* Responsive padding - automatically generates all breakpoints and fallback chains */
-@include responsive-prop('zen-component', 'padding', 'padding');
-
-/* Responsive gap */
-@include responsive-prop('zen-component', 'gap', 'gap');
+// Emotion generates (conceptually):
+// gap: var(--space-2);  // base value
+// @media (min-width: 1024px) {
+//   gap: var(--space-6);  // md value
+// }
 ```
 
-The mixin automatically generates:
-
-- Base styles (no media query)
-- Media queries for each breakpoint (xs, sm, md, lg)
-- Properly nested `var()` fallback chains for each breakpoint
-
-**Manual CSS (if not using SCSS):**
-
-If you're using plain CSS, write the media queries manually:
-
-```css
-/* Responsive padding */
-/* Only applies when data-has-responsive-padding attribute is present */
-.zen-component[data-has-responsive-padding='true'] {
-  padding: var(--component-padding-base);
-}
-
-@media (min-width: 480px) {
-  /* --breakpoint-xs: 480px */
-  .zen-component[data-has-responsive-padding='true'] {
-    padding: var(--component-padding-xs, var(--component-padding-base));
-  }
-}
-
-@media (min-width: 640px) {
-  /* --breakpoint-sm: 640px */
-  .zen-component[data-has-responsive-padding='true'] {
-    padding: var(
-      --component-padding-sm,
-      var(--component-padding-xs, var(--component-padding-base))
-    );
-  }
-}
-
-@media (min-width: 1024px) {
-  /* --breakpoint-md: 1024px */
-  .zen-component[data-has-responsive-padding='true'] {
-    padding: var(
-      --component-padding-md,
-      var(
-        --component-padding-sm,
-        var(--component-padding-xs, var(--component-padding-base))
-      )
-    );
-  }
-}
-
-@media (min-width: 1280px) {
-  /* --breakpoint-lg: 1280px */
-  .zen-component[data-has-responsive-padding='true'] {
-    padding: var(
-      --component-padding-lg,
-      var(
-        --component-padding-md,
-        var(
-          --component-padding-sm,
-          var(--component-padding-xs, var(--component-padding-base))
-        )
-      )
-    );
-  }
-}
-```
-
-**For camelCase prop names in SCSS:**
-
-When using camelCase prop names (like `gridTemplateAreas`), write the CSS manually since the mixin expects kebab-case:
-
-```scss
-/* Responsive grid-template-areas (camelCase prop name) */
-.zen-component[data-has-responsive-grid-template-areas='true'] {
-  grid-template-areas: var(--component-gridTemplateAreas-base);
-}
-
-@media (min-width: 480px) {
-  .zen-component[data-has-responsive-grid-template-areas='true'] {
-    grid-template-areas: var(
-      --component-gridTemplateAreas-xs,
-      var(--component-gridTemplateAreas-base)
-    );
-  }
-}
-
-/* ... continue for other breakpoints */
-```
+You don't need to write any CSS for responsive behavior - Emotion handles it all automatically.
 
 ### Key Implementation Details
 
-**1. Data Attributes**
+**1. Emotion Handles Everything**
 
-Always add data attributes when responsive props are used. This ensures CSS rules only apply when the CSS custom properties actually exist, preventing undefined variable warnings.
+With Emotion, you don't need to manually manage CSS custom properties or data attributes. Emotion generates and injects the CSS at runtime, including all media queries.
 
-**Using the utility (recommended):**
-
-```tsx
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-
-// Automatically generates data attributes for all responsive props
-const dataAttributes = generateResponsiveDataAttributes({
-  padding,
-  gap,
-  columns,
-})
-```
-
-**Manual approach (for camelCase props or custom logic):**
-
-```tsx
-const dataAttributes: Record<string, string> = {}
-if (padding && isResponsiveObject(padding)) {
-  dataAttributes['data-has-responsive-padding'] = 'true'
-}
-if (gap && isResponsiveObject(gap)) {
-  dataAttributes['data-has-responsive-gap'] = 'true'
-}
-```
-
-**2. CSS Custom Property Naming**
+**2. CSS Custom Property Naming (Internal)**
 
 CSS custom properties follow this pattern:
 
@@ -1476,17 +1372,9 @@ padding: var(
 );
 ```
 
-**4. Component Name Parameter**
+**4. CSS Property Names**
 
-The first parameter to `processResponsiveProps` should be the component name (lowercase, kebab-case with hyphens allowed for multi-word components):
-
-```tsx
-processResponsiveProps('box', { padding: ... })        // ✅ Correct (single word)
-processResponsiveProps('shoji-grid', { gap: ... })     // ✅ Correct (multi-word, kebab-case)
-processResponsiveProps('zen-box', { padding: ... })    // ❌ Wrong (includes 'zen-' prefix)
-processResponsiveProps('Box', { padding: ... })        // ❌ Wrong (capitalized)
-processResponsiveProps('shojiGrid', { gap: ... })     // ❌ Wrong (camelCase, should be kebab-case)
-```
+When using `responsiveStyles`, pass the CSS property name directly (e.g., `'gap'`, `'padding'`, `'gridTemplateAreas'`). Emotion handles the rest automatically.
 
 ### Backward Compatibility
 
@@ -1631,7 +1519,7 @@ const baseValue = getComputedStyle(element).getPropertyValue(
 )
 ```
 
-**Note for Compound Components:** When sub-components extend other component props (like `BoxProps`), they should use the parent component's CSS prefix in `processResponsiveProps`. For example, a `GridCell` component that extends `BoxProps` should use `'box'` as the prefix, allowing it to reuse Box CSS rules.
+**Note for Compound Components:** When sub-components extend other component props (like `BoxProps`), they can reuse the parent component's Emotion style utilities. For example, a `GridCell` component that extends `BoxProps` can use `getPaddingEmotionStyles` from Box, allowing it to reuse Box padding styles.
 
 ### Best Practices
 
@@ -1640,7 +1528,7 @@ const baseValue = getComputedStyle(element).getPropertyValue(
 </Guideline>
 
 <Guideline type="do">
-  Use data attributes to conditionally apply CSS rules
+  Use Emotion's `responsiveStyles` utility for all responsive props
 </Guideline>
 
 <Guideline type="do">
@@ -1650,7 +1538,7 @@ const baseValue = getComputedStyle(element).getPropertyValue(
 </Guideline>
 
 <Guideline type="do">
-  Add comments in CSS referencing breakpoint tokens
+  Keep CSS files for base styles, variants, and states only
 </Guideline>
 
 <Guideline type="dont">
@@ -1867,30 +1755,23 @@ it('should handle disabled state', () => {
 })
 ```
 
-#### 7. Normalization Functions
+#### 7. Conversion Functions
 
-Test that normalization functions convert values correctly:
+Test that conversion functions convert values correctly:
 
 ```tsx
-import { normalizeResponsiveGap } from './ComponentName'
+import { gapToCSS } from './ComponentName'
 
-describe('normalizeResponsiveGap', () => {
+describe('gapToCSS', () => {
   it('should convert simple value to CSS', () => {
-    const result = normalizeResponsiveGap('sm')
+    const result = gapToCSS('sm')
     expect(result).toBe('var(--grid-gap-sm)')
   })
 
-  it('should convert responsive object to CSS values', () => {
-    const result = normalizeResponsiveGap({ base: 'sm', md: 'md' })
-    expect(result).toEqual({
-      base: 'var(--grid-gap-sm)',
-      md: 'var(--grid-gap-md)',
-    })
-  })
-
-  it('should return undefined for undefined input', () => {
-    const result = normalizeResponsiveGap(undefined)
-    expect(result).toBeUndefined()
+  it('should convert all gap values correctly', () => {
+    expect(gapToCSS('none')).toBe('0')
+    expect(gapToCSS('sm')).toBe('var(--grid-gap-sm)')
+    expect(gapToCSS('md')).toBe('var(--grid-gap-md)')
   })
 })
 ```
@@ -2389,15 +2270,20 @@ Sub-components that extend other component props (like `FlexProps`) should:
 - Only add class names for non-responsive values
 
 ```tsx
-// GridCell uses 'flex' prefix since it extends FlexProps
-const responsiveStyles = processResponsiveProps('flex', {
-  gap: normalizeResponsiveGap(gap),
-  direction: normalizeResponsiveDirection(direction),
-  // ... other flex props
-})
+// GridCell can reuse Box's padding styles utility
+import { getPaddingEmotionStyles } from '../Box/boxPaddingStyles'
+
+const paddingStyles = getPaddingEmotionStyles(
+  padding,
+  paddingHorizontal,
+  paddingVertical,
+)
+const emotionStyles = css`
+  ${paddingStyles}
+`
 ```
 
-This allows sub-components to reuse the parent component's CSS rules while maintaining their own implementation.
+This allows sub-components to reuse the parent component's Emotion style utilities while maintaining their own implementation.
 
 ---
 
@@ -2508,10 +2394,12 @@ Before submitting a new component, verify:
         </li>
         <li>Normalizes semantic values to CSS (if needed)</li>
         <li>
-          Uses <code>processResponsiveProps</code> to generate CSS custom
-          properties
+          Uses <code>responsiveStyles</code> to generate Emotion CSS with media
+          queries
         </li>
-        <li>Adds data attributes for responsive props</li>
+        <li>
+          Combines Emotion styles with CSS classes for backward compatibility
+        </li>
         <li>Handles camelCase prop names correctly</li>
         <li>Maintains class names for backward compatibility</li>
         <li>CSS includes fallback chains for all breakpoints</li>

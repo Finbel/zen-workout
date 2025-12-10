@@ -1,10 +1,9 @@
 import { HTMLAttributes, forwardRef, type Ref } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-import './Heading.scss'
+import { responsiveStyles } from '../../utils/responsiveStyles'
+import './Heading.css'
 
 export type HeadingSize =
   | 'xs'
@@ -33,11 +32,6 @@ function sizeToCSS(size: HeadingSize): string {
   }
   return mapping[size]
 }
-
-/**
- * Normalize responsive size value to CSS value
- */
-const normalizeResponsiveSize = createNormalizeResponsive(sizeToCSS)
 
 /**
  * Get class name for a size prop if it's a simple (non-responsive) value
@@ -70,11 +64,6 @@ const HeadingComponent = forwardRef<HTMLHeadingElement, HeadingProps>(
     { size = '2xl', level = 1, className = '', style, children, ...props },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('heading', {
-      size: normalizeResponsiveSize(size),
-    })
-
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const classNames = [
@@ -86,16 +75,18 @@ const HeadingComponent = forwardRef<HTMLHeadingElement, HeadingProps>(
       .filter(Boolean)
       .join(' ')
 
-    // Generate data attributes to indicate which responsive props are used
-    // This allows CSS to conditionally apply styles only when needed
-    const dataAttributes = generateResponsiveDataAttributes({
-      size,
-    })
+    // Generate Emotion styles for responsive size
+    const fontSizeStyles = responsiveStyles('fontSize', size, sizeToCSS)
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${fontSizeStyles}
+    `
 
     const commonProps = {
       className: classNames,
-      style: { ...responsiveStyles, ...style },
-      ...dataAttributes,
+      css: emotionStyles,
+      style,
       ...props,
     }
 

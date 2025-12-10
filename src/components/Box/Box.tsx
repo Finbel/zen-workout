@@ -1,17 +1,15 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-import './Box.scss'
+import { getPaddingEmotionStyles } from './boxPaddingStyles'
+import './Box.css'
 
 export type BoxPadding = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 /**
  * Convert BoxPadding value to CSS spacing token
  */
-function paddingToCSS(padding: BoxPadding): string {
+export function paddingToCSS(padding: BoxPadding): string {
   const mapping: Record<BoxPadding, string> = {
     none: '0',
     xs: 'var(--space-1)',
@@ -24,14 +22,9 @@ function paddingToCSS(padding: BoxPadding): string {
 }
 
 /**
- * Normalize responsive padding value to CSS value
- */
-const normalizeResponsivePadding = createNormalizeResponsive(paddingToCSS)
-
-/**
  * Get class name for a padding prop if it's a simple (non-responsive) value
  */
-function getPaddingClassName(
+export function getPaddingClassName(
   value: Responsive<BoxPadding> | undefined,
   prefix: string,
 ): string | false {
@@ -62,13 +55,6 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
     },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('box', {
-      padding: normalizeResponsivePadding(padding),
-      paddingHorizontal: normalizeResponsivePadding(paddingHorizontal),
-      paddingVertical: normalizeResponsivePadding(paddingVertical),
-    })
-
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const classNames = [
@@ -81,31 +67,19 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
       .filter(Boolean)
       .join(' ')
 
-    // Generate data attributes to indicate which responsive props are used
-    // This allows CSS to conditionally apply styles only when needed
-    const dataAttributes = generateResponsiveDataAttributes({
+    // Generate Emotion styles for responsive padding using shared utility
+    const emotionStyles = getPaddingEmotionStyles(
       padding,
       paddingHorizontal,
       paddingVertical,
-    })
-
-    // For camelCase prop names, convert data attributes to kebab-case
-    // The CSS custom properties use camelCase, but data attributes should use kebab-case
-    if (paddingHorizontal && isResponsiveObject(paddingHorizontal)) {
-      delete dataAttributes['data-has-responsive-paddingHorizontal']
-      dataAttributes['data-has-responsive-padding-horizontal'] = 'true'
-    }
-    if (paddingVertical && isResponsiveObject(paddingVertical)) {
-      delete dataAttributes['data-has-responsive-paddingVertical']
-      dataAttributes['data-has-responsive-padding-vertical'] = 'true'
-    }
+    )
 
     return (
       <div
         ref={ref}
         className={classNames}
-        style={{ ...responsiveStyles, ...style }}
-        {...dataAttributes}
+        css={emotionStyles}
+        style={style}
         {...props}
       >
         {children}

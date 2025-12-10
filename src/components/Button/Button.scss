@@ -1,0 +1,143 @@
+/* ============================================
+   BUTTON COMPONENT
+   ============================================ */
+
+.zen-button {
+  /* Reset */
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  /* Typography */
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+
+  /* Shape */
+  border-radius: var(--radius-sm);
+
+  /* Interaction */
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast), border-color var(--transition-fast),
+    box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.zen-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.zen-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.zen-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ----------------------------------------
+   SIZE VARIANTS
+   ---------------------------------------- */
+
+.zen-button--sm {
+  --button-height: 2rem;
+  --button-padding-x: var(--space-3);
+  --button-font-size: var(--font-size-sm);
+
+  height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  font-size: var(--button-font-size);
+}
+
+.zen-button--md {
+  --button-height: 2.5rem;
+  --button-padding-x: var(--space-4);
+  --button-font-size: var(--font-size-base);
+
+  height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  font-size: var(--button-font-size);
+}
+
+.zen-button--lg {
+  --button-height: 3rem;
+  --button-padding-x: var(--space-6);
+  --button-font-size: var(--font-size-lg);
+
+  height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  font-size: var(--button-font-size);
+}
+
+/* ----------------------------------------
+   STYLE VARIANTS
+   ---------------------------------------- */
+
+/* Primary - filled with brand color */
+.zen-button--primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.zen-button--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.zen-button--primary:active:not(:disabled) {
+  background-color: var(--color-primary-active);
+}
+
+/* Secondary - filled with neutral color */
+.zen-button--secondary {
+  background-color: var(--color-surface-elevated);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.zen-button--secondary:hover:not(:disabled) {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.zen-button--secondary:active:not(:disabled) {
+  background-color: var(--color-border-subtle);
+}
+
+/* Outline - transparent with border */
+.zen-button--outline {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.zen-button--outline:hover:not(:disabled) {
+  background-color: var(--color-primary-subtle);
+}
+
+.zen-button--outline:active:not(:disabled) {
+  background-color: var(--color-primary-subtle);
+  border-color: var(--color-primary-hover);
+}
+
+/* Ghost - minimal, no border */
+.zen-button--ghost {
+  background-color: transparent;
+  color: var(--color-text-primary);
+}
+
+.zen-button--ghost:hover:not(:disabled) {
+  background-color: var(--color-surface);
+}
+
+.zen-button--ghost:active:not(:disabled) {
+  background-color: var(--color-border-subtle);
+}

@@ -22,11 +22,11 @@ import {
   XCircleIcon,
   type Icon as PhosphorIcon,
 } from '@phosphor-icons/react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-import './Icon.scss'
+import { responsiveStyles } from '../../utils/responsiveStyles'
+import './Icon.css'
 
 /**
  * Supported icon names for the Icon component.
@@ -172,24 +172,31 @@ export const Icon = forwardRef<SVGSVGElement, IconProps>(
       return null
     }
 
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('icon', {
-      size,
-      color,
-    })
-
     // Get base values for Phosphor icon props (Phosphor icons don't support responsive props directly)
     const baseSize = getBaseValue(size, 20)
     const baseColor = getBaseValue(color, 'currentColor')
 
-    // Generate data attributes for responsive props
-    const dataAttributes = generateResponsiveDataAttributes(
-      {
-        size,
-        color,
-      },
-      { includeBreakpointValues: true },
-    )
+    // Convert size to CSS string (handle both number and string)
+    const sizeToCSSString = (val: number | string): string => {
+      if (typeof val === 'number') {
+        return `${val}px`
+      }
+      return val
+    }
+
+    // Generate Emotion styles for responsive size (width and height)
+    const sizeWidthStyles = responsiveStyles('width', size, sizeToCSSString)
+    const sizeHeightStyles = responsiveStyles('height', size, sizeToCSSString)
+
+    // Generate Emotion styles for responsive color
+    const colorStyles = responsiveStyles('color', color, (val) => val)
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${sizeWidthStyles}
+      ${sizeHeightStyles}
+      ${colorStyles}
+    `
 
     const classNames = ['zen-icon', className].filter(Boolean).join(' ')
 
@@ -200,10 +207,10 @@ export const Icon = forwardRef<SVGSVGElement, IconProps>(
         weight="light"
         color={baseColor}
         className={classNames}
-        style={{ ...responsiveStyles, ...style }}
+        css={emotionStyles}
+        style={style}
         aria-label={alt}
         aria-hidden={!alt}
-        {...dataAttributes}
         {...props}
       />
     )

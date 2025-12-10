@@ -2,8 +2,6 @@
    TEXT COMPONENT
    ============================================ */
 
-@use '../../styles/mixins/responsive' as *;
-
 .zen-text {
   /* Typography */
   font-family: var(--font-family-sans);
@@ -46,9 +44,3 @@
 .zen-text--4xl {
   font-size: var(--font-size-4xl);
 }
-
-/* ----------------------------------------
-   RESPONSIVE SIZE
-   ---------------------------------------- */
-
-@include responsive-prop('zen-text', 'size', 'font-size');

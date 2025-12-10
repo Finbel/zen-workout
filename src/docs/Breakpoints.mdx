@@ -360,91 +360,46 @@ This applies:
 When you provide a responsive prop value:
 
 1. **Component processes the value**: Detects if it's a simple value or responsive object
-2. **CSS custom properties are set**: Creates variables like `--{component-name}-{prop-name}-base`, `--{component-name}-{prop-name}-sm`, etc.
-   - TypeScript: Uses `processResponsiveProps('{component-name}', { ... })` where `{component-name}` is kebab-case WITHOUT `zen-` prefix
-   - SCSS: Uses `@include responsive-prop('zen-{component-name}', '{prop-name}', '{css-property}')` where class name includes `zen-` prefix (mixin strips it automatically)
+2. **Emotion generates CSS**: Uses the `responsiveStyles` utility to generate Emotion CSS with media queries
+   - TypeScript: Uses `responsiveStyles('{css-property}', value, toCSS)` where `{css-property}` is the CSS property name (e.g., `'gap'`, `'padding'`, `'gridTemplateAreas'`)
+   - Emotion automatically generates media queries for each breakpoint when using responsive objects
 3. **Class names are maintained**: For responsive objects, the base value's class name is added (e.g., `zen-{component-name}--{prop-name}-{base-value}`) to maintain compatibility with existing CSS
-4. **Data attributes are added**: Adds `data-has-responsive-{prop-name}="true"` and breakpoint-specific attributes (e.g., `data-{prop-name}-{breakpoint}="{value}"`) to enable CSS rules
-   - For camelCase props: Data attributes use kebab-case (e.g., `gridTemplateColumns` → `data-has-responsive-grid-template-columns`)
-5. **CSS media queries apply**: Uses the CSS custom properties with fallback chains
+4. **Emotion injects styles**: Emotion injects the generated CSS at runtime, including all media queries
+5. **CSS media queries apply**: Emotion-generated CSS includes media queries that apply styles at the correct breakpoints
 
-### CSS Custom Property Fallback Chains
+### How Emotion Generates Media Queries
 
-Responsive props use nested CSS variable fallbacks to create cascading values. Each breakpoint includes fallbacks for all previous breakpoints:
+Emotion automatically generates CSS with media queries when you use responsive objects. The `responsiveStyles` utility creates CSS that applies different values at different breakpoints:
 
-```css
-@media (min-width: 480px) {
-  /* --breakpoint-xs: 480px */
-  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
-    {css-property}: var(
-      --{component-name}-{prop-name}-xs,
-      var(--{component-name}-{prop-name}-base)
-    );
-  }
-}
+**Example:**
 
-@media (min-width: 640px) {
-  /* --breakpoint-sm: 640px */
-  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
-    {css-property}: var(
-      --{component-name}-{prop-name}-sm,
-      var(
-        --{component-name}-{prop-name}-xs,
-        var(--{component-name}-{prop-name}-base)
-      )
-    );
-  }
-}
+```tsx
+// Input:
+const gapStyles = responsiveStyles('gap', { base: 'sm', md: 'lg' }, gapToCSS)
 
-@media (min-width: 1024px) {
-  /* --breakpoint-md: 1024px */
-  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
-    {css-property}: var(
-      --{component-name}-{prop-name}-md,
-      var(
-        --{component-name}-{prop-name}-sm,
-        var(
-          --{component-name}-{prop-name}-xs,
-          var(--{component-name}-{prop-name}-base)
-        )
-      )
-    );
-  }
-}
-
-@media (min-width: 1280px) {
-  /* --breakpoint-lg: 1280px */
-  .zen-{component-name}[data-has-responsive-{prop-name}='true'] {
-    {css-property}: var(
-      --{component-name}-{prop-name}-lg,
-      var(
-        --{component-name}-{prop-name}-md,
-        var(
-          --{component-name}-{prop-name}-sm,
-          var(
-            --{component-name}-{prop-name}-xs,
-            var(--{component-name}-{prop-name}-base)
-          )
-        )
-      )
-    );
-  }
-}
+// Emotion generates CSS (conceptually):
+// gap: var(--space-2);  // base value
+// @media (min-width: 1024px) {
+//   gap: var(--space-6);  // md value
+// }
 ```
 
-**How the fallback works:**
+**How breakpoint inheritance works:**
 
-At each breakpoint, the browser tries fallbacks in order:
+When you provide a responsive object, Emotion generates media queries that apply values at the correct breakpoints:
 
-1. **xs breakpoint**: Try `--{component-name}-{prop-name}-xs`, fall back to `base`
-2. **sm breakpoint**: Try `sm`, then `xs`, then `base`
-3. **md breakpoint**: Try `md`, then `sm`, then `xs`, then `base`
-4. **lg breakpoint**: Try `lg`, then `md`, then `sm`, then `xs`, then `base`
+1. **Base value**: Applied by default (no media query)
+2. **xs breakpoint**: Applied at 480px and above
+3. **sm breakpoint**: Applied at 640px and above
+4. **md breakpoint**: Applied at 1024px and above
+5. **lg breakpoint**: Applied at 1280px and above
+
+If you only set `base` and `lg`, the `base` value applies from 0px to 1279px, and `lg` applies from 1280px and above. Intermediate breakpoints inherit from the previous breakpoint value.
 
 This ensures that:
 
-- If you only set `base` and `lg`, intermediate breakpoints inherit from `base`
-- Missing breakpoint values gracefully fall back through all smaller breakpoints
+- If you only set `base` and `lg`, intermediate breakpoints use `base` until `lg` applies
+- Missing breakpoint values gracefully inherit from previous breakpoints
 - The system works with partial breakpoint specifications
 
 ---
@@ -612,66 +567,39 @@ if (isResponsiveObject(padding)) {
 
 ## Technical Details
 
-### CSS Custom Property Naming
+### CSS Property Names
 
-Responsive props generate CSS custom properties with this pattern:
+When using `responsiveStyles`, you pass the CSS property name directly:
 
-```
---{component-name}-{prop-name}-{breakpoint}
-```
+**Property name rules:**
 
-**Component name rules:**
+- Simple props: Use CSS property name as-is (e.g., `'gap'`, `'padding'`, `'margin'`)
+- CamelCase props: Use camelCase CSS property name (e.g., `'gridTemplateAreas'`, `'gridTemplateColumns'`)
 
-- Component name should be kebab-case (e.g., `component-name`)
-- In TypeScript: Pass component name WITHOUT `zen-` prefix (e.g., `'component-name'`)
-- In SCSS: Pass full class name WITH `zen-` prefix (e.g., `'zen-component-name'`), the mixin automatically strips it
+**Examples:**
 
-**Prop name rules:**
+```tsx
+// Simple property
+const gapStyles = responsiveStyles('gap', gap, gapToCSS)
 
-- Simple props: Use prop name as-is (e.g., `padding`, `gap`)
-- CamelCase props: Preserve camelCase in CSS custom properties (e.g., `gridTemplateColumns` → `--{component-name}-gridTemplateColumns-base`)
-
-Examples:
-
-- `--{component-name}-{prop-name}-base`
-- `--{component-name}-{prop-name}-xs`
-- `--{component-name}-{prop-name}-sm`
-- `--{component-name}-gridTemplateRows-base` (camelCase preserved)
-- `--{component-name}-gridTemplateColumns-md` (camelCase preserved)
-
-### Data Attributes
-
-Components add data attributes to enable conditional CSS:
-
-**Pattern:**
-
-```
-data-has-responsive-{prop-name}="true"
+// CamelCase property
+const gridTemplateAreasStyles = responsiveStyles(
+  'gridTemplateAreas',
+  gridTemplateAreas,
+  (val) => val,
+)
 ```
 
-**Rules:**
-
-- Simple props: Use prop name as-is (e.g., `data-has-responsive-padding`, `data-has-responsive-gap`)
-- CamelCase props: Convert to kebab-case (e.g., `gridTemplateColumns` → `data-has-responsive-grid-template-columns`)
-- Breakpoint-specific attributes: `data-{prop-name}-{breakpoint}="{value}"` (e.g., `data-gap-base="sm"`, `data-gap-md="md"`)
-
-Examples:
-
-- `data-has-responsive-{prop-name}="true"` when `{prop-name}` is responsive
-- `data-has-responsive-grid-template-columns="true"` when `gridTemplateColumns` is responsive (camelCase → kebab-case)
-- `data-{prop-name}-base="{value}"` for breakpoint-specific values
-
-This ensures CSS rules only apply when responsive props are actually used, preventing undefined CSS variable warnings.
+Emotion automatically handles the CSS property name and generates the appropriate media queries. You don't need to worry about CSS custom property naming or data attributes - Emotion handles everything automatically.
 
 ### Browser Support
 
 Responsive props work in all modern browsers that support:
 
-- CSS Custom Properties (CSS Variables)
 - CSS Media Queries
-- CSS `var()` function with fallbacks
+- Emotion (which handles CSS-in-JS)
 
-This includes all major browsers from the last 5+ years.
+This includes all major browsers from the last 5+ years. Emotion automatically handles browser compatibility and CSS generation.
 
 ---
 

@@ -1,0 +1,39 @@
+/* ============================================
+   SHOJIGRID COMPONENT
+   ============================================ */
+
+.zen-shoji-grid {
+  display: grid;
+  /* Shoji (Japanese room divider) styling - applied by default */
+  --shoji-frame: var(--color-neutral-600);
+  --shoji-panel: var(--color-neutral-0);
+  background-color: var(--shoji-frame);
+}
+
+.zen-shoji-grid > * {
+  background-color: var(--shoji-panel);
+}
+
+/* ----------------------------------------
+   GAP VARIANTS
+   ---------------------------------------- */
+
+.zen-shoji-grid--gap-none {
+  gap: 0;
+}
+
+.zen-shoji-grid--gap-sm {
+  gap: var(--grid-gap-sm);
+}
+
+.zen-shoji-grid--gap-md {
+  gap: var(--grid-gap-md);
+}
+
+/* ----------------------------------------
+   SHOJIGRID CELL
+   ---------------------------------------- */
+
+.zen-shoji-grid-cell {
+  min-width: 0; /* Prevent grid blowout */
+}

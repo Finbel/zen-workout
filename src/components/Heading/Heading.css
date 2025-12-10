@@ -2,8 +2,6 @@
    HEADING COMPONENT
    ============================================ */
 
-@use '../../styles/mixins/responsive' as *;
-
 .zen-heading {
   /* Typography */
   font-family: var(--font-family-heading);
@@ -75,9 +73,3 @@
 .zen-heading--4xl {
   font-size: var(--font-size-4xl);
 }
-
-/* ----------------------------------------
-   RESPONSIVE SIZE
-   ---------------------------------------- */
-
-@include responsive-prop('zen-heading', 'size', 'font-size');

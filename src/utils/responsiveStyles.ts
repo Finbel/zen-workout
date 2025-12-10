@@ -68,7 +68,12 @@ export function responsiveStyles<T>(
   }
 
   // Add media queries for each breakpoint (excluding base)
-  const mediaBreakpoints: Array<'xs' | 'sm' | 'md' | 'lg'> = ['xs', 'sm', 'md', 'lg']
+  const mediaBreakpoints: Array<'xs' | 'sm' | 'md' | 'lg'> = [
+    'xs',
+    'sm',
+    'md',
+    'lg',
+  ]
 
   for (const bp of mediaBreakpoints) {
     if (responsiveObj[bp] !== undefined) {
@@ -81,4 +86,3 @@ export function responsiveStyles<T>(
 
   return css(cssObject)
 }
-

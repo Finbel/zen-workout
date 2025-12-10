@@ -1,12 +1,13 @@
 import { forwardRef } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
+import { responsiveStyles } from '../../utils/responsiveStyles'
 import { BoxProps } from '../Box'
-import '../Box/Box.scss'
-import './Flex.scss'
+import { getPaddingClassName } from '../Box/Box'
+import { getPaddingEmotionStyles } from '../Box/boxPaddingStyles'
+import '../Box/Box.css'
+import './Flex.css'
 
 export type FlexGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type FlexDirection = 'row' | 'column'
@@ -29,21 +30,11 @@ function gapToCSS(gap: FlexGap): string {
 }
 
 /**
- * Normalize responsive gap value to CSS value
- */
-const normalizeResponsiveGap = createNormalizeResponsive(gapToCSS)
-
-/**
  * Convert FlexDirection value to CSS value
  */
 function directionToCSS(direction: FlexDirection): string {
   return direction === 'row' ? 'row' : 'column'
 }
-
-/**
- * Normalize responsive direction value to CSS value
- */
-const normalizeResponsiveDirection = createNormalizeResponsive(directionToCSS)
 
 /**
  * Convert FlexAlign value to CSS value
@@ -57,11 +48,6 @@ function alignToCSS(align: FlexAlign): string {
   }
   return mapping[align]
 }
-
-/**
- * Normalize responsive align value to CSS value
- */
-const normalizeResponsiveAlign = createNormalizeResponsive(alignToCSS)
 
 /**
  * Convert FlexJustify value to CSS value
@@ -78,21 +64,11 @@ function justifyToCSS(justify: FlexJustify): string {
 }
 
 /**
- * Normalize responsive justify value to CSS value
- */
-const normalizeResponsiveJustify = createNormalizeResponsive(justifyToCSS)
-
-/**
  * Convert boolean wrap value to CSS value
  */
 function wrapToCSS(wrap: boolean): string {
   return wrap ? 'wrap' : 'nowrap'
 }
-
-/**
- * Normalize responsive wrap value to CSS value
- */
-const normalizeResponsiveWrap = createNormalizeResponsive(wrapToCSS)
 
 /**
  * Get class name for a prop if it's a simple (non-responsive) value
@@ -143,15 +119,6 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
     },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('flex', {
-      gap: normalizeResponsiveGap(gap),
-      direction: normalizeResponsiveDirection(direction),
-      align: normalizeResponsiveAlign(align),
-      justify: normalizeResponsiveJustify(justify),
-      wrap: normalizeResponsiveWrap(wrap),
-    })
-
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const classNames = [
@@ -161,27 +128,53 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
       !isResponsiveObject(wrap) && wrap && 'zen-flex--wrap',
       getClassName(align, 'align'),
       getClassName(justify, 'justify'),
-      // Box padding classes (handled by Box component)
+      // Box padding classes
+      getPaddingClassName(padding, 'p'),
+      getPaddingClassName(paddingHorizontal, 'px'),
+      getPaddingClassName(paddingVertical, 'py'),
       className,
     ]
       .filter(Boolean)
       .join(' ')
 
-    // Generate data attributes for responsive props
-    const dataAttributes = generateResponsiveDataAttributes({
-      gap,
+    // Generate Emotion styles for Flex's own responsive props
+    const gapStyles = responsiveStyles('gap', gap, gapToCSS)
+    const directionStyles = responsiveStyles(
+      'flexDirection',
       direction,
-      align,
+      directionToCSS,
+    )
+    const alignStyles = responsiveStyles('alignItems', align, alignToCSS)
+    const justifyStyles = responsiveStyles(
+      'justifyContent',
       justify,
-      wrap,
-    })
+      justifyToCSS,
+    )
+    const wrapStyles = responsiveStyles('flexWrap', wrap, wrapToCSS)
+
+    // Get padding styles from shared utility
+    const paddingStyles = getPaddingEmotionStyles(
+      padding,
+      paddingHorizontal,
+      paddingVertical,
+    )
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${gapStyles}
+      ${directionStyles}
+      ${alignStyles}
+      ${justifyStyles}
+      ${wrapStyles}
+      ${paddingStyles}
+    `
 
     return (
       <div
         ref={ref}
         className={classNames}
-        style={{ ...responsiveStyles, ...style }}
-        {...dataAttributes}
+        css={emotionStyles}
+        style={style}
         {...props}
       >
         {children}

@@ -1,9 +1,9 @@
 import { InputHTMLAttributes, forwardRef } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
-import './TextInput.scss'
+import { responsiveStyles } from '../../utils/responsiveStyles'
+import './TextInput.css'
 
 export type TextInputType =
   | 'text'
@@ -14,6 +14,30 @@ export type TextInputType =
   | 'tel'
   | 'number'
 export type TextInputSize = 'sm' | 'md' | 'lg'
+
+/**
+ * Size to CSS value mappings
+ */
+const SIZE_STYLES: Record<
+  TextInputSize,
+  { height: string; paddingY: string; fontSize: string }
+> = {
+  sm: {
+    height: '2rem',
+    paddingY: 'var(--space-1)',
+    fontSize: 'var(--font-size-sm)',
+  },
+  md: {
+    height: '2.5rem',
+    paddingY: 'var(--space-2)',
+    fontSize: 'var(--font-size-base)',
+  },
+  lg: {
+    height: '3rem',
+    paddingY: 'var(--space-3)',
+    fontSize: 'var(--font-size-lg)',
+  },
+}
 
 export interface TextInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
@@ -50,11 +74,6 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('text-input', {
-      size,
-    })
-
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const inputClassNames = [
@@ -73,13 +92,35 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       .filter(Boolean)
       .join(' ')
 
-    // Generate data attributes for responsive props
-    const dataAttributes = generateResponsiveDataAttributes(
-      {
-        size,
-      },
-      { includeBreakpointValues: true },
+    // Generate Emotion styles for responsive size
+    const sizeHeightStyles = responsiveStyles(
+      'height',
+      size,
+      (s) => SIZE_STYLES[s].height,
     )
+    const sizePaddingTopStyles = responsiveStyles(
+      'paddingTop',
+      size,
+      (s) => SIZE_STYLES[s].paddingY,
+    )
+    const sizePaddingBottomStyles = responsiveStyles(
+      'paddingBottom',
+      size,
+      (s) => SIZE_STYLES[s].paddingY,
+    )
+    const sizeFontSizeStyles = responsiveStyles(
+      'fontSize',
+      size,
+      (s) => SIZE_STYLES[s].fontSize,
+    )
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${sizeHeightStyles}
+      ${sizePaddingTopStyles}
+      ${sizePaddingBottomStyles}
+      ${sizeFontSizeStyles}
+    `
 
     return (
       <div className={wrapperClassNames}>
@@ -87,10 +128,10 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           ref={ref}
           type={type}
           className={inputClassNames}
-          style={{ ...responsiveStyles, ...style }}
+          css={emotionStyles}
+          style={style}
           disabled={disabled}
           aria-invalid={error}
-          {...dataAttributes}
           {...props}
         />
       </div>

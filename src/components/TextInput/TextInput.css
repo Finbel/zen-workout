@@ -2,8 +2,6 @@
    TEXT INPUT COMPONENT
    ============================================ */
 
-@use '../../styles/variables/breakpoints' as bp;
-
 /* ----------------------------------------
    WRAPPER
    ---------------------------------------- */
@@ -93,76 +91,6 @@
   height: var(--text-input-height);
   padding: var(--text-input-padding-y) 0;
   font-size: var(--text-input-font-size);
-}
-
-/* ----------------------------------------
-   RESPONSIVE SIZE
-   ---------------------------------------- */
-
-/* Apply size styles based on data attributes with breakpoint values */
-.zen-text-input[data-has-responsive-size='true'][data-size-base='sm'] {
-  --text-input-height: 2rem;
-  --text-input-padding-y: var(--space-1);
-  --text-input-font-size: var(--font-size-sm);
-
-  height: var(--text-input-height);
-  padding: var(--text-input-padding-y) 0;
-  font-size: var(--text-input-font-size);
-}
-
-.zen-text-input[data-has-responsive-size='true'][data-size-base='md'] {
-  --text-input-height: 2.5rem;
-  --text-input-padding-y: var(--space-2);
-  --text-input-font-size: var(--font-size-base);
-
-  height: var(--text-input-height);
-  padding: var(--text-input-padding-y) 0;
-  font-size: var(--text-input-font-size);
-}
-
-.zen-text-input[data-has-responsive-size='true'][data-size-base='lg'] {
-  --text-input-height: 3rem;
-  --text-input-padding-y: var(--space-3);
-  --text-input-font-size: var(--font-size-lg);
-
-  height: var(--text-input-height);
-  padding: var(--text-input-padding-y) 0;
-  font-size: var(--text-input-font-size);
-}
-
-@each $breakpoint, $min-width in bp.$breakpoints {
-  @media (min-width: $min-width) {
-    /* --breakpoint-#{$breakpoint}: #{$min-width} */
-    .zen-text-input[data-has-responsive-size='true'][data-size-#{$breakpoint}='sm'] {
-      --text-input-height: 2rem;
-      --text-input-padding-y: var(--space-1);
-      --text-input-font-size: var(--font-size-sm);
-
-      height: var(--text-input-height);
-      padding: var(--text-input-padding-y) 0;
-      font-size: var(--text-input-font-size);
-    }
-
-    .zen-text-input[data-has-responsive-size='true'][data-size-#{$breakpoint}='md'] {
-      --text-input-height: 2.5rem;
-      --text-input-padding-y: var(--space-2);
-      --text-input-font-size: var(--font-size-base);
-
-      height: var(--text-input-height);
-      padding: var(--text-input-padding-y) 0;
-      font-size: var(--text-input-font-size);
-    }
-
-    .zen-text-input[data-has-responsive-size='true'][data-size-#{$breakpoint}='lg'] {
-      --text-input-height: 3rem;
-      --text-input-padding-y: var(--space-3);
-      --text-input-font-size: var(--font-size-lg);
-
-      height: var(--text-input-height);
-      padding: var(--text-input-padding-y) 0;
-      font-size: var(--text-input-font-size);
-    }
-  }
 }
 
 /* ----------------------------------------

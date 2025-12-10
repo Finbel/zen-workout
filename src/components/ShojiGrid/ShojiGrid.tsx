@@ -1,14 +1,12 @@
 import { forwardRef, CSSProperties } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
+import { responsiveStyles } from '../../utils/responsiveStyles'
 import { BoxProps } from '../Box'
-import '../Box/Box.scss'
-import './ShojiGrid.scss'
+import '../Box/Box.css'
+import './ShojiGrid.css'
 import { ShojiGridCell } from './ShojiGridCell'
-import { SHOJI_GRID_COLUMNS_BASE } from './shojiGridConstants'
 
 /**
  * Default minimum width for grid children when using auto-fill or auto-fit columns
@@ -33,11 +31,6 @@ function gapToCSS(gap: ShojiGridGap): string {
 }
 
 /**
- * Convert responsive gap value to CSS value
- */
-const normalizeResponsiveGap = createNormalizeResponsive(gapToCSS)
-
-/**
  * Convert ShojiGridColumns to grid-template-columns CSS value
  * Uses a default minWidth for auto-fill/auto-fit - users can specify gridTemplateColumns
  * directly if they need a different minWidth.
@@ -47,34 +40,6 @@ function columnsToCSS(columns: ShojiGridColumns): string {
     return `repeat(${columns}, 1fr)`
   }
   return `repeat(${columns}, minmax(${DEFAULT_MIN_CHILD_WIDTH}, 1fr))`
-}
-
-/**
- * Process responsive columns into CSS custom properties
- */
-function processResponsiveColumns(
-  columns: Responsive<ShojiGridColumns> | undefined,
-): Record<string, string> {
-  const cssProps: Record<string, string> = {}
-
-  if (columns === undefined) return cssProps
-
-  if (isResponsiveObject(columns)) {
-    if (columns.base !== undefined) {
-      cssProps[SHOJI_GRID_COLUMNS_BASE] = columnsToCSS(columns.base)
-    }
-    for (const breakpoint of ['xs', 'sm', 'md', 'lg'] as const) {
-      if (columns[breakpoint] !== undefined) {
-        cssProps[`--shoji-grid-columns-${breakpoint}`] = columnsToCSS(
-          columns[breakpoint],
-        )
-      }
-    }
-  } else {
-    cssProps[SHOJI_GRID_COLUMNS_BASE] = columnsToCSS(columns)
-  }
-
-  return cssProps
 }
 
 /**
@@ -94,13 +59,6 @@ function normalizeGridTemplateAreas(value: string): string {
     .join(' ')
     .trim()
 }
-
-/**
- * Convert responsive grid-template-areas value to normalized CSS value
- */
-const normalizeResponsiveGridTemplateAreas = createNormalizeResponsive(
-  normalizeGridTemplateAreas,
-)
 
 /**
  * Get class name for a gap prop
@@ -155,22 +113,6 @@ const ShojiGridRoot = forwardRef<HTMLDivElement, ShojiGridProps>(
     },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('shoji-grid', {
-      gap: normalizeResponsiveGap(gap),
-      gridTemplateRows: gridTemplateRows,
-      gridTemplateColumns: gridTemplateColumns,
-      gridTemplateAreas:
-        normalizeResponsiveGridTemplateAreas(gridTemplateAreas),
-    })
-
-    // Handle columns for grid-template-columns
-    // Only process if gridTemplateColumns is not provided (it takes precedence)
-    if (!gridTemplateColumns) {
-      const columnsStyles = processResponsiveColumns(columns)
-      Object.assign(responsiveStyles, columnsStyles)
-    }
-
     // Build class names for non-responsive usage (backward compatibility)
     const classNames = [
       'zen-shoji-grid',
@@ -181,42 +123,44 @@ const ShojiGridRoot = forwardRef<HTMLDivElement, ShojiGridProps>(
       .filter(Boolean)
       .join(' ')
 
-    // Add data attributes to indicate which responsive props are used
-    // Generate base data attributes for simple props (non-camelCase)
-    const dataAttributes = generateResponsiveDataAttributes({
-      gap,
-      columns,
-    })
+    // Generate Emotion styles for responsive gap
+    const gapStyles = responsiveStyles('gap', gap, gapToCSS)
 
-    // Handle camelCase prop names for gridTemplate* props (use kebab-case in data attributes)
-    if (gridTemplateRows && isResponsiveObject(gridTemplateRows)) {
-      dataAttributes['data-has-responsive-grid-template-rows'] = 'true'
-    }
-    if (gridTemplateColumns && isResponsiveObject(gridTemplateColumns)) {
-      dataAttributes['data-has-responsive-grid-template-columns'] = 'true'
-    }
-    if (gridTemplateAreas && isResponsiveObject(gridTemplateAreas)) {
-      dataAttributes['data-has-responsive-grid-template-areas'] = 'true'
-    }
+    // Generate Emotion styles for responsive gridTemplateRows
+    const gridTemplateRowsStyles = responsiveStyles(
+      'gridTemplateRows',
+      gridTemplateRows,
+      (val) => val,
+    )
 
-    // Add breakpoint-specific data attributes for gap (needed for shoji styles)
-    if (gap && isResponsiveObject(gap)) {
-      if (gap.base !== undefined) {
-        dataAttributes['data-gap-base'] = gap.base
-      }
-      if (gap.xs !== undefined) {
-        dataAttributes['data-gap-xs'] = gap.xs
-      }
-      if (gap.sm !== undefined) {
-        dataAttributes['data-gap-sm'] = gap.sm
-      }
-      if (gap.md !== undefined) {
-        dataAttributes['data-gap-md'] = gap.md
-      }
-      if (gap.lg !== undefined) {
-        dataAttributes['data-gap-lg'] = gap.lg
-      }
-    }
+    // Generate Emotion styles for responsive gridTemplateColumns
+    const gridTemplateColumnsStyles = responsiveStyles(
+      'gridTemplateColumns',
+      gridTemplateColumns,
+      (val) => val,
+    )
+
+    // Generate Emotion styles for responsive gridTemplateAreas
+    const gridTemplateAreasStyles = responsiveStyles(
+      'gridTemplateAreas',
+      gridTemplateAreas,
+      normalizeGridTemplateAreas,
+    )
+
+    // Handle columns for grid-template-columns
+    // Only process if gridTemplateColumns is not provided (it takes precedence)
+    const columnsStyles = !gridTemplateColumns
+      ? responsiveStyles('gridTemplateColumns', columns, columnsToCSS)
+      : undefined
+
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${gapStyles}
+      ${gridTemplateRowsStyles}
+      ${gridTemplateColumnsStyles}
+      ${gridTemplateAreasStyles}
+      ${columnsStyles}
+    `
 
     // Handle non-responsive inline styles for backward compatibility
     const gridStyle: CSSProperties = {
@@ -224,7 +168,7 @@ const ShojiGridRoot = forwardRef<HTMLDivElement, ShojiGridProps>(
     }
 
     // gridTemplateColumns prop takes precedence over columns
-    // Only set inline if not responsive (responsive handled via CSS custom properties)
+    // Only set inline if not responsive (responsive handled via Emotion)
     if (
       gridTemplateColumns &&
       !isResponsiveObject(gridTemplateColumns) &&
@@ -249,8 +193,8 @@ const ShojiGridRoot = forwardRef<HTMLDivElement, ShojiGridProps>(
       <div
         ref={ref}
         className={classNames}
-        style={{ ...responsiveStyles, ...gridStyle }}
-        {...dataAttributes}
+        css={emotionStyles}
+        style={gridStyle}
         {...props}
       >
         {children}

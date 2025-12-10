@@ -1,32 +1,12 @@
-import { forwardRef, CSSProperties } from 'react'
+import { forwardRef } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
-import { processResponsiveProps } from '../../utils/responsiveProps'
-import { generateResponsiveDataAttributes } from '../../utils/responsiveDataAttributes'
+import { responsiveStyles } from '../../utils/responsiveStyles'
 import { BoxProps, BoxPadding } from '../Box'
-import { createNormalizeResponsive } from '../../utils/normalizeResponsive'
-import '../Box/Box.scss'
-import './ShojiGrid.scss'
-
-/**
- * Convert BoxPadding value to CSS spacing token
- */
-function paddingToCSS(padding: BoxPadding): string {
-  const mapping: Record<BoxPadding, string> = {
-    none: '0',
-    xs: 'var(--space-1)',
-    sm: 'var(--space-2)',
-    md: 'var(--space-4)',
-    lg: 'var(--space-6)',
-    xl: 'var(--space-8)',
-  }
-  return mapping[padding]
-}
-
-/**
- * Convert responsive padding value to CSS value
- */
-const normalizeResponsivePadding = createNormalizeResponsive(paddingToCSS)
+import { getPaddingEmotionStyles } from '../Box/boxPaddingStyles'
+import '../Box/Box.css'
+import './ShojiGrid.css'
 
 /**
  * Get class name for a padding prop if it's a simple (non-responsive) value
@@ -42,11 +22,11 @@ function getPaddingClassName(
 
 export interface ShojiGridCellProps extends BoxProps {
   /** Grid area name (for use with gridTemplateAreas) */
-  area?: string
+  area?: Responsive<string>
   /** Grid column placement (e.g., "1 / 3" or "span 2") */
-  column?: string
+  column?: Responsive<string>
   /** Grid row placement (e.g., "1 / 3" or "span 2") */
-  row?: string
+  row?: Responsive<string>
 }
 
 export const ShojiGridCell = forwardRef<HTMLDivElement, ShojiGridCellProps>(
@@ -65,13 +45,6 @@ export const ShojiGridCell = forwardRef<HTMLDivElement, ShojiGridCellProps>(
     },
     ref,
   ) => {
-    // Process responsive props to CSS custom properties
-    const responsiveStyles = processResponsiveProps('box', {
-      padding: normalizeResponsivePadding(padding),
-      paddingHorizontal: normalizeResponsivePadding(paddingHorizontal),
-      paddingVertical: normalizeResponsivePadding(paddingVertical),
-    })
-
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const classNames = [
@@ -84,35 +57,35 @@ export const ShojiGridCell = forwardRef<HTMLDivElement, ShojiGridCellProps>(
       .filter(Boolean)
       .join(' ')
 
-    // Add data attributes to indicate which responsive props are used
-    const dataAttributes = generateResponsiveDataAttributes({
+    // Generate Emotion styles for responsive padding using shared utility
+    const paddingStyles = getPaddingEmotionStyles(
       padding,
       paddingHorizontal,
       paddingVertical,
-    })
+    )
 
-    const cellStyle: CSSProperties = {
-      ...style,
-    }
+    // Helper function to convert string values to CSS (identity function)
+    const stringToCSS = (val: string): string => val
 
-    if (area) {
-      cellStyle.gridArea = area
-    }
+    // Generate Emotion styles for responsive grid placement props
+    const areaStyles = responsiveStyles('gridArea', area, stringToCSS)
+    const columnStyles = responsiveStyles('gridColumn', column, stringToCSS)
+    const rowStyles = responsiveStyles('gridRow', row, stringToCSS)
 
-    if (column) {
-      cellStyle.gridColumn = column
-    }
-
-    if (row) {
-      cellStyle.gridRow = row
-    }
+    // Combine all Emotion styles
+    const emotionStyles = css`
+      ${paddingStyles}
+      ${areaStyles}
+      ${columnStyles}
+      ${rowStyles}
+    `
 
     return (
       <div
         ref={ref}
         className={classNames}
-        style={{ ...responsiveStyles, ...cellStyle }}
-        {...dataAttributes}
+        css={emotionStyles}
+        style={style}
         {...props}
       >
         {children}

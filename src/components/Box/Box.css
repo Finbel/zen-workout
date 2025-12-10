@@ -1,0 +1,103 @@
+/* ============================================
+   BOX COMPONENT
+   ============================================ */
+
+.zen-box {
+  box-sizing: border-box;
+}
+
+/* ----------------------------------------
+   PADDING - ALL SIDES
+   ---------------------------------------- */
+
+.zen-box--p-none {
+  padding: 0;
+}
+
+.zen-box--p-xs {
+  padding: var(--space-1);
+}
+
+.zen-box--p-sm {
+  padding: var(--space-2);
+}
+
+.zen-box--p-md {
+  padding: var(--space-4);
+}
+
+.zen-box--p-lg {
+  padding: var(--space-6);
+}
+
+.zen-box--p-xl {
+  padding: var(--space-8);
+}
+
+/* ----------------------------------------
+   PADDING - HORIZONTAL (LEFT & RIGHT)
+   ---------------------------------------- */
+
+.zen-box--px-none {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.zen-box--px-xs {
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
+}
+
+.zen-box--px-sm {
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+
+.zen-box--px-md {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.zen-box--px-lg {
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+.zen-box--px-xl {
+  padding-left: var(--space-8);
+  padding-right: var(--space-8);
+}
+
+/* ----------------------------------------
+   PADDING - VERTICAL (TOP & BOTTOM)
+   ---------------------------------------- */
+
+.zen-box--py-none {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.zen-box--py-xs {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+
+.zen-box--py-sm {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+
+.zen-box--py-md {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+}
+
+.zen-box--py-lg {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
+}
+
+.zen-box--py-xl {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
