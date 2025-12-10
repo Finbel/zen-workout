@@ -122,6 +122,7 @@ const ComplexContentComponent = () => {
           <ShojiGrid
             columns={{ base: 1, md: 2 }}
             gap={{ base: 'sm', md: 'md' }}
+            style={{ height: '100%' }}
           >
             <ShojiGrid.Cell padding={{ base: 'md', md: 'lg' }}>
               <Heading size="3xl" level={1}>
@@ -163,4 +164,3 @@ export const ComplexContent: Story = {
   name: 'Complex Content',
   render: () => <ComplexContentComponent />,
 }
-

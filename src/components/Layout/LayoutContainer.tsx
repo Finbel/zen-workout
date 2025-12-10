@@ -3,6 +3,7 @@ import { css } from '@emotion/react'
 import { ShojiGridCell } from '../ShojiGrid/ShojiGridCell'
 import { BoxProps } from '../Box'
 import { responsiveStyles } from '../../utils/responsiveStyles'
+import type { Responsive } from '../../utils/Responsive'
 
 /**
  * Convert max-width value to CSS max-width value
@@ -14,6 +15,8 @@ function maxWidthToCSS(maxWidth: string): string {
 export interface LayoutContainerProps extends BoxProps {
   /** Content to render inside the container */
   children: ReactNode
+  /** Maximum width of the container. Accepts a string or responsive object. Defaults to full width on mobile and 1280px on desktop. */
+  maxWidth?: Responsive<string>
 }
 
 export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
@@ -22,6 +25,7 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
       padding,
       paddingHorizontal = { base: 'md', md: 'lg' },
       paddingBottom = { base: 'md', md: 'lg' },
+      maxWidth = { base: '100%', md: '1280px' },
       className = '',
       style,
       children,
@@ -29,8 +33,6 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
     },
     ref,
   ) => {
-    // Internal max-width: responsive from full on mobile to lg on desktop
-    const maxWidth = { base: '100%', md: '1280px' }
     const maxWidthStyles = responsiveStyles('maxWidth', maxWidth, maxWidthToCSS)
 
     // Container should never have padding-top
