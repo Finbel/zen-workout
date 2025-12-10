@@ -62,29 +62,50 @@ type Story = StoryObj<typeof ShojiGrid>
 export const Playground: Story = {
   args: {
     columns: 3,
-    gap: 'sm',
   },
   render: (args) => (
     <div style={{ padding: 'var(--space-4)' }}>
       <ShojiGrid {...args}>
-        <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
+        <ShojiGrid.Cell
+          shadowRight
+          shadowTop={false}
+          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
+        >
           Item 1
-        </div>
-        <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
+        </ShojiGrid.Cell>
+        <ShojiGrid.Cell
+          shadowRight
+          shadowTop={false}
+          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
+        >
           Item 2
-        </div>
-        <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
+        </ShojiGrid.Cell>
+        <ShojiGrid.Cell
+          shadowTop={false}
+          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
+        >
           Item 3
-        </div>
-        <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
+        </ShojiGrid.Cell>
+        <ShojiGrid.Cell
+          shadowRight
+          shadowTop
+          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
+        >
           Item 4
-        </div>
-        <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
+        </ShojiGrid.Cell>
+        <ShojiGrid.Cell
+          shadowRight
+          shadowTop
+          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
+        >
           Item 5
-        </div>
-        <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
+        </ShojiGrid.Cell>
+        <ShojiGrid.Cell
+          shadowTop
+          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
+        >
           Item 6
-        </div>
+        </ShojiGrid.Cell>
       </ShojiGrid>
     </div>
   ),
@@ -125,7 +146,12 @@ export const HolyGrailLayout: Story = {
       }}
       style={{ minHeight: '100vh' }}
     >
-      <ShojiGrid.Cell area="header" padding={{ base: 'sm', md: 'md' }}>
+      <ShojiGrid.Cell
+        area="header"
+        padding={{ base: 'sm', md: 'md' }}
+        shadowTop={false}
+        shadowRight={false}
+      >
         <Flex
           direction={{ base: 'column', sm: 'row' }}
           align="center"
@@ -140,7 +166,12 @@ export const HolyGrailLayout: Story = {
           </nav>
         </Flex>
       </ShojiGrid.Cell>
-      <ShojiGrid.Cell area="nav" padding={{ base: 'sm', md: 'md' }}>
+      <ShojiGrid.Cell
+        area="nav"
+        padding={{ base: 'sm', md: 'md' }}
+        shadowTop
+        shadowRight={{ base: false, md: true }}
+      >
         <Flex direction="column" gap="sm">
           <strong style={{ marginBottom: 'var(--space-2)' }}>Navigation</strong>
           <div>Dashboard</div>
@@ -149,11 +180,16 @@ export const HolyGrailLayout: Story = {
           <div>Settings</div>
         </Flex>
       </ShojiGrid.Cell>
-      <ShojiGrid.Cell area="main" padding={{ base: 'md', md: 'lg' }}>
+      <ShojiGrid.Cell
+        area="main"
+        padding={{ base: 'md', md: 'lg' }}
+        shadowTop
+        shadowRight={{ base: false, md: true }}
+      >
         <h2 style={{ marginTop: 0 }}>Main Content</h2>
         <p style={{ color: 'var(--color-text-secondary)' }}>
-          This is the main content area using ShojiGrid.Cell with area="main". The
-          layout adapts responsively:
+          This is the main content area using ShojiGrid.Cell with area="main".
+          The layout adapts responsively:
         </p>
         <ul style={{ color: 'var(--color-text-secondary)' }}>
           <li>
@@ -166,11 +202,16 @@ export const HolyGrailLayout: Story = {
           </li>
         </ul>
         <p style={{ color: 'var(--color-text-secondary)' }}>
-          ShojiGrid.Cell extends Box, so it supports responsive padding. For flex
-          layouts, wrap content in a Flex component.
+          ShojiGrid.Cell extends Box, so it supports responsive padding. For
+          flex layouts, wrap content in a Flex component.
         </p>
       </ShojiGrid.Cell>
-      <ShojiGrid.Cell area="aside" padding={{ base: 'sm', md: 'md' }}>
+      <ShojiGrid.Cell
+        area="aside"
+        padding={{ base: 'sm', md: 'md' }}
+        shadowTop
+        shadowRight={false}
+      >
         <strong style={{ marginBottom: 'var(--space-2)' }}>Sidebar</strong>
         <div
           style={{
@@ -189,7 +230,12 @@ export const HolyGrailLayout: Story = {
           Widget 2
         </div>
       </ShojiGrid.Cell>
-      <ShojiGrid.Cell area="footer" padding={{ base: 'sm', md: 'md' }}>
+      <ShojiGrid.Cell
+        area="footer"
+        padding={{ base: 'sm', md: 'md' }}
+        shadowTop
+        shadowRight={false}
+      >
         <Flex direction="row" align="center" justify="center">
           Footer Content
         </Flex>

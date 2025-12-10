@@ -172,3 +172,4 @@ export const WithLongContent: Story = {
     </Table>
   ),
 }
+

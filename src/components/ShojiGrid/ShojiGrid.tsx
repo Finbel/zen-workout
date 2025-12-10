@@ -1,4 +1,10 @@
-import { forwardRef, CSSProperties } from 'react'
+import {
+  forwardRef,
+  CSSProperties,
+  createContext,
+  useContext,
+  ReactNode,
+} from 'react'
 import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
@@ -17,6 +23,22 @@ const DEFAULT_MIN_CHILD_WIDTH = '200px'
 
 export type ShojiGridGap = 'none' | 'sm' | 'md'
 export type ShojiGridColumns = number | 'auto-fill' | 'auto-fit'
+
+/**
+ * Context to provide gap information to ShojiGrid.Cell components
+ */
+interface ShojiGridContextValue {
+  gap: Responsive<ShojiGridGap>
+}
+
+const ShojiGridContext = createContext<ShojiGridContextValue | null>(null)
+
+/**
+ * Hook to access ShojiGrid context
+ */
+export function useShojiGridContext(): ShojiGridContextValue | null {
+  return useContext(ShojiGridContext)
+}
 
 /**
  * Convert ShojiGridGap value to CSS spacing token
@@ -99,7 +121,7 @@ const ShojiGridRoot = forwardRef<HTMLDivElement, ShojiGridProps>(
   (
     {
       columns = 1,
-      gap = { base: 'sm', md: 'md' },
+      gap = 'md',
       gridTemplateRows,
       gridTemplateColumns,
       gridTemplateAreas,
@@ -190,15 +212,17 @@ const ShojiGridRoot = forwardRef<HTMLDivElement, ShojiGridProps>(
     }
 
     return (
-      <div
-        ref={ref}
-        className={classNames}
-        css={emotionStyles}
-        style={gridStyle}
-        {...props}
-      >
-        {children}
-      </div>
+      <ShojiGridContext.Provider value={{ gap }}>
+        <div
+          ref={ref}
+          className={classNames}
+          css={emotionStyles}
+          style={gridStyle}
+          {...props}
+        >
+          {children}
+        </div>
+      </ShojiGridContext.Provider>
     )
   },
 )

@@ -238,3 +238,4 @@ export const IconSizes: Story = {
     </div>
   ),
 }
+

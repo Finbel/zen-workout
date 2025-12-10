@@ -79,3 +79,4 @@ export const Logo = forwardRef<HTMLDivElement | HTMLAnchorElement, LogoProps>(
 )
 
 Logo.displayName = 'Logo'
+

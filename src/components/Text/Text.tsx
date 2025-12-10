@@ -14,6 +14,7 @@ export type TextSize =
   | '2xl'
   | '3xl'
   | '4xl'
+export type TextAlign = 'left' | 'center' | 'right' | 'justify'
 
 /**
  * Convert TextSize value to CSS font-size token
@@ -47,10 +48,15 @@ function getSizeClassName(
 export interface TextProps extends HTMLAttributes<HTMLParagraphElement> {
   /** Font size that adapts to screen size */
   size?: Responsive<TextSize>
+  /** Text alignment that adapts to screen size */
+  textAlign?: Responsive<TextAlign>
 }
 
 export const Text = forwardRef<HTMLParagraphElement, TextProps>(
-  ({ size = 'base', className = '', style, children, ...props }, ref) => {
+  (
+    { size = 'base', textAlign, className = '', style, children, ...props },
+    ref,
+  ) => {
     // Build class names for non-responsive usage (backward compatibility)
     // Only add classes if the value is a simple (non-responsive) value
     const classNames = ['zen-text', getSizeClassName(size, 'base'), className]
@@ -60,9 +66,17 @@ export const Text = forwardRef<HTMLParagraphElement, TextProps>(
     // Generate Emotion styles for responsive size
     const fontSizeStyles = responsiveStyles('fontSize', size, sizeToCSS)
 
+    // Generate Emotion styles for responsive textAlign
+    const textAlignStyles = responsiveStyles(
+      'textAlign',
+      textAlign,
+      (val) => val,
+    )
+
     // Combine all Emotion styles
     const emotionStyles = css`
       ${fontSizeStyles}
+      ${textAlignStyles}
     `
 
     return (

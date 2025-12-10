@@ -6,6 +6,7 @@ import { responsiveStyles } from '../../utils/responsiveStyles'
 import { BoxProps } from '../Box'
 import { getPaddingClassName } from '../Box/Box'
 import { getPaddingEmotionStyles } from '../Box/boxPaddingStyles'
+import { getVisibleStyles } from '../../utils/visibleStyles'
 import '../Box/Box.css'
 import './Flex.css'
 
@@ -112,6 +113,7 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
       padding,
       paddingHorizontal,
       paddingVertical,
+      visible,
       className = '',
       style,
       children,
@@ -159,6 +161,9 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
       paddingVertical,
     )
 
+    // Get visible styles from shared utility
+    const visibleStyles = getVisibleStyles(visible)
+
     // Combine all Emotion styles
     const emotionStyles = css`
       ${gapStyles}
@@ -167,6 +172,7 @@ export const Flex = forwardRef<HTMLDivElement, FlexProps>(
       ${justifyStyles}
       ${wrapStyles}
       ${paddingStyles}
+      ${visibleStyles}
     `
 
     return (

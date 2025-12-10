@@ -1,0 +1,384 @@
+{/* Guide.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction/Guide" />
+
+# Getting Started with Zen Design
+
+Zen Design is a **low-configuration, highly opinionated** design system. We've made deliberate choices about how components work together, so you can focus on building your application rather than configuring every detail. The system provides sensible defaults and clear patterns that ensure consistency across your application.
+
+---
+
+## Installation
+
+```bash
+npm install zen-design
+# or
+yarn add zen-design
+```
+
+---
+
+## Basic Usage
+
+```tsx
+import { Button } from 'zen-design'
+import 'zen-design/tokens.css'
+
+function App() {
+  return <Button variant="primary">Get Started</Button>
+}
+```
+
+---
+
+## Using Design Tokens
+
+All design tokens are available as CSS custom properties:
+
+```css
+.my-component {
+  background: var(--color-surface);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-sans);
+}
+```
+
+---
+
+## Building Layouts: The Zen Design Way
+
+Zen Design provides an **opinionated layout system** that makes building responsive pages straightforward. The system is built around a few core components that work together seamlessly:
+
+- **`Layout`** — The root container that structures your page
+- **`Layout.Navbar`** — A responsive navigation bar
+- **`Layout.Container`** — A content container with built-in responsive constraints
+- **`ShojiGrid`** — A flexible grid system for organizing content
+- **`ShojiGrid.Cell`** — Individual cells with built-in shadows and spacing
+
+### The Foundation: Landing Page Pattern
+
+The best way to understand how to build layouts in Zen Design is to start with our foundational pattern. Here's a complete example that demonstrates the recommended approach:
+
+```tsx
+import { Layout } from 'zen-design'
+import { ShojiGrid } from 'zen-design'
+import { Heading, Text } from 'zen-design'
+import { useState } from 'react'
+
+function MyPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  return (
+    <Layout>
+      <Layout.Navbar
+        icon="barbell"
+        title="My App"
+        onMenuToggle={() => setIsMenuOpen(!isMenuOpen)}
+        isMenuOpen={isMenuOpen}
+      >
+        <Layout.NavItem name="Home" />
+        <Layout.NavItem name="About" />
+      </Layout.Navbar>
+
+      <Layout.Container>
+        <ShojiGrid
+          columns={{ base: 1, md: 2 }}
+          padding={{ base: 'md', md: 'lg' }}
+          gap={{ base: 'sm', md: 'md' }}
+        >
+          <ShojiGrid.Cell
+            padding={{ base: 'md', md: 'lg' }}
+            shadowTop={false}
+            shadowRight={{ base: false, md: true }}
+          >
+            <Heading size="3xl" level={1}>
+              Welcome
+            </Heading>
+            <Text size="base">Your content goes here.</Text>
+          </ShojiGrid.Cell>
+
+          <ShojiGrid.Cell
+            padding={{ base: 'md', md: 'lg' }}
+            shadowTop={false}
+            shadowRight={false}
+          >
+            {/* More content */}
+          </ShojiGrid.Cell>
+        </ShojiGrid>
+      </Layout.Container>
+    </Layout>
+  )
+}
+```
+
+**See the complete example:** [Landing Page with Navbar Showcase](?path=/story/showcase-landingpagewithnavbar--default)
+
+### Key Principles
+
+#### 1. Start with `Layout`
+
+The `Layout` component is your page's foundation. It automatically handles:
+
+- Full viewport height
+- Grid structure for navbar and content
+- Responsive behavior
+
+You don't need to configure grid areas or rows—they're built in.
+
+#### 2. Use `Layout.Container` for Content
+
+`Layout.Container` provides:
+
+- **Automatic max-width** (full width on mobile, constrained on desktop)
+- **Centered content** (no manual margin calculations)
+- **Proper spacing** (no padding-top, responsive horizontal padding)
+- **Viewport-aware height** (automatically accounts for navbar height)
+
+**Don't** add your own max-width or centering logic. The container handles it.
+
+#### 3. Organize Content with `ShojiGrid`
+
+`ShojiGrid` is Zen Design's responsive grid system. It:
+
+- Uses CSS Grid under the hood
+- Accepts responsive column definitions: `{ base: 1, md: 2 }`
+- Handles gaps and padding responsively
+- Works seamlessly with `ShojiGrid.Cell`
+
+**Pattern:** Always use responsive objects for columns, padding, and gaps:
+
+```tsx
+columns={{ base: 1, md: 2, lg: 3 }}
+padding={{ base: 'sm', md: 'md', lg: 'lg' }}
+gap={{ base: 'sm', md: 'md' }}
+```
+
+#### 4. Use `ShojiGrid.Cell` for Sections
+
+Each `ShojiGrid.Cell` is a content section with:
+
+- Built-in shadows (configurable per breakpoint)
+- Responsive padding
+- Automatic background and border styling
+
+**Shadow pattern:** Typically, cells have:
+
+- `shadowTop={false}` for the first row
+- `shadowRight={{ base: false, md: true }}` for left columns (hidden on mobile, visible on desktop)
+- `shadowRight={false}` for rightmost columns
+
+This creates the signature "shoji screen" effect where shadows separate content sections.
+
+### Best Practices
+
+#### ✅ Do
+
+- **Use the Layout pattern** for full-page layouts
+- **Let components handle responsive behavior** — use responsive prop objects
+- **Trust the defaults** — spacing, colors, and typography are carefully chosen
+- **Use ShojiGrid for content organization** — it's designed for this purpose
+- **Follow the shadow pattern** — it creates visual hierarchy
+
+#### ❌ Don't
+
+- **Don't override max-width** on `Layout.Container` — it's already handled
+- **Don't add custom padding-top** to containers — the system manages spacing
+- **Don't create custom grid systems** — use `ShojiGrid` instead
+- **Don't fight the responsive props** — use the `{ base, md, lg }` pattern
+- **Don't add unnecessary wrappers** — components are designed to compose directly
+
+### Mobile-First Responsive Design
+
+Zen Design uses a mobile-first approach. When you write:
+
+```tsx
+padding={{ base: 'md', md: 'lg' }}
+```
+
+This means:
+
+- **Mobile (base):** `padding: var(--space-md)`
+- **Desktop (md and up):** `padding: var(--space-lg)`
+
+All responsive props follow this pattern. Start with the mobile experience, then enhance for larger screens.
+
+### Common Patterns
+
+#### Two-Column Layout
+
+```tsx
+<ShojiGrid columns={{ base: 1, md: 2 }}>
+  <ShojiGrid.Cell shadowRight={{ base: false, md: true }}>
+    {/* Left column */}
+  </ShojiGrid.Cell>
+  <ShojiGrid.Cell shadowRight={false}>{/* Right column */}</ShojiGrid.Cell>
+</ShojiGrid>
+```
+
+#### Three-Column Layout
+
+```tsx
+<ShojiGrid columns={{ base: 1, md: 2, lg: 3 }}>
+  <ShojiGrid.Cell shadowRight={{ base: false, md: true }}>
+    {/* Column 1 */}
+  </ShojiGrid.Cell>
+  <ShojiGrid.Cell shadowRight={{ base: false, lg: true }}>
+    {/* Column 2 */}
+  </ShojiGrid.Cell>
+  <ShojiGrid.Cell shadowRight={false}>{/* Column 3 */}</ShojiGrid.Cell>
+</ShojiGrid>
+```
+
+#### Full-Width Content
+
+```tsx
+<Layout.Container>
+  <ShojiGrid columns={{ base: 1 }}>
+    <ShojiGrid.Cell shadowTop={false} shadowRight={false}>
+      {/* Full-width content */}
+    </ShojiGrid.Cell>
+  </ShojiGrid>
+</Layout.Container>
+```
+
+---
+
+## Why Opinionated?
+
+Zen Design makes strong choices so you don't have to:
+
+1. **Consistent Spacing** — We provide a spacing scale. Use it.
+2. **Responsive Patterns** — Mobile-first with clear breakpoints.
+3. **Visual Hierarchy** — Shadows, borders, and spacing create structure automatically.
+4. **Component Composition** — Components are designed to work together, not in isolation.
+
+This opinionated approach means:
+
+- **Less configuration** — Components work out of the box
+- **Faster development** — No decision fatigue about spacing, colors, or layout
+- **Better consistency** — All pages follow the same patterns
+- **Easier maintenance** — Changes to design tokens propagate automatically
+
+If you find yourself fighting the system, step back and use the components as intended. The patterns are there for a reason.
+
+---
+
+## Explore
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  gap: '1rem',
+  marginTop: '1rem'
+}}>
+  <a href="?path=/docs/foundations-colors--docs" style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}>
+    <div style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem'
+    }}>Colors →</div>
+    <div style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)'
+    }}>Explore the color palette</div>
+  </a>
+
+{' '}
+<a
+  href="?path=/docs/foundations-typography--docs"
+  style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}
+>
+  <div
+    style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem',
+    }}
+  >
+    Typography →
+  </div>
+  <div
+    style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+    }}
+  >
+    Fonts and text styles
+  </div>
+</a>
+
+{' '}
+<a
+  href="?path=/docs/foundations-spacing--docs"
+  style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}
+>
+  <div
+    style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem',
+    }}
+  >
+    Spacing →
+  </div>
+  <div
+    style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)',
+    }}
+  >
+    The spacing scale
+  </div>
+</a>
+
+  <a href="?path=/docs/components-button--docs" style={{
+    display: 'block',
+    padding: '1.25rem',
+    backgroundColor: 'var(--color-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border-subtle)',
+    textDecoration: 'none',
+    transition: 'var(--transition-base)',
+  }}>
+    <div style={{
+      fontSize: 'var(--font-size-base)',
+      fontWeight: 'var(--font-weight-semibold)',
+      color: 'var(--color-primary)',
+      marginBottom: '0.25rem'
+    }}>Button →</div>
+    <div style={{
+      fontSize: 'var(--font-size-sm)',
+      color: 'var(--color-text-secondary)'
+    }}>Interactive button component</div>
+  </a>
+</div>
+

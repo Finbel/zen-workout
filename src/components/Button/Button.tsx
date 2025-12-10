@@ -3,6 +3,7 @@ import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
 import { responsiveStyles } from '../../utils/responsiveStyles'
+import { getVisibleStyles } from '../../utils/visibleStyles'
 import { Icon, IconName } from '../Icon'
 import './Button.css'
 
@@ -23,6 +24,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Responsive<ButtonSize>
   /** Optional icon to display in the button */
   icon?: ButtonIcon
+  /** Control visibility at different breakpoints. Uses CSS display: none, does not remove from DOM. */
+  visible?: Responsive<boolean>
 }
 
 const ICON_SIZE_MAP: Record<ButtonSize, number> = {
@@ -123,6 +126,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       variant = 'primary',
       size = 'md',
       icon,
+      visible,
       className = '',
       disabled,
       style,
@@ -184,6 +188,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       (v) => VARIANT_STYLES[v].border || 'none',
     )
 
+    // Generate Emotion styles for responsive visibility
+    const visibleStyles = getVisibleStyles(visible)
+
     // Combine all Emotion styles
     const emotionStyles = css`
       ${sizeHeightStyles}
@@ -193,6 +200,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ${variantBackgroundColorStyles}
       ${variantColorStyles}
       ${variantBorderStyles}
+      ${visibleStyles}
     `
 
     // Use base size for icon size (icons use base breakpoint size)

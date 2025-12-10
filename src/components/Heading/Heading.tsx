@@ -57,11 +57,21 @@ export interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
   size?: Responsive<HeadingSize>
   /** Heading level (1-6) */
   level?: HeadingLevel
+  /** Text alignment that adapts to screen size */
+  textAlign?: Responsive<TextAlign>
 }
 
 const HeadingComponent = forwardRef<HTMLHeadingElement, HeadingProps>(
   (
-    { size = '2xl', level = 1, className = '', style, children, ...props },
+    {
+      size = '2xl',
+      level = 1,
+      textAlign,
+      className = '',
+      style,
+      children,
+      ...props
+    },
     ref,
   ) => {
     // Build class names for non-responsive usage (backward compatibility)
@@ -78,9 +88,17 @@ const HeadingComponent = forwardRef<HTMLHeadingElement, HeadingProps>(
     // Generate Emotion styles for responsive size
     const fontSizeStyles = responsiveStyles('fontSize', size, sizeToCSS)
 
+    // Generate Emotion styles for responsive textAlign
+    const textAlignStyles = responsiveStyles(
+      'textAlign',
+      textAlign,
+      (val) => val,
+    )
+
     // Combine all Emotion styles
     const emotionStyles = css`
       ${fontSizeStyles}
+      ${textAlignStyles}
     `
 
     const commonProps = {

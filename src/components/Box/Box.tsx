@@ -1,6 +1,8 @@
 import { HTMLAttributes, forwardRef } from 'react'
+import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
+import { getVisibleStyles } from '../../utils/visibleStyles'
 import { getPaddingEmotionStyles } from './boxPaddingStyles'
 import './Box.css'
 
@@ -40,6 +42,12 @@ export interface BoxProps extends HTMLAttributes<HTMLDivElement> {
   paddingHorizontal?: Responsive<BoxPadding>
   /** Vertical padding (top and bottom) */
   paddingVertical?: Responsive<BoxPadding>
+  paddingBottom?: Responsive<BoxPadding>
+  paddingTop?: Responsive<BoxPadding>
+  paddingLeft?: Responsive<BoxPadding>
+  paddingRight?: Responsive<BoxPadding>
+  /** Control visibility at different breakpoints. Uses CSS display: none, does not remove from DOM. */
+  visible?: Responsive<boolean>
 }
 
 export const Box = forwardRef<HTMLDivElement, BoxProps>(
@@ -48,6 +56,7 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
       padding,
       paddingHorizontal,
       paddingVertical,
+      visible,
       className = '',
       style,
       children,
@@ -68,11 +77,23 @@ export const Box = forwardRef<HTMLDivElement, BoxProps>(
       .join(' ')
 
     // Generate Emotion styles for responsive padding using shared utility
-    const emotionStyles = getPaddingEmotionStyles(
+    const paddingStyles = getPaddingEmotionStyles(
       padding,
       paddingHorizontal,
       paddingVertical,
     )
+
+    // Generate Emotion styles for responsive visibility
+    const visibleStyles = getVisibleStyles(visible)
+
+    // Combine all Emotion styles
+    const emotionStyles =
+      paddingStyles || visibleStyles
+        ? css`
+            ${paddingStyles}
+            ${visibleStyles}
+          `
+        : undefined
 
     return (
       <div

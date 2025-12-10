@@ -23,3 +23,4 @@ export const BOX_PADDING_VERTICAL_XS = '--box-paddingVertical-xs'
 export const BOX_PADDING_VERTICAL_SM = '--box-paddingVertical-sm'
 export const BOX_PADDING_VERTICAL_MD = '--box-paddingVertical-md'
 export const BOX_PADDING_VERTICAL_LG = '--box-paddingVertical-lg'
+
