@@ -20,6 +20,7 @@ import {
   WarningIcon,
   CheckCircleIcon,
   XCircleIcon,
+  BarbellIcon,
   type Icon as PhosphorIcon,
 } from '@phosphor-icons/react'
 import { css } from '@emotion/react'
@@ -64,6 +65,7 @@ export type IconName =
   | 'warning'
   | 'check-circle'
   | 'x-circle'
+  | 'barbell'
 
 /**
  * Map of icon names to Phosphor icon components.
@@ -101,6 +103,7 @@ const ICON_MAP: Record<IconName, PhosphorIcon> = {
   warning: WarningIcon,
   'check-circle': CheckCircleIcon,
   'x-circle': XCircleIcon,
+  barbell: BarbellIcon,
 }
 
 export interface IconProps
