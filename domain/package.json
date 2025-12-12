@@ -1,0 +1,31 @@
+{
+  "name": "@zen-design/domain",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Zen Design - Domain layer with clean architecture",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.15"
+  },
+  "keywords": [
+    "clean-architecture",
+    "domain",
+    "usecases",
+    "ports"
+  ],
+  "license": "MIT"
+}
+
+
+

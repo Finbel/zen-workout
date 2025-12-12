@@ -164,3 +164,50 @@ export const ComplexContent: Story = {
   name: 'Complex Content',
   render: () => <ComplexContentComponent />,
 }
+
+const WithAsPropComponent = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  return (
+    <Layout>
+      <Layout.Navbar
+        icon="barbell"
+        title="Zen Design"
+        onMenuToggle={() => setIsMenuOpen(!isMenuOpen)}
+        isMenuOpen={isMenuOpen}
+      >
+        <Layout.NavItem as="a" href="#home" name="Home" />
+        <Layout.NavItem as="a" href="#about" name="About" />
+      </Layout.Navbar>
+      <Layout.Container>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-4)',
+            alignItems: 'center',
+            textAlign: 'center',
+          }}
+        >
+          <Heading size="3xl" level={1}>
+            Using the `as` prop
+          </Heading>
+          <Text size="base">
+            The Layout.NavItem component supports polymorphic rendering via the
+            `as` prop. You can use it with any component, including routing
+            libraries.
+          </Text>
+          <Text size="base">
+            In this example, nav items are rendered as anchor tags using
+            `as="a"`.
+          </Text>
+        </div>
+      </Layout.Container>
+    </Layout>
+  )
+}
+
+export const WithAsProp: Story = {
+  name: 'With `as` Prop',
+  render: () => <WithAsPropComponent />,
+}

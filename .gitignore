@@ -1,9 +1,13 @@
 # Dependencies
 node_modules/
+.pnp
+.pnp.js
 
 # Build outputs
 dist/
+build/
 storybook-static/
+*.tsbuildinfo
 
 # Logs
 *.log
@@ -26,11 +30,9 @@ Thumbs.db
 *.swp
 *.swo
 
-# TypeScript
-*.tsbuildinfo
-
 # Vite
 .vite/
+dist-ssr/
 
 # Cache
 .cache/

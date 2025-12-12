@@ -239,3 +239,45 @@ export const IconSizes: Story = {
   ),
 }
 
+/* ----------------------------------------
+   WITH AS PROP
+   ---------------------------------------- */
+
+export const WithAsProp: Story = {
+  name: 'With `as` Prop',
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-6)',
+      }}
+    >
+      <div>
+        <p
+          style={{
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+            marginBottom: 'var(--space-2)',
+          }}
+        >
+          Logo with `as` prop (rendered as anchor tag):
+        </p>
+        <Logo as="a" href="#home" icon="check" text="Zen Design" />
+      </div>
+      <div>
+        <p
+          style={{
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text-secondary)',
+            marginBottom: 'var(--space-2)',
+          }}
+        >
+          The Logo component supports polymorphic rendering via the `as` prop.
+          You can use it with any component, including routing libraries.
+        </p>
+        <Logo as="a" href="#about" icon="gear" text="Settings" />
+      </div>
+    </div>
+  ),
+}

@@ -4,6 +4,9 @@ import { ShojiGridCell } from '../ShojiGrid/ShojiGridCell'
 import { BoxProps } from '../Box'
 import { responsiveStyles } from '../../utils/responsiveStyles'
 import type { Responsive } from '../../utils/Responsive'
+import { useLayoutContext } from './LayoutContext'
+import { LayoutNavItem } from './LayoutNavItem'
+import { Flex } from '../Flex'
 
 /**
  * Convert max-width value to CSS max-width value
@@ -33,6 +36,7 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
     },
     ref,
   ) => {
+    const { navItems, isMenuOpen, onMenuToggle } = useLayoutContext()
     const maxWidthStyles = responsiveStyles('maxWidth', maxWidth, maxWidthToCSS)
 
     // Container should never have padding-top
@@ -74,7 +78,41 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
         {...props}
       >
         <div ref={ref} css={innerContainerStyles}>
-          {children}
+          {isMenuOpen ? (
+            <Flex
+              direction="column"
+              gap="md"
+              align="start"
+              padding={{ base: 'md', md: 'lg' }}
+            >
+              {navItems.map((item, index) => (
+                <LayoutNavItem
+                  key={`${item.name}-${item.to || item.href || index}`}
+                  to={item.to}
+                  href={item.href}
+                  name={item.name}
+                  onClick={(e) => {
+                    // Call the item's onClick if provided
+                    if (item.onClick) {
+                      item.onClick(e as any)
+                    }
+                    // Close the menu when an item is clicked
+                    if (onMenuToggle) {
+                      onMenuToggle()
+                    }
+                  }}
+                  className={item.className}
+                  style={{
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    ...item.style,
+                  }}
+                />
+              ))}
+            </Flex>
+          ) : (
+            children
+          )}
         </div>
       </ShojiGridCell>
     )
