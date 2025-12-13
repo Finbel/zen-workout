@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import { LayoutNavItemProps } from './LayoutNavItem'
+import type { Responsive } from '../../utils/Responsive'
 
 export interface NavItemData
   extends Pick<
@@ -21,6 +22,10 @@ export interface LayoutContextValue {
   isMenuOpen?: boolean
   /** Callback to toggle the mobile menu */
   onMenuToggle?: () => void
+  /** Maximum width of the container for grid column calculation */
+  maxWidth?: Responsive<string>
+  /** Function to set the maximum width */
+  setMaxWidth: (maxWidth: Responsive<string>) => void
 }
 
 export const LayoutContext = createContext<LayoutContextValue>({
@@ -30,6 +35,8 @@ export const LayoutContext = createContext<LayoutContextValue>({
   unregisterNavItem: () => {},
   isMenuOpen: false,
   onMenuToggle: undefined,
+  maxWidth: undefined,
+  setMaxWidth: () => {},
 })
 
 /**

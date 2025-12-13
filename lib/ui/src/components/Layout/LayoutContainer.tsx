@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode } from 'react'
+import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { css } from '@emotion/react'
 import { ShojiGridCell } from '../ShojiGrid/ShojiGridCell'
 import { BoxProps } from '../Box'
@@ -26,7 +26,7 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
   (
     {
       padding,
-      paddingHorizontal = { base: 'md', md: 'lg' },
+      paddingHorizontal,
       paddingBottom = { base: 'md', md: 'lg' },
       maxWidth = { base: '100%', md: '1280px' },
       className = '',
@@ -36,8 +36,48 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
     },
     ref,
   ) => {
-    const { navItems, isMenuOpen, onMenuToggle } = useLayoutContext()
-    const maxWidthStyles = responsiveStyles('maxWidth', maxWidth, maxWidthToCSS)
+    const { navItems, isMenuOpen, onMenuToggle, setMaxWidth } =
+      useLayoutContext()
+
+    // Destructure Box props that shouldn't be passed to DOM elements
+    // These are already handled by ShojiGridCell, so we filter them out
+    // Note: padding, paddingHorizontal, and paddingBottom are already destructured
+    // in the function parameters above, so they're not in props
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {
+      paddingTop: _paddingTop,
+      paddingVertical: _paddingVertical,
+      paddingLeft: _paddingLeft,
+      paddingRight: _paddingRight,
+      visible: _visible,
+      ...domProps
+    } = props
+
+    // Register maxWidth with context so Layout can use it for grid columns
+    // Use refs to track values and avoid infinite loops
+    const prevMaxWidthStringRef = useRef<string>('')
+    const isInitialMountRef = useRef(true)
+
+    useEffect(() => {
+      if (!setMaxWidth) return
+
+      const currentMaxWidthString = JSON.stringify(maxWidth)
+
+      // On initial mount, always set the value
+      if (isInitialMountRef.current) {
+        prevMaxWidthStringRef.current = currentMaxWidthString
+        setMaxWidth(maxWidth)
+        isInitialMountRef.current = false
+        return
+      }
+
+      // On subsequent renders, only update if the value has actually changed
+      if (prevMaxWidthStringRef.current !== currentMaxWidthString) {
+        prevMaxWidthStringRef.current = currentMaxWidthString
+        setMaxWidth(maxWidth)
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [maxWidth])
 
     // Container should never have padding-top
     // If padding is provided, extract it to use for horizontal and bottom only
@@ -45,13 +85,20 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
     const effectivePaddingHorizontal = padding ? padding : paddingHorizontal
     const effectivePaddingBottom = padding ? padding : paddingBottom
 
-    // Generate styles for centering the inner container
+    // Generate styles for centering the inner container (mobile only)
+    const maxWidthStyles = responsiveStyles('maxWidth', maxWidth, maxWidthToCSS)
     const innerContainerStyles = css`
       ${maxWidthStyles}
       margin-left: auto;
       margin-right: auto;
       width: 100%;
       height: 100%;
+      /* Hide inner container on desktop - grid handles width */
+      @media (min-width: 1024px) {
+        max-width: none;
+        margin-left: 0;
+        margin-right: 0;
+      }
     `
 
     // Container styles: no padding-top, and min-height to cover viewport
@@ -65,56 +112,75 @@ export const LayoutContainer = forwardRef<HTMLDivElement, LayoutContainerProps>(
       );
     `
 
-    return (
-      <ShojiGridCell
-        area="content"
-        paddingHorizontal={effectivePaddingHorizontal}
-        paddingBottom={effectivePaddingBottom}
-        shadowTop
-        shadowRight={false}
-        className={className}
-        css={containerStyles}
-        style={style}
-        {...props}
+    // Content to render (menu or children)
+    const content = isMenuOpen ? (
+      <Flex
+        direction="column"
+        gap="md"
+        align="start"
+        padding={{ base: 'md', md: 'lg' }}
       >
-        <div ref={ref} css={innerContainerStyles}>
-          {isMenuOpen ? (
-            <Flex
-              direction="column"
-              gap="md"
-              align="start"
-              padding={{ base: 'md', md: 'lg' }}
-            >
-              {navItems.map((item, index) => (
-                <LayoutNavItem
-                  key={`${item.name}-${item.to || item.href || index}`}
-                  to={item.to}
-                  href={item.href}
-                  name={item.name}
-                  onClick={(e) => {
-                    // Call the item's onClick if provided
-                    if (item.onClick) {
-                      item.onClick(e as any)
-                    }
-                    // Close the menu when an item is clicked
-                    if (onMenuToggle) {
-                      onMenuToggle()
-                    }
-                  }}
-                  className={item.className}
-                  style={{
-                    width: '100%',
-                    justifyContent: 'flex-start',
-                    ...item.style,
-                  }}
-                />
-              ))}
-            </Flex>
-          ) : (
-            children
-          )}
-        </div>
-      </ShojiGridCell>
+        {navItems.map((item, index) => (
+          <LayoutNavItem
+            key={`${item.name}-${item.to || item.href || index}`}
+            to={item.to}
+            href={item.href}
+            name={item.name}
+            onClick={(e) => {
+              // Call the item's onClick if provided
+              if (item.onClick) {
+                item.onClick(e as any)
+              }
+              // Close the menu when an item is clicked
+              if (onMenuToggle) {
+                onMenuToggle()
+              }
+            }}
+            className={item.className}
+            style={{
+              width: '100%',
+              justifyContent: 'flex-start',
+              ...item.style,
+            }}
+          />
+        ))}
+      </Flex>
+    ) : (
+      children
+    )
+
+    return (
+      <>
+        {/* Left shoji cell - only visible on desktop (md+) */}
+        <ShojiGridCell
+          area={{ md: 'left' }}
+          shadowTop
+          shadowRight
+          visible={{ base: false, md: true }}
+        />
+        {/* Content cell */}
+        <ShojiGridCell
+          area="content"
+          paddingHorizontal={effectivePaddingHorizontal}
+          paddingBottom={effectivePaddingBottom}
+          shadowTop
+          shadowRight={{ base: false, md: true }}
+          className={className}
+          css={containerStyles}
+          style={style}
+          {...domProps}
+        >
+          <div ref={ref} css={innerContainerStyles}>
+            {content}
+          </div>
+        </ShojiGridCell>
+        {/* Right shoji cell - only visible on desktop (md+) */}
+        <ShojiGridCell
+          shadowTop
+          area={{ md: 'right' }}
+          visible={{ base: false, md: true }}
+        />
+      </>
     )
   },
 )
