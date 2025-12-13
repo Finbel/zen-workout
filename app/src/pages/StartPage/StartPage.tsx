@@ -1,42 +1,8 @@
-import { useState, useEffect, useMemo } from 'react'
 import { Heading, Text, Button, ShojiGrid, Flex } from '@zen-design/ui'
-import { createCounterUseCases } from '@zen-design/domain'
-import { LocalStorageAdapter } from '../adapters/LocalStorageAdapter'
+import { useCounterViewModel } from './useCounterViewModel'
 
 export function StartPage() {
-  const [counterValue, setCounterValue] = useState<number>(0)
-  const [isLoading, setIsLoading] = useState(true)
-
-  // Initialize use cases with LocalStorageAdapter
-  const counterUseCases = useMemo(() => {
-    const storageAdapter = new LocalStorageAdapter()
-    return createCounterUseCases({ storagePort: storageAdapter })
-  }, [])
-
-  // Load initial counter value
-  useEffect(() => {
-    const loadCounter = async () => {
-      try {
-        const value = await counterUseCases.getCounter()
-        setCounterValue(value)
-      } catch (error) {
-        console.error('Error loading counter:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    loadCounter()
-  }, [counterUseCases])
-
-  // Handle increment counter
-  const handleIncrement = async () => {
-    try {
-      const newValue = await counterUseCases.incrementCounter()
-      setCounterValue(newValue)
-    } catch (error) {
-      console.error('Error incrementing counter:', error)
-    }
-  }
+  const { counterValue, isLoading, incrementCounter } = useCounterViewModel()
 
   return (
     <ShojiGrid
@@ -118,7 +84,7 @@ export function StartPage() {
             <Button
               variant="primary"
               size="md"
-              onClick={handleIncrement}
+              onClick={incrementCounter}
               disabled={isLoading}
             >
               Increment Counter
@@ -129,4 +95,3 @@ export function StartPage() {
     </ShojiGrid>
   )
 }
-

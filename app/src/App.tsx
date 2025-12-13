@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { Layout } from '@zen-design/ui'
-import { StartPage } from './pages/StartPage'
+import { StartPage } from './pages/StartPage/StartPage'
 import { AboutPage } from './pages/AboutPage'
 
 interface RouteConfig {

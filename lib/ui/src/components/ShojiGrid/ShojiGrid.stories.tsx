@@ -8,6 +8,38 @@ const meta: Meta<typeof ShojiGrid> = {
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component: `
+## Design Philosophy: Creating a Shoji Wall Effect
+
+The ShojiGrid component creates the visual effect of a traditional Japanese Shoji wall by combining two key design elements:
+
+### 1. Grid Gaps as Frame
+
+The **gaps** between grid cells serve as the frame structure of the Shoji wall. These gaps display the frame color (\`--shoji-frame\`), creating the visual separation between panels. The gap size can be controlled using the \`gap\` prop (\`'none'\`, \`'sm'\`, or \`'md'\`).
+
+### 2. Strategic Shadow Placement
+
+The **shadowTop** and **shadowRight** props on \`ShojiGrid.Cell\` components create depth by casting inset shadows that overlap the gaps. This gives the illusion that panels are recessed into the frame:
+
+- **shadowTop**: Applies a shadow along the top edge, casting downward to create depth
+- **shadowRight**: Applies a shadow along the right edge, casting leftward to create depth
+
+### How It Works Together
+
+When you apply shadows to the correct cells (typically cells that have adjacent cells below or to the right), the shadows overlap the grid gaps using pseudo-elements. This creates the three-dimensional effect where panels appear to sit inside a frame, just like traditional Shoji screens.
+
+**Key principle**: Only apply shadows where there are adjacent cells. For example:
+- Cells in the top row should not have \`shadowTop\` (no cell above)
+- Cells in the rightmost column should not have \`shadowRight\` (no cell to the right)
+- Interior cells typically have both shadows
+- Edge cells have only the appropriate shadow(s)
+
+This careful placement of shadows combined with the visible gaps creates the authentic Shoji wall aesthetic.
+        `,
+      },
+    },
   },
   argTypes: {
     columns: {
@@ -56,72 +88,19 @@ export default meta
 type Story = StoryObj<typeof ShojiGrid>
 
 /* ----------------------------------------
-   PLAYGROUND
+   HOLY GRAIL LAYOUT (Playground & Documentation)
    ---------------------------------------- */
 
-export const Playground: Story = {
+export const Default: Story = {
   args: {
-    columns: 3,
+    gap: 'md',
   },
-  render: (args) => (
-    <div style={{ padding: 'var(--space-4)' }}>
-      <ShojiGrid {...args}>
-        <ShojiGrid.Cell
-          shadowRight
-          shadowTop={false}
-          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
-        >
-          Item 1
-        </ShojiGrid.Cell>
-        <ShojiGrid.Cell
-          shadowRight
-          shadowTop={false}
-          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
-        >
-          Item 2
-        </ShojiGrid.Cell>
-        <ShojiGrid.Cell
-          shadowTop={false}
-          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
-        >
-          Item 3
-        </ShojiGrid.Cell>
-        <ShojiGrid.Cell
-          shadowRight
-          shadowTop
-          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
-        >
-          Item 4
-        </ShojiGrid.Cell>
-        <ShojiGrid.Cell
-          shadowRight
-          shadowTop
-          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
-        >
-          Item 5
-        </ShojiGrid.Cell>
-        <ShojiGrid.Cell
-          shadowTop
-          style={{ padding: 'var(--space-4)', textAlign: 'center' }}
-        >
-          Item 6
-        </ShojiGrid.Cell>
-      </ShojiGrid>
-    </div>
-  ),
-}
-
-/* ----------------------------------------
-   HOLY GRAIL LAYOUT
-   ---------------------------------------- */
-
-export const HolyGrailLayout: Story = {
-  name: 'Holy Grail Layout with ShojiGrid.Cell',
   parameters: {
     layout: 'fullscreen',
   },
-  render: () => (
+  render: (args) => (
     <ShojiGrid
+      {...args}
       gridTemplateAreas={{
         base: `
           "header"
