@@ -55,6 +55,16 @@ export type {
   TableCellProps,
 } from './components/Table'
 
+export { TextInput } from './components/TextInput'
+export type {
+  TextInputProps,
+  TextInputType,
+  TextInputSize,
+} from './components/TextInput'
+
+export { Checkbox } from './components/Checkbox'
+export type { CheckboxProps } from './components/Checkbox'
+
 export { Layout } from './components/Layout'
 export type { LayoutProps } from './components/Layout'
 export { LayoutNavbar } from './components/Layout/LayoutNavbar'

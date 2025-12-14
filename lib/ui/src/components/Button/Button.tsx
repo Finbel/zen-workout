@@ -130,6 +130,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className = '',
       disabled,
       style,
+      type = 'button',
       children,
       ...props
     },
@@ -213,6 +214,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         css={emotionStyles}
         style={style}
         disabled={disabled}
+        type={type}
         {...props}
       >
         {icon?.position === 'left' && <Icon name={icon.name} size={iconSize} />}

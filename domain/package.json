@@ -24,8 +24,8 @@
     "usecases",
     "ports"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^4.1.13"
+  }
 }
-
-
-
