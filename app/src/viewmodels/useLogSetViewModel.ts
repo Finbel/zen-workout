@@ -39,7 +39,7 @@ export function useLogSetViewModel() {
   const [totalTime, setTotalTime] = useState(0)
   const [restTime, setRestTime] = useState(0)
   const [restStartTime, setRestStartTime] = useState<number>(0)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const restTimerStartedRef = useRef(false)
 
   // Initialize use cases

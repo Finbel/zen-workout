@@ -31,7 +31,7 @@ export function useActiveWorkoutViewModel() {
   const [totalTime, setTotalTime] = useState(0)
   const [exerciseTime, setExerciseTime] = useState(0)
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const useCases = useMemo(() => {
     const exerciseAdapter = new LocalStorageExerciseAdapter()
