@@ -326,6 +326,38 @@ export function useLogSetViewModel() {
 
       // Check if more sets remaining
       const workoutExercise = workout?.exercises[exerciseIndex]
+      // #region agent log
+      fetch(
+        'http://127.0.0.1:7242/ingest/03f8e5cd-3c01-4ff1-8896-6a24c160cf96',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: 'useLogSetViewModel.ts:327',
+            message: 'Navigation decision point - checking sets and exercises',
+            data: {
+              setNumber,
+              workoutExerciseSets: workoutExercise?.sets,
+              exerciseIndex,
+              totalExercises: workout?.exercises.length || 0,
+              isLastSet: workoutExercise
+                ? setNumber >= workoutExercise.sets
+                : false,
+              isMoreSets: workoutExercise
+                ? setNumber < workoutExercise.sets
+                : false,
+              isMoreExercises:
+                exerciseIndex < (workout?.exercises.length || 0) - 1,
+              restStartTime,
+            },
+            timestamp: Date.now(),
+            sessionId: 'debug-session',
+            runId: 'run1',
+            hypothesisId: 'A',
+          }),
+        },
+      ).catch(() => {})
+      // #endregion
       if (workoutExercise && setNumber < workoutExercise.sets) {
         // More sets - go to rest
         // Use restStartTime state if available, otherwise use current time as fallback
@@ -337,18 +369,19 @@ export function useLogSetViewModel() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              location: 'useLogSetViewModel.ts:186',
-              message: 'Navigating to RestPage with restStartTime',
+              location: 'useLogSetViewModel.ts:356',
+              message: 'Navigating to RestPage - more sets in current exercise',
               data: {
                 restStartTimeToPass,
                 restStartTime,
                 setNumber,
                 nextSet: setNumber + 1,
+                exerciseIndex,
               },
               timestamp: Date.now(),
               sessionId: 'debug-session',
               runId: 'run1',
-              hypothesisId: 'C',
+              hypothesisId: 'A',
             }),
           },
         ).catch(() => {})
@@ -360,11 +393,89 @@ export function useLogSetViewModel() {
         )
       } else {
         // Check if more exercises
+        // #region agent log
+        fetch(
+          'http://127.0.0.1:7242/ingest/03f8e5cd-3c01-4ff1-8896-6a24c160cf96',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              location: 'useLogSetViewModel.ts:381',
+              message: 'Last set of exercise - checking if more exercises',
+              data: {
+                exerciseIndex,
+                totalExercises: workout?.exercises.length || 0,
+                isMoreExercises:
+                  exerciseIndex < (workout?.exercises.length || 0) - 1,
+                restStartTime,
+                willNavigateTo:
+                  exerciseIndex < (workout?.exercises.length || 0) - 1
+                    ? 'rest'
+                    : 'summary',
+              },
+              timestamp: Date.now(),
+              sessionId: 'debug-session',
+              runId: 'run1',
+              hypothesisId: 'B',
+            }),
+          },
+        ).catch(() => {})
+        // #endregion
         if (exerciseIndex < (workout?.exercises.length || 0) - 1) {
-          // Next exercise
-          navigate(`/workouts/${id}/active?logId=${logId}`)
+          // Next exercise - go to RestPage to rest before next exercise
+          const restStartTimeToPass = restStartTime || Date.now()
+          const nextExerciseIndex = exerciseIndex + 1
+          // #region agent log
+          fetch(
+            'http://127.0.0.1:7242/ingest/03f8e5cd-3c01-4ff1-8896-6a24c160cf96',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                location: 'useLogSetViewModel.ts:403',
+                message: 'FIXED: Navigating to RestPage before next exercise',
+                data: {
+                  exerciseIndex,
+                  nextExerciseIndex,
+                  restStartTime,
+                  restStartTimeToPass,
+                  nextSet: 1,
+                },
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'post-fix',
+                hypothesisId: 'B',
+              }),
+            },
+          ).catch(() => {})
+          // #endregion
+          navigate(
+            `/workouts/${id}/rest?logId=${logId}&exerciseIndex=${nextExerciseIndex}&nextSet=1&restStartTime=${restStartTimeToPass}`,
+          )
         } else {
           // Complete workout
+          // #region agent log
+          fetch(
+            'http://127.0.0.1:7242/ingest/03f8e5cd-3c01-4ff1-8896-6a24c160cf96',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                location: 'useLogSetViewModel.ts:421',
+                message:
+                  'Last exercise - completing workout and navigating to summary',
+                data: {
+                  exerciseIndex,
+                  totalExercises: workout?.exercises.length || 0,
+                },
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'run1',
+                hypothesisId: 'A',
+              }),
+            },
+          ).catch(() => {})
+          // #endregion
           await useCases.completeWorkout({ workoutLogId: logId })
           navigate(`/workouts/${id}/summary?logId=${logId}`)
         }

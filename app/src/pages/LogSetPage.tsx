@@ -49,7 +49,7 @@ export function LogSetPage() {
 
   return (
     <Box padding="lg">
-      <Flex direction="column" gap="lg" align="center">
+      <Flex direction="column" gap={{ base: 'sm', md: 'md' }} align="center">
         <Heading size="2xl">{exercise.name}</Heading>
 
         <Flex direction="column" gap="md" align="center">

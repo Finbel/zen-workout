@@ -32,7 +32,7 @@ export function ActiveWorkoutPage() {
 
   return (
     <Box padding="lg">
-      <Flex direction="column" gap="md" align="center">
+      <Flex direction="column" gap={{ base: 'sm', md: 'md' }} align="center">
         <Heading size="2xl">
           {currentExercise.exercise?.name || 'Exercise'}
         </Heading>

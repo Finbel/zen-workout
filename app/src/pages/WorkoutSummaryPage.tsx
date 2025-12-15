@@ -181,7 +181,11 @@ export function WorkoutSummaryPage() {
                           <Table.Cell>{set.weight || '-'}</Table.Cell>
                         )}
                         {exercise?.usesReps && (
-                          <Table.Cell>{set.reps || '-'}</Table.Cell>
+                          <Table.Cell>
+                            {exercise?.isTwoSided && set.reps
+                              ? `2x${set.reps}`
+                              : set.reps || '-'}
+                          </Table.Cell>
                         )}
                         {exercise?.usesTime && (
                           <Table.Cell>

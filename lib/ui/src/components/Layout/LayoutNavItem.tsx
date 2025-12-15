@@ -66,6 +66,7 @@ const LayoutNavItemInner = (
     const finalProps: any = {
       ...componentProps,
       to,
+      onClick,
       className:
         `zen-button zen-button--ghost zen-button--lg ${className}`.trim(),
       style: {
@@ -88,6 +89,7 @@ const LayoutNavItemInner = (
     const finalProps: any = {
       ...componentProps,
       href,
+      onClick,
       className:
         `zen-button zen-button--ghost zen-button--lg ${className}`.trim(),
       style: {

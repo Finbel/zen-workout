@@ -16,6 +16,7 @@ export const ExerciseSchema = z.object({
   usesWeight: z.boolean(),
   usesTime: z.boolean(),
   usesReps: z.boolean(),
+  isTwoSided: z.boolean().default(false),
 })
 
 export type Exercise = z.infer<typeof ExerciseSchema>
@@ -33,6 +34,7 @@ export function parseExercise(data: {
   usesWeight: boolean
   usesTime: boolean
   usesReps: boolean
+  isTwoSided?: boolean
 }): Exercise {
   return ExerciseSchema.parse({
     id: parseExerciseId(data.id),
@@ -40,6 +42,7 @@ export function parseExercise(data: {
     usesWeight: data.usesWeight,
     usesTime: data.usesTime,
     usesReps: data.usesReps,
+    isTwoSided: data.isTwoSided ?? false,
   })
 }
 
@@ -52,6 +55,7 @@ export function safeParseExercise(data: {
   usesWeight: boolean
   usesTime: boolean
   usesReps: boolean
+  isTwoSided?: boolean
 }) {
   return ExerciseSchema.safeParse({
     id: ExerciseIdSchema.safeParse(data.id).success
@@ -61,6 +65,7 @@ export function safeParseExercise(data: {
     usesWeight: data.usesWeight,
     usesTime: data.usesTime,
     usesReps: data.usesReps,
+    isTwoSided: data.isTwoSided ?? false,
   })
 }
 
@@ -72,6 +77,7 @@ export function createExercise(data: {
   usesWeight: boolean
   usesTime: boolean
   usesReps: boolean
+  isTwoSided?: boolean
   id?: string
 }): Exercise {
   const id = data.id ?? crypto.randomUUID()
@@ -81,5 +87,6 @@ export function createExercise(data: {
     usesWeight: data.usesWeight,
     usesTime: data.usesTime,
     usesReps: data.usesReps,
+    isTwoSided: data.isTwoSided ?? false,
   })
 }

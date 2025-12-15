@@ -13,6 +13,7 @@ export interface UpdateExerciseInput {
   usesWeight: boolean
   usesTime: boolean
   usesReps: boolean
+  isTwoSided?: boolean
 }
 
 /**
@@ -27,6 +28,7 @@ export const createUpdateExercise =
       usesWeight: input.usesWeight,
       usesTime: input.usesTime,
       usesReps: input.usesReps,
+      isTwoSided: input.isTwoSided ?? false,
     })
     return await repositoryPort.updateExercise(exercise)
   }

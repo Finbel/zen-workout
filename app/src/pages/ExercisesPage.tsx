@@ -54,6 +54,7 @@ export function ExercisesPage() {
                 <Table.Header>Uses Weight</Table.Header>
                 <Table.Header>Uses Time</Table.Header>
                 <Table.Header>Uses Reps</Table.Header>
+                <Table.Header>Two-Sided</Table.Header>
                 <Table.Header>Actions</Table.Header>
               </Table.Row>
             </Table.Head>
@@ -64,6 +65,7 @@ export function ExercisesPage() {
                   <Table.Cell>{exercise.usesWeight ? 'Yes' : 'No'}</Table.Cell>
                   <Table.Cell>{exercise.usesTime ? 'Yes' : 'No'}</Table.Cell>
                   <Table.Cell>{exercise.usesReps ? 'Yes' : 'No'}</Table.Cell>
+                  <Table.Cell>{exercise.isTwoSided ? 'Yes' : 'No'}</Table.Cell>
                   <Table.Cell>
                     <Button
                       variant="ghost"

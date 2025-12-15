@@ -15,7 +15,7 @@ export function RestPage() {
 
   return (
     <Box padding="lg">
-      <Flex direction="column" gap="lg" align="center">
+      <Flex direction="column" gap={{ base: 'sm', md: 'md' }} align="center">
         <Heading size="2xl">Rest</Heading>
         <Text>Next: {nextExerciseName || 'Exercise'}</Text>
         <Text>Set {nextSet}</Text>

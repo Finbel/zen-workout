@@ -19,6 +19,7 @@ export function CreateExercisePage() {
   const [usesWeight, setUsesWeight] = useState(false)
   const [usesTime, setUsesTime] = useState(false)
   const [usesReps, setUsesReps] = useState(false)
+  const [isTwoSided, setIsTwoSided] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,6 +31,7 @@ export function CreateExercisePage() {
       usesWeight,
       usesTime,
       usesReps,
+      isTwoSided,
     })
   }
 
@@ -109,6 +111,21 @@ export function CreateExercisePage() {
                   }
                 />
                 <Text>Uses Reps</Text>
+              </label>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-2)',
+                }}
+              >
+                <Checkbox
+                  checked={isTwoSided}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setIsTwoSided(e.target.checked)
+                  }
+                />
+                <Text>Two-Sided</Text>
               </label>
             </Flex>
 
