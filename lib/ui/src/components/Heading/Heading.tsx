@@ -3,6 +3,7 @@ import { css } from '@emotion/react'
 import type { Responsive } from '../../utils/Responsive'
 import { isResponsiveObject } from '../../utils/Responsive'
 import { responsiveStyles } from '../../utils/responsiveStyles'
+import type { TextAlign } from '../Text/Text'
 import './Heading.css'
 
 export type HeadingSize =

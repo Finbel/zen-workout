@@ -560,19 +560,15 @@ describe('ShojiGrid - HolyGrailLayout', () => {
       })
 
       it('should not apply shadow styles when shadows are false', () => {
-        const { container } = render(
+        render(
           <ShojiGrid gap="md">
             <ShojiGrid.Cell shadowTop={false} shadowRight={false}>
               Content
             </ShojiGrid.Cell>
           </ShojiGrid>,
         )
-        const cell = container.querySelector(
-          '.zen-shoji-grid-cell',
-        ) as HTMLElement
 
         // When no shadows, styles should not be applied (no position relative needed)
-        const styles = window.getComputedStyle(cell)
         // Position might be static or relative depending on other styles
         // But backgroundColor should not be set for shadows
         // Actually, we always set position relative when shadows are defined, even if false

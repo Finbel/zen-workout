@@ -176,8 +176,8 @@ const WithAsPropComponent = () => {
         onMenuToggle={() => setIsMenuOpen(!isMenuOpen)}
         isMenuOpen={isMenuOpen}
       >
-        <Layout.NavItem as="a" href="#home" name="Home" />
-        <Layout.NavItem as="a" href="#about" name="About" />
+        <Layout.NavItem href="#home" name="Home" />
+        <Layout.NavItem href="#about" name="About" />
       </Layout.Navbar>
       <Layout.Container>
         <div
