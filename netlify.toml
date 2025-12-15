@@ -1,0 +1,15 @@
+[build]
+  # Base directory for the build (monorepo root)
+  base = "."
+  
+  # Build command - builds UI library first, then the app
+  command = "yarn build"
+  
+  # Publish directory - Vite outputs to app/dist
+  publish = "app/dist"
+
+# Redirect rules for React Router (SPA routing)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

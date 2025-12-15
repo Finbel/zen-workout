@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { createWorkoutTrackerUseCases } from '@zen-design/domain'
 import { LocalStorageExerciseAdapter } from '../adapters/LocalStorageExerciseAdapter'
 import { LocalStorageWorkoutAdapter } from '../adapters/LocalStorageWorkoutAdapter'
@@ -13,6 +14,7 @@ export interface WorkoutLogWithWorkout extends WorkoutLog {
  * ViewModel for Start page
  */
 export function useStartPageViewModel() {
+  const navigate = useNavigate()
   const [workoutLogs, setWorkoutLogs] = useState<WorkoutLogWithWorkout[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
@@ -90,6 +92,32 @@ export function useStartPageViewModel() {
     return new Date(date).toLocaleDateString()
   }, [])
 
+  /**
+   * Handles clicking on a workout log row, navigating to the appropriate page
+   * based on whether the workout is completed or in progress
+   */
+  const handleWorkoutLogClick = useCallback(
+    (log: WorkoutLogWithWorkout) => {
+      const workoutId = log.workoutId as string
+      const logId = log.id as string
+
+      // Validate IDs exist
+      if (!workoutId || !logId) {
+        console.error('Missing workoutId or logId for workout log:', log)
+        return
+      }
+
+      if (log.completedAt) {
+        // Completed workout -> summary page
+        navigate(`/workouts/${workoutId}/summary?logId=${logId}`)
+      } else {
+        // In progress -> active workout page
+        navigate(`/workouts/${workoutId}/active?logId=${logId}`)
+      }
+    },
+    [navigate],
+  )
+
   return {
     workoutLogs,
     isLoading,
@@ -97,5 +125,6 @@ export function useStartPageViewModel() {
     reload: loadWorkoutLogs,
     formatDuration,
     formatDate,
+    handleWorkoutLogClick,
   }
 }
